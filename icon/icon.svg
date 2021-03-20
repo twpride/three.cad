@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   enable-background="new 0 0 24 24"
+   viewBox="0 0 24 24"
+   fill="black"
+   width="24px"
+   height="24px"
+   version="1.1"
+   id="svg26"
+   sodipodi:docname="icon.svg"
+   inkscape:version="1.0.2 (1.0.2+r75+1)">
+  <metadata
+     id="metadata32">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs30" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1623"
+     inkscape:window-height="1236"
+     id="namedview28"
+     showgrid="false"
+     inkscape:zoom="21.184428"
+     inkscape:cx="16.030816"
+     inkscape:cy="15.296979"
+     inkscape:window-x="426"
+     inkscape:window-y="92"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg26"
+     inkscape:document-rotation="0"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       position="-3.6819497,21.6"
+       orientation="0,1"
+       id="guide842"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="-1.0857031,2.4"
+       orientation="0,1"
+       id="guide846"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+  </sodipodi:namedview>
+  <circle
+     style="fill:#a6a6a6;stroke-width:0.05;stroke-linecap:round"
+     id="path927"
+     cx="12"
+     cy="12"
+     r="12" />
+  <g
+     id="g875"
+     transform="matrix(1.2,0,0,1.2,-2.4,-2.4)">
+    <g
+       id="g868"
+       style="fill:#5ccff0;fill-opacity:1">
+      <polygon
+         opacity=".3"
+         points="13,17.17 17,14.87 17,10.24 13,12.57 "
+         id="polygon6"
+         style="opacity:1;fill:#5ccff0;fill-opacity:1" />
+      <polygon
+         opacity=".3"
+         points="12,6.25 8.04,8.53 12,10.84 15.96,8.53 "
+         id="polygon8"
+         style="opacity:1;fill:#5ccff0;fill-opacity:1" />
+      <polygon
+         opacity=".3"
+         points="7,14.87 11,17.17 11,12.57 7,10.24 "
+         id="polygon10"
+         style="opacity:1;fill:#5ccff0;fill-opacity:1" />
+    </g>
+    <path
+       d="M 19,14.87 V 9.13 C 19,8.41 18.62,7.75 18,7.4 L 13,4.52 C 12.69,4.34 12.35,4.25 12,4.25 c -0.35,0 -0.69,0.09 -1,0.27 L 6,7.39 C 5.38,7.75 5,8.41 5,9.13 v 5.74 c 0,0.72 0.38,1.38 1,1.73 l 5,2.88 c 0.31,0.18 0.65,0.27 1,0.27 0.35,0 0.69,-0.09 1,-0.27 l 5,-2.88 c 0.62,-0.35 1,-1.01 1,-1.73 z m -8,2.3 -4,-2.3 v -4.63 l 4,2.33 z M 12,10.84 8.04,8.53 12,6.25 15.96,8.53 Z m 5,4.03 -4,2.3 v -4.6 l 4,-2.33 z"
+       id="path20" />
+  </g>
+</svg>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="favicon.ico" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+
+  <meta property="og:title" content="CAD Tool" />
+  <meta property="og:description" content="Three.js CAD tool" />
+  <meta property="og:url" content="" />
+  <meta property="og:image" content="" />
+
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
+  <title>CAD Tool</title>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+    }
+
+    #c {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .split {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #view1 {
+      width: 100%;
+      height: 100%;
+    }
+
+    #view2 {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 30%;
+      height: 30%;
+    }
+  </style>
+
+</head>
+
+<body>
+  <canvas id="c"></canvas>
+  <div class="split">
+    <div id="view1"></div>
+    <div id="view2"></div>
+  </div>
+
+
+  <script src="bundle.js" type="module"></script>
+  </script>
+
+</body>
+
+</html>
