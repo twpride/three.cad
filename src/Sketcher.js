@@ -1,5 +1,6 @@
 
 import { Matrix4 } from 'three';
+
 import * as THREE from '../node_modules/three/src/Three'
 
 export class Sketcher extends THREE.Group {
@@ -53,11 +54,6 @@ export class Sketcher extends THREE.Group {
 
 
     this.mode = ""
-    this.keyTable = {
-      'l': this.addLine,
-      'Escape': this.clear
-    }
-
 
 
   }
@@ -83,6 +79,9 @@ export class Sketcher extends THREE.Group {
       case 'l':
         this.addLine()
         this.mode = "line"
+        break;
+      case 'b':
+        this.writeBuff()
         break;
       case '=':
         this.plane.applyMatrix4(new Matrix4().makeRotationY(0.1))
@@ -142,7 +141,7 @@ export class Sketcher extends THREE.Group {
   grabbedMove(e) {
     const mouseLoc = this.getLocation(e);
 
-    this.moveLinePt(this.grabPtIdx,mouseLoc)
+    this.moveLinePt(this.grabPtIdx, mouseLoc)
 
     this.dispatchEvent({ type: 'change' })
   }
@@ -259,7 +258,29 @@ export class Sketcher extends THREE.Group {
     this.pointStart(e)
   }
 
+  writeBuff() {
+    // const linesBuf = new Float32Array(this.linesArr.length * 4)
+    // const xyOnly = [0,1,3,4];
+    // let p = 0
+    // for (let i = 0; i < this.linesArr.length; i++) {
+    //   for (let j of xyOnly) {
+    //     linesBuf[p++] = this.linesArr[i].geometry.attributes.position.array[j]
+    //   }
+    // }
 
+    let ptsBuf = new Float32Array(this.ptsArr.length * 2)
+    for (let i = 0, p = 0; i < this.ptsArr.length; i++) {
+      for (let j = 0; j < 2; j++) {
+        ptsBuf[p++] = this.ptsArr[i].geometry.attributes.position.array[j]
+      }
+    }
+    console.log(ptsBuf)
+
+    buffer = Module._malloc(ptsBuf.length * ptsBuf.BYTES_PER_ELEMENT)
+    Module.HEAPF32.set(ptsBuf, buffer >> 2)
+
+    Module["_solver"](buffer)
+  }
 }
 
 

@@ -1,0 +1,1 @@
+emcc  ./wasm/solver.c ./wasm/libslvs.a -L./wasm/ -lslvs -o ./dist/solver.js -s TOTAL_MEMORY=134217728 -s EXPORTED_FUNCTIONS='[_main, _solver]'
