@@ -81,7 +81,7 @@ export class Sketcher extends THREE.Group {
         this.mode = "line"
         break;
       case 'b':
-        this.writeBuff()
+        this.solve()
         break;
       case '=':
         this.plane.applyMatrix4(new Matrix4().makeRotationY(0.1))
@@ -258,7 +258,7 @@ export class Sketcher extends THREE.Group {
     this.pointStart(e)
   }
 
-  writeBuff() {
+  solve() {
     // const linesBuf = new Float32Array(this.linesArr.length * 4)
     // const xyOnly = [0,1,3,4];
     // let p = 0
@@ -274,12 +274,13 @@ export class Sketcher extends THREE.Group {
         ptsBuf[p++] = this.ptsArr[i].geometry.attributes.position.array[j]
       }
     }
-    console.log(ptsBuf)
 
     buffer = Module._malloc(ptsBuf.length * ptsBuf.BYTES_PER_ELEMENT)
     Module.HEAPF32.set(ptsBuf, buffer >> 2)
 
-    Module["_solver"](buffer)
+    Module["_solver"](this.ptsArr.length/2, buffer)
+
+    Module._free(buffer)
   }
 }
 
