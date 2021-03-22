@@ -32,6 +32,7 @@ export class Sketcher extends THREE.Group {
     this.grabbedObject = null
 
     this.lineMaterial = new THREE.LineBasicMaterial({
+      linewidth: 3,
       color: 0x555,
     })
     this.pointMaterial = new THREE.PointsMaterial({
