@@ -148,12 +148,13 @@ export class Sketcher extends THREE.Group {
 
   moveLinePt(ptIdx, absPos) {
     this.ptsArr[ptIdx].geometry.attributes.position.set(absPos);
-    this.ptsArr[ptIdx].geometry.attributes.position.needsUpdate = true;
+    this.solve()
+    // this.ptsArr[ptIdx].geometry.attributes.position.needsUpdate = true;
 
-    const lineIdx = Math.floor(ptIdx / 2)
-    const endPtIdx = (ptIdx % 2) * 3
-    this.linesArr[lineIdx].geometry.attributes.position.set(absPos, endPtIdx)
-    this.linesArr[lineIdx].geometry.attributes.position.needsUpdate = true;
+    // const lineIdx = Math.floor(ptIdx / 2)
+    // const endPtIdx = (ptIdx % 2) * 3
+    // this.linesArr[lineIdx].geometry.attributes.position.set(absPos, endPtIdx)
+    // this.linesArr[lineIdx].geometry.attributes.position.needsUpdate = true;
   }
 
   grabEnd() {
@@ -242,6 +243,7 @@ export class Sketcher extends THREE.Group {
   move(e) {
     const mouseLoc = this.getLocation(e);
     this.lineGeom.attributes.position.set(mouseLoc, 3)
+
     this.lineGeom.attributes.position.needsUpdate = true;
     this.p2Geom.attributes.position.set(mouseLoc);
     this.p2Geom.attributes.position.needsUpdate = true;
@@ -259,29 +261,48 @@ export class Sketcher extends THREE.Group {
   }
 
   solve() {
-    // const linesBuf = new Float32Array(this.linesArr.length * 4)
-    // const xyOnly = [0,1,3,4];
-    // let p = 0
-    // for (let i = 0; i < this.linesArr.length; i++) {
-    //   for (let j of xyOnly) {
-    //     linesBuf[p++] = this.linesArr[i].geometry.attributes.position.array[j]
-    //   }
-    // }
-
     let ptsBuf = new Float32Array(this.ptsArr.length * 2)
     for (let i = 0, p = 0; i < this.ptsArr.length; i++) {
-      for (let j = 0; j < 2; j++) {
-        ptsBuf[p++] = this.ptsArr[i].geometry.attributes.position.array[j]
-      }
+      ptsBuf[p++] = this.ptsArr[i].geometry.attributes.position.array[0]
+      ptsBuf[p++] = this.ptsArr[i].geometry.attributes.position.array[1]
     }
+
 
     buffer = Module._malloc(ptsBuf.length * ptsBuf.BYTES_PER_ELEMENT)
     Module.HEAPF32.set(ptsBuf, buffer >> 2)
+    Module["_solver"](this.ptsArr.length / 2, buffer)
 
-    Module["_solver"](this.ptsArr.length/2, buffer)
+
+    let ptr = buffer >> 2;
+
+
+    for (let i = 0; i < ptsBuf.length; i += 4) {
+      const pt1_pos = this.ptsArr[i >> 1].geometry.attributes.position;
+      const pt2_pos = this.ptsArr[(i >> 1) + 1].geometry.attributes.position;
+      const line_pos = this.linesArr[i >> 2].geometry.attributes.position;
+
+      pt1_pos.array[0] = Module.HEAPF32[ptr]
+      line_pos.array[0] = Module.HEAPF32[ptr++]
+
+      pt1_pos.array[1] = Module.HEAPF32[ptr]
+      line_pos.array[1] = Module.HEAPF32[ptr++]
+
+      pt2_pos.array[0] = Module.HEAPF32[ptr]
+      line_pos.array[3] = Module.HEAPF32[ptr++]
+
+      pt2_pos.array[1] = Module.HEAPF32[ptr]
+      line_pos.array[4] = Module.HEAPF32[ptr++]
+
+      pt1_pos.needsUpdate = true;
+      pt2_pos.needsUpdate = true;
+      line_pos.needsUpdate = true;
+    }
+
+    this.dispatchEvent({ type: 'change' })
 
     Module._free(buffer)
   }
+
 }
 
 
