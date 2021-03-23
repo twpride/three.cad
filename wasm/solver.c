@@ -49,7 +49,7 @@ int solver(int nLines, float *ptr)
   sys.param[sys.params++] = Slvs_MakeParam(3, g, 0.0);
   sys.entity[sys.entities++] = Slvs_MakePoint3d(101, g, 1, 2, 3);
   /* and it is parallel to the xy plane, so it has basis vectors (1 0 0)
-     * and (0 1 0). */
+     * and (0 1 0).  */
   Slvs_MakeQuaternion(1, 0, 0,
                       0, 1, 0, &qw, &qx, &qy, &qz);
   sys.param[sys.params++] = Slvs_MakeParam(4, g, qw);
@@ -94,7 +94,7 @@ int solver(int nLines, float *ptr)
           SLVS_C_POINTS_COINCIDENT,
           200,
           0.0,
-          vh - 1, vh - 2, 0, 0);
+          vh - 2, vh - 1, 0, 0);
     }
   }
 

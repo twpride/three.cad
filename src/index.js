@@ -73,17 +73,17 @@ function main() {
   helpersGroup.add(cameraHelper);
 
 
-  const camera2 = new THREE.PerspectiveCamera(
-    60,  // fov
-    2,   // aspect
-    0.1, // near
-    500, // far
-  );
-  camera2.position.set(16, 28, 40);
-  camera2.lookAt(0, 5, 0);
-  const controls2 = new OrbitControls(camera2, view2Elem);
-  controls2.target.set(0, 5, 0);
-  controls2.update();
+  // const camera2 = new THREE.PerspectiveCamera(
+  //   60,  // fov
+  //   2,   // aspect
+  //   0.1, // near
+  //   500, // far
+  // );
+  // camera2.position.set(16, 28, 40);
+  // camera2.lookAt(0, 5, 0);
+  // const controls2 = new OrbitControls(camera2, view2Elem);
+  // controls2.target.set(0, 5, 0);
+  // controls2.update();
 
 
 
@@ -155,13 +155,13 @@ function main() {
       cameraHelper.visible = false;
       renderer.render(scene, camera);
     }
-    {
-      const aspect = setScissorForElement(view2Elem);
-      camera2.aspect = aspect;
-      camera2.updateProjectionMatrix();
-      cameraHelper.visible = true;
-      renderer.render(scene, camera2);
-    }
+    // {
+    //   const aspect = setScissorForElement(view2Elem);
+    //   camera2.aspect = aspect;
+    //   camera2.updateProjectionMatrix();
+    //   cameraHelper.visible = true;
+    //   renderer.render(scene, camera2);
+    // }
 
     stats.end();
 
@@ -172,7 +172,7 @@ function main() {
 
   controls.addEventListener('change', render);
   controls.addEventListener('start', render);
-  controls2.addEventListener('change', render);
+  // controls2.addEventListener('change', render);
   sketcher.addEventListener('change', render);
   window.addEventListener('resize', render);
   render();
