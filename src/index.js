@@ -40,7 +40,6 @@ import { KeyboardController } from './utils'
 
 function main() {
 
-  const Controller = new KeyboardController()
 
   var stats = new Stats();
   stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -92,6 +91,7 @@ function main() {
 
   const sketchPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
   const sketcher = new Sketcher(camera, view1Elem, sketchPlane)
+  window.sketcher = sketcher
   scene.add(sketcher)
 
   {
