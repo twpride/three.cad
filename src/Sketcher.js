@@ -250,11 +250,10 @@ export class Sketcher extends THREE.Group {
 
   onDrag(e) {
     const mouseLoc = this.getLocation(e);
-    this.geomGroup.children[this.grabPtIdx].geometry.attributes.position.set(mouseLoc);
-    this.updatePointsBuffer()
+
+    this.ptsBuf.set(mouseLoc.slice(0,2),this.objIdx.get(this.geomGroup.children[this.grabPtIdx].id)*2)
+
     this.solve()
-    // console.log(this.geomGroup.children[this.grabPtIdx].geometry.attributes.position.array)
-    // this.geomGroup.children[this.grabPtIdx].geometry.attributes.position.needsUpdate = true;
     this.dispatchEvent({ type: 'change' })
   }
 
@@ -263,7 +262,6 @@ export class Sketcher extends THREE.Group {
     this.domElement.removeEventListener('pointermove', this.onDrag)
     this.domElement.removeEventListener('pointerup', this.onRelease)
     this.geomGroup.children[this.grabPtIdx].geometry.computeBoundingSphere()
-    // this.grabbedObject = null
   }
 
 
@@ -529,13 +527,6 @@ export class Sketcher extends THREE.Group {
 
 
   solve() {
-
-    for (let i = 0, p = 0; i < this.geomGroup.children.length; i++) {
-      if (this.geomGroup.children[i].type == "Points") {
-        this.ptsBuf[2 * i] = this.geomGroup.children[i].geometry.attributes.position.array[0]
-        this.ptsBuf[2 * i + 1] = this.geomGroup.children[i].geometry.attributes.position.array[1]
-      }
-    }
 
     const pts_buffer = Module._malloc(this.ptsBuf.length * this.ptsBuf.BYTES_PER_ELEMENT)
     Module.HEAPF32.set(this.ptsBuf, pts_buffer >> 2)
