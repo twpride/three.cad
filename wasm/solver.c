@@ -75,7 +75,6 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
   int p_start = sys.params;
   for (int i = 0; i < nPts; i++)
   {
-    printf("i: %i %f %f \n",  i,(float)*p_ptr,(float)*(p_ptr+1));
     if (isnan((float)*p_ptr))
     {
       p_ptr+=2;
@@ -91,28 +90,26 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
     if (*l_ptr++ == 0)
     {
       sys.entity[sys.entities++] = Slvs_MakeLineSegment(lh++, g,
-                                                        200, (int)*l_ptr++, (int)*l_ptr++);
-      l_ptr += 2;
+                                                        200, (int)*l_ptr, (int)*(l_ptr+1));
+      l_ptr += 4;
     } else {
       l_ptr += 4;
     }
   }
 
-   printf("nconst: %i \n",  nConst);
   for (int i = 0; i < nConst; i++)
   {
     if ((int)*c_ptr == 0)
     {
       c_ptr+=2;
-      printf("const: %i %i \n",  (int)*c_ptr, (int)*(c_ptr+1));
       sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
           con_id++, g,
           SLVS_C_POINTS_COINCIDENT,
           200,
           0.0,
-          (int)*c_ptr++, (int)*c_ptr++, 0, 0);
+          (int)*c_ptr, (int)*(c_ptr+1), 0, 0);
 
-      c_ptr += 2;
+      c_ptr += 4;
 
     } else {
       c_ptr += 6;
@@ -122,7 +119,6 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
   /* And solve. */
   Slvs_Solve(&sys, g);
 
-  printf("npts: %i \n", nPts);
   if (sys.result == SLVS_RESULT_OKAY)
   {
     // printf("solved okay\n");
@@ -134,7 +130,6 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
         buf_pt_start+=2;
         continue;
       }
-      printf("res: %i %f %f \n",i,  (float)sys.param[p_start].val, (float)sys.param[p_start+1].val);
       *buf_pt_start++ = (float)sys.param[p_start++].val;
       *buf_pt_start++ = (float)sys.param[p_start++].val;
     }
@@ -163,12 +158,12 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
 
 int main(int argc, char *argv[])
 {
-  sys.param = CheckMalloc(50 * sizeof(sys.param[0]));
-  sys.entity = CheckMalloc(50 * sizeof(sys.entity[0]));
-  sys.constraint = CheckMalloc(50 * sizeof(sys.constraint[0]));
+  sys.param = CheckMalloc(500 * sizeof(sys.param[0]));
+  sys.entity = CheckMalloc(500 * sizeof(sys.entity[0]));
+  sys.constraint = CheckMalloc(500 * sizeof(sys.constraint[0]));
 
-  sys.failed = CheckMalloc(50 * sizeof(sys.failed[0]));
-  sys.faileds = 50;
+  sys.failed = CheckMalloc(500 * sizeof(sys.failed[0]));
+  sys.faileds = 500;
 
   // Example2d(150.0);
 

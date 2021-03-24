@@ -157,6 +157,9 @@ export class Sketcher extends THREE.Group {
         this.mode = ""
         break;
       case 'l':
+        if (this.mode == 'line') {
+          this.clear()
+        }
         this.domElement.addEventListener('pointerdown', this.onClick_1)
         this.mode = "line"
         break;
@@ -248,7 +251,10 @@ export class Sketcher extends THREE.Group {
   onDrag(e) {
     const mouseLoc = this.getLocation(e);
     this.geomGroup.children[this.grabPtIdx].geometry.attributes.position.set(mouseLoc);
+    this.updatePointsBuffer()
     this.solve()
+    // console.log(this.geomGroup.children[this.grabPtIdx].geometry.attributes.position.array)
+    // this.geomGroup.children[this.grabPtIdx].geometry.attributes.position.needsUpdate = true;
     this.dispatchEvent({ type: 'change' })
   }
 
@@ -300,7 +306,6 @@ export class Sketcher extends THREE.Group {
 
     i = 0;
     for (let [key, obj] of this.linkedObjs) {
-      console.log(obj[0])
       this.linksBuf.set(
         [
           this.linkNum[obj[1]],
@@ -308,7 +313,6 @@ export class Sketcher extends THREE.Group {
         ],
         (i) * 5
       )
-      console.log(this.linksBuf)
       i++
     }
 
@@ -338,7 +342,7 @@ export class Sketcher extends THREE.Group {
     return i
   }
 
-  updatePointsBuffer(startingIdx=0) {
+  updatePointsBuffer(startingIdx = 0) {
     for (let i = startingIdx; i < this.geomGroup.children.length; i++) {
       const obj = this.geomGroup.children[i]
       this.objIdx.set(obj.id, i)
@@ -526,11 +530,12 @@ export class Sketcher extends THREE.Group {
 
   solve() {
 
-    // for (let i = 0, p = 0; i < this.geomGroup.children.length; i++) {
-    //   this.ptsBuf[p++] = this.geomGroup.children[i].geometry.attributes.position.array[0]
-    //   this.ptsBuf[p++] = this.geomGroup.children[i].geometry.attributes.position.array[1]
-    // }
-    this.updatePointsBuffer()
+    for (let i = 0, p = 0; i < this.geomGroup.children.length; i++) {
+      if (this.geomGroup.children[i].type == "Points") {
+        this.ptsBuf[2 * i] = this.geomGroup.children[i].geometry.attributes.position.array[0]
+        this.ptsBuf[2 * i + 1] = this.geomGroup.children[i].geometry.attributes.position.array[1]
+      }
+    }
 
     const pts_buffer = Module._malloc(this.ptsBuf.length * this.ptsBuf.BYTES_PER_ELEMENT)
     Module.HEAPF32.set(this.ptsBuf, pts_buffer >> 2)
@@ -549,15 +554,17 @@ export class Sketcher extends THREE.Group {
     for (let i = 0; i < this.geomGroup.children.length; i += 1) {
 
       const pos = this.geomGroup.children[i].geometry.attributes.position;
+      // console.log(pos.array)
       if (isNaN(Module.HEAPF32[ptr])) {
-        pos.array[0] = Module.HEAPF32[ptr-4]
-        pos.array[1] = Module.HEAPF32[ptr-3]
-        pos.array[3] = Module.HEAPF32[ptr-2]
-        pos.array[4] = Module.HEAPF32[ptr-1]
+        pos.array[0] = Module.HEAPF32[ptr - 4]
+        pos.array[1] = Module.HEAPF32[ptr - 3]
+        pos.array[3] = Module.HEAPF32[ptr - 2]
+        pos.array[4] = Module.HEAPF32[ptr - 1]
       } else {
-        pos.array[0] = Module.HEAPF32[ptr++]
-        pos.array[1] = Module.HEAPF32[ptr++]
+        pos.array[0] = Module.HEAPF32[ptr]
+        pos.array[1] = Module.HEAPF32[ptr + 1]
       }
+      ptr += 2;
 
       pos.needsUpdate = true;
     }
