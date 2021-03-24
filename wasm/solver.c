@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-
+#include <math.h>
 #include "slvs.h"
 
 static Slvs_System sys;
@@ -33,11 +33,9 @@ static void *CheckMalloc(size_t n)
  * entities and constraints.
  *---------------------------------------------------------------------------*/
 
-int solver(int nLines, float *ptr)
+int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *l_ptr)
 {
-
-  float *buf_pt_start = ptr;
-
+  // printf("first %i \n", (int)*(l_ptr + 1));
   Slvs_hGroup g;
   double qw, qx, qy, qz;
 
@@ -67,46 +65,77 @@ int solver(int nLines, float *ptr)
   /* These points are represented by their coordinates (u v) within the
      * workplane, so they need only two parameters each. */
 
-  int p_start = sys.params;
-
-  Slvs_hParam ph = 11, ph_s = 11;
+  Slvs_hParam ph = 11;
   Slvs_hParam vh = 301, vh_s = 301;
   Slvs_hParam lh = 400, lh_s = 400;
 
   Slvs_hParam con_id = 1;
 
-  for (int i = 0; i < nLines * 2; i++)
+  float *buf_pt_start = p_ptr;
+  int p_start = sys.params;
+  for (int i = 0; i < nPts; i++)
   {
+    printf("i: %i %f %f \n",  i,(float)*p_ptr,(float)*(p_ptr+1));
+    if (isnan((float)*p_ptr))
+    {
+      p_ptr+=2;
+      continue;
+    }
+    sys.param[sys.params++] = Slvs_MakeParam(ph++, g, (float)*p_ptr++);
+    sys.param[sys.params++] = Slvs_MakeParam(ph++, g, (float)*p_ptr++);
+    sys.entity[sys.entities++] = Slvs_MakePoint2d(i, g, 200, ph - 1, ph - 2);
+  }
 
-    sys.param[sys.params++] = Slvs_MakeParam(ph++, g, (float)*ptr++);
-    sys.param[sys.params++] = Slvs_MakeParam(ph++, g, (float)*ptr++);
-    sys.entity[sys.entities++] = Slvs_MakePoint2d(vh++, g, 200, ph - 1, ph - 2);
-
-    if (i % 2 == 1)
+  for (int i = 0; i < nLinks; i++)
+  {
+    if (*l_ptr++ == 0)
     {
       sys.entity[sys.entities++] = Slvs_MakeLineSegment(lh++, g,
-                                                        200, vh - 1, vh - 2);
+                                                        200, (int)*l_ptr++, (int)*l_ptr++);
+      l_ptr += 2;
+    } else {
+      l_ptr += 4;
     }
-    else if (i > 0)
+  }
+
+   printf("nconst: %i \n",  nConst);
+  for (int i = 0; i < nConst; i++)
+  {
+    if ((int)*c_ptr == 0)
     {
+      c_ptr+=2;
+      printf("const: %i %i \n",  (int)*c_ptr, (int)*(c_ptr+1));
       sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
           con_id++, g,
           SLVS_C_POINTS_COINCIDENT,
           200,
           0.0,
-          vh - 2, vh - 1, 0, 0);
+          (int)*c_ptr++, (int)*c_ptr++, 0, 0);
+
+      c_ptr += 2;
+
+    } else {
+      c_ptr += 6;
     }
   }
 
   /* And solve. */
   Slvs_Solve(&sys, g);
 
+  printf("npts: %i \n", nPts);
   if (sys.result == SLVS_RESULT_OKAY)
   {
     // printf("solved okay\n");
 
-    for (int i = 0; i < nLines * 4; i++)
+    for (int i = 0; i < nPts; i++)
     {
+      if (isnan((float)*buf_pt_start))
+      {
+        buf_pt_start+=2;
+        continue;
+      }
+      printf("res: %i %f %f \n",i,  (float)sys.param[p_start].val, (float)sys.param[p_start+1].val);
+      *buf_pt_start++ = (float)sys.param[p_start++].val;
       *buf_pt_start++ = (float)sys.param[p_start++].val;
     }
   }

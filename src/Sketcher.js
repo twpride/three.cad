@@ -70,6 +70,8 @@ export class Sketcher extends THREE.Group {
     this.colorPt = new THREE.Color('white')
     this.selected = new Set()
 
+    this.geomGroup = new THREE.Group();
+    scene.add(this.geomGroup);
 
     this.lineMaterial = new THREE.LineBasicMaterial({
       linewidth: 3,
@@ -113,13 +115,13 @@ export class Sketcher extends THREE.Group {
     this.objIdx = new Map()
 
     this.max_pts = 1000
-    this.ptsBuf = new Float32Array(this.max_pts * 2)
+    this.ptsBuf = new Float32Array(this.max_pts * 2).fill(NaN)
 
     this.max_links = 1000
-    this.linksBuf = new Int32Array(this.max_links * 5) // [0]:type, [1]:pt1, [2]:pt2, [3]:pt3, [4]:pt4
+    this.linksBuf = new Float32Array(this.max_links * 5).fill(NaN) // [0]:type, [1]:pt1, [2]:pt2, [3]:pt3, [4]:pt4
 
     this.max_constraints = 1000
-    this.constraintsBuf = new Float32Array(this.max_constraints * 6) // [0]:type, [1]:pt1, [2]:pt2, [3]:lk1, [4]:lk2, [5]:val
+    this.constraintsBuf = new Float32Array(this.max_constraints * 6).fill(NaN) // [0]:type, [1]:val, [2]:pt1, [3]:pt2, [4]:lk1, [5]:lk2
 
     this.subsequent = false;
     this.ptsBufPt = 0;
@@ -194,7 +196,7 @@ export class Sketcher extends THREE.Group {
       this.camera
     );
 
-    const hoverPts = this.raycaster.intersectObjects(this.children)
+    const hoverPts = this.raycaster.intersectObjects(this.geomGroup.children)
 
     if (hoverPts.length) {
       let minDist = Infinity;
@@ -228,7 +230,7 @@ export class Sketcher extends THREE.Group {
     if (this.hovered) {
       this.selected.add(this.hovered)
       if (this.hovered.type === "Points") {
-        this.grabPtIdx = this.children.indexOf(
+        this.grabPtIdx = this.geomGroup.children.indexOf(
           this.hovered
         )
         this.domElement.addEventListener('pointermove', this.onDrag);
@@ -245,7 +247,7 @@ export class Sketcher extends THREE.Group {
 
   onDrag(e) {
     const mouseLoc = this.getLocation(e);
-    this.children[this.grabPtIdx].geometry.attributes.position.set(mouseLoc);
+    this.geomGroup.children[this.grabPtIdx].geometry.attributes.position.set(mouseLoc);
     this.solve()
     this.dispatchEvent({ type: 'change' })
   }
@@ -254,22 +256,22 @@ export class Sketcher extends THREE.Group {
   onRelease() {
     this.domElement.removeEventListener('pointermove', this.onDrag)
     this.domElement.removeEventListener('pointerup', this.onRelease)
-    this.children[this.grabPtIdx].geometry.computeBoundingSphere()
+    this.geomGroup.children[this.grabPtIdx].geometry.computeBoundingSphere()
     // this.grabbedObject = null
   }
 
 
 
   deleteSelected() {
-    let minI = this.children.length;
+    let minI = this.geomGroup.children.length;
 
     for (let obj of this.selected) {
       minI = Math.min(minI, this.delete(obj))
 
     }
 
-    this.updateBuffer(minI)
-    this.resetConstraints()
+    this.updatePointsBuffer(minI)
+    this.updateOtherBuffers()
 
     this.selected.clear()
     this.dispatchEvent({ type: 'change' })
@@ -283,13 +285,13 @@ export class Sketcher extends THREE.Group {
     this.constraints.delete(c_id)
   }
 
-  resetConstraints() {
+  updateOtherBuffers() {
     let i = 0
-    for (let [key,obj] of this.constraints) {
+    for (let [key, obj] of this.constraints) {
       this.constraintsBuf.set(
         [
+          this.contraintNum[obj[1]], obj[2],
           ...obj[0].map(ele => this.objIdx.get(ele.id) || -1),
-          this.contraintNum[obj[4]], obj[5]
         ],
         (i) * 6
       )
@@ -297,14 +299,16 @@ export class Sketcher extends THREE.Group {
     }
 
     i = 0;
-    for (let [key,obj] of this.linkedObjs) {
+    for (let [key, obj] of this.linkedObjs) {
+      console.log(obj[0])
       this.linksBuf.set(
         [
-          ...obj[0].map(ele => this.objIdx.get(ele.id) || -1),
-          this.linkNum[obj[4]]
+          this.linkNum[obj[1]],
+          ...obj[0].map(ele => this.objIdx.get(ele.id) ?? -1),
         ],
         (i) * 5
       )
+      console.log(this.linksBuf)
       i++
     }
 
@@ -314,11 +318,11 @@ export class Sketcher extends THREE.Group {
 
     const link = this.linkedObjs.get(obj.l_id)
 
-    let i = this.children.indexOf(link[0][0])
+    let i = this.geomGroup.children.indexOf(link[0][0])
     if (i == -1) return Infinity
 
     for (let j = 0; j < link[0].length; j++) {
-      const obj = this.children[i + j]
+      const obj = this.geomGroup.children[i + j]
       obj.geometry.dispose()
       obj.material.dispose()
 
@@ -327,16 +331,16 @@ export class Sketcher extends THREE.Group {
       }
     }
 
-    this.children.splice(i, link[0].length)
+    this.geomGroup.children.splice(i, link[0].length)
 
     this.linkedObjs.delete(obj.l_id)
 
     return i
   }
 
-  updateBuffer(startingIdx) {
-    for (let i = startingIdx; i < this.children.length; i++) {
-      const obj = this.children[i]
+  updatePointsBuffer(startingIdx=0) {
+    for (let i = startingIdx; i < this.geomGroup.children.length; i++) {
+      const obj = this.geomGroup.children[i]
       this.objIdx.set(obj.id, i)
       if (obj.type == "Points") {
         this.ptsBuf[2 * i] = obj.geometry.attributes.position.array[0]
@@ -354,7 +358,7 @@ export class Sketcher extends THREE.Group {
       this.domElement.removeEventListener('pointermove', this.beforeClick_2);
       this.domElement.removeEventListener('pointerdown', this.onClick_2);
 
-      this.delete(this.children[this.children.length - 1])
+      this.delete(this.geomGroup.children[this.geomGroup.children.length - 1])
 
       this.dispatchEvent({ type: 'change' })
       this.subsequent = false
@@ -413,23 +417,15 @@ export class Sketcher extends THREE.Group {
 
       if (this.subsequent) {
 
-        this.constraintsBuf.set(
-          [
-            this.children.length - 2, this.children.length, -1, -1,
-            this.contraintNum['coincident'], -1
-          ],
-          (this.constraints.size) * 6
-        )
-
         this.constraints.set(this.c_id,
           [
-            [this.children[this.children.length - 2], this.p1, -1, -1],
+            [this.geomGroup.children[this.geomGroup.children.length - 2], this.p1, -1, -1],
             'coincident', -1
           ]
         )
 
         this.p1.constraints.add(this.c_id)
-        this.children[this.children.length - 2].constraints.add(this.c_id)
+        this.geomGroup.children[this.geomGroup.children.length - 2].constraints.add(this.c_id)
         this.c_id += 1
       }
 
@@ -455,21 +451,8 @@ export class Sketcher extends THREE.Group {
     }
 
 
-    let ptr = this.children.length
-    this.add(...toPush)
-    this.updateBuffer(ptr)
-
-
-    const link_entry = new Array(5).fill(-1)
-    for (let i = ptr, j = 0; j < toPush.length - 1;) {
-      link_entry[j++] = i++
-    }
-    link_entry[link_entry.length - 1] = this.linkNum[this.mode]
-
-    this.linksBuf.set(
-      link_entry,
-      (this.linkedObjs.size) * 5
-    )
+    this.updatePoint = this.geomGroup.children.length
+    this.geomGroup.add(...toPush)
 
     this.linkedObjs.set(this.l_id, [toPush, this.mode])
 
@@ -477,7 +460,6 @@ export class Sketcher extends THREE.Group {
       obj.l_id = this.l_id
     }
     this.l_id += 1
-
 
 
     this.domElement.removeEventListener('pointerdown', this.onClick_1)
@@ -518,13 +500,18 @@ export class Sketcher extends THREE.Group {
     if (e.buttons !== 1) return;
     this.domElement.removeEventListener('pointermove', this.beforeClick_2);
     this.domElement.removeEventListener('pointerdown', this.onClick_2);
+
+
     if (this.mode == "line") {
+
+
+      this.updatePointsBuffer(this.updatePoint)
+      this.updateOtherBuffers()
+
+
       this.subsequent = true
       this.onClick_1(e)
     } else if (this.mode == "arc") {
-
-
-
       // this.domElement.addEventListener('pointermove', this.beforeClick_3)
     }
   }
@@ -539,48 +526,45 @@ export class Sketcher extends THREE.Group {
 
   solve() {
 
+    // for (let i = 0, p = 0; i < this.geomGroup.children.length; i++) {
+    //   this.ptsBuf[p++] = this.geomGroup.children[i].geometry.attributes.position.array[0]
+    //   this.ptsBuf[p++] = this.geomGroup.children[i].geometry.attributes.position.array[1]
+    // }
+    this.updatePointsBuffer()
 
-    for (let i = 0, p = 0; i < this.children.length; i++) {
-      this.ptsBuf[p++] = this.children[i].geometry.attributes.position.array[0]
-      this.ptsBuf[p++] = this.children[i].geometry.attributes.position.array[1]
-    }
+    const pts_buffer = Module._malloc(this.ptsBuf.length * this.ptsBuf.BYTES_PER_ELEMENT)
+    Module.HEAPF32.set(this.ptsBuf, pts_buffer >> 2)
 
-    buffer = Module._malloc(this.ptsBuf.length * this.ptsBuf.BYTES_PER_ELEMENT)
-    Module.HEAPF32.set(this.ptsBuf, buffer >> 2)
+    const constraints_buffer = Module._malloc(this.constraintsBuf.length * this.constraintsBuf.BYTES_PER_ELEMENT)
+    Module.HEAPF32.set(this.constraintsBuf, constraints_buffer >> 2)
+
+    const links_buffer = Module._malloc(this.linksBuf.length * this.linksBuf.BYTES_PER_ELEMENT)
+    Module.HEAPF32.set(this.linksBuf, links_buffer >> 2)
+
+    Module["_solver"](this.geomGroup.children.length, pts_buffer, this.constraints.size, constraints_buffer, this.linkedObjs.size, links_buffer)
+
+    let ptr = pts_buffer >> 2;
 
 
-    Module["_solver"](this.children.length / 2, buffer)
+    for (let i = 0; i < this.geomGroup.children.length; i += 1) {
 
+      const pos = this.geomGroup.children[i].geometry.attributes.position;
+      if (isNaN(Module.HEAPF32[ptr])) {
+        pos.array[0] = Module.HEAPF32[ptr-4]
+        pos.array[1] = Module.HEAPF32[ptr-3]
+        pos.array[3] = Module.HEAPF32[ptr-2]
+        pos.array[4] = Module.HEAPF32[ptr-1]
+      } else {
+        pos.array[0] = Module.HEAPF32[ptr++]
+        pos.array[1] = Module.HEAPF32[ptr++]
+      }
 
-    let ptr = buffer >> 2;
-
-
-    for (let i = 0; i < this.linkedObjs.lengthxx; i += 1) {
-
-      const pt1_pos = this.children[i >> 1].geometry.attributes.position;
-      const pt2_pos = this.children[(i >> 1) + 1].geometry.attributes.position;
-      const line_pos = this.linesArr[i >> 2].geometry.attributes.position;
-
-      pt1_pos.array[0] = Module.HEAPF32[ptr]
-      line_pos.array[0] = Module.HEAPF32[ptr++]
-
-      pt1_pos.array[1] = Module.HEAPF32[ptr]
-      line_pos.array[1] = Module.HEAPF32[ptr++]
-
-      pt2_pos.array[0] = Module.HEAPF32[ptr]
-      line_pos.array[3] = Module.HEAPF32[ptr++]
-
-      pt2_pos.array[1] = Module.HEAPF32[ptr]
-      line_pos.array[4] = Module.HEAPF32[ptr++]
-
-      pt1_pos.needsUpdate = true;
-      pt2_pos.needsUpdate = true;
-      line_pos.needsUpdate = true;
+      pos.needsUpdate = true;
     }
 
     this.dispatchEvent({ type: 'change' })
 
-    Module._free(buffer)
+    Module._free(pts_buffer)
   }
 
 }
