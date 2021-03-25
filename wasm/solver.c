@@ -77,12 +77,13 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
   {
     if (isnan((float)*p_ptr))
     {
-      p_ptr+=2;
+      p_ptr+=3;
       continue;
     }
     sys.param[sys.params++] = Slvs_MakeParam(ph++, g, (float)*p_ptr++);
     sys.param[sys.params++] = Slvs_MakeParam(ph++, g, (float)*p_ptr++);
     sys.entity[sys.entities++] = Slvs_MakePoint2d(i, g, 200, ph - 1, ph - 2);
+    p_ptr+=1;
   }
 
   for (int i = 0; i < nLinks; i++)
@@ -127,11 +128,12 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
     {
       if (isnan((float)*buf_pt_start))
       {
-        buf_pt_start+=2;
+        buf_pt_start+=3;
         continue;
       }
       *buf_pt_start++ = (float)sys.param[p_start++].val;
       *buf_pt_start++ = (float)sys.param[p_start++].val;
+      buf_pt_start+=1;
     }
   }
   else

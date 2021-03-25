@@ -3,7 +3,8 @@ import { Matrix4 } from 'three';
 
 import * as THREE from '../node_modules/three/src/Three'
 
-const factor = Math.tan(Math.PI / 3)
+import { sketchLine } from './sketchTools'
+
 
 function get2PtArc(p1, p2, divisions = 36) {
 
@@ -16,6 +17,8 @@ function get2PtArc(p1, p2, divisions = 36) {
 
   a1 = a1 < 0 ? a1 + 2 * Math.PI : a1
   a2 = a2 < 0 ? a2 + 2 * Math.PI : a1
+
+  const factor = Math.tan(Math.PI / 3)
   const cx = (p1[0] + p2[0] - dy * factor) / 2
   const cy = (p1[1] + p2[1] + dx * factor) / 2
 
@@ -70,8 +73,6 @@ export class Sketcher extends THREE.Group {
     this.colorPt = new THREE.Color('white')
     this.selected = new Set()
 
-    this.geomGroup = new THREE.Group();
-    scene.add(this.geomGroup);
 
     this.lineMaterial = new THREE.LineBasicMaterial({
       linewidth: 3,
@@ -115,13 +116,18 @@ export class Sketcher extends THREE.Group {
     this.objIdx = new Map()
 
     this.max_pts = 1000
-    this.ptsBuf = new Float32Array(this.max_pts * 2).fill(NaN)
+    this.buffer = new ArrayBuffer(3*4*this.max_pts);
+    this.ptsBuf = new Float32Array(this.buffer).fill(NaN)
 
     this.max_links = 1000
-    this.linksBuf = new Float32Array(this.max_links * 5).fill(NaN) // [0]:type, [1]:pt1, [2]:pt2, [3]:pt3, [4]:pt4
+
+    // [0]:type, [1]:pt1, [2]:pt2, [3]:pt3, [4]:pt4
+    this.linksBuf = new Float32Array(this.max_links * 5).fill(NaN)
 
     this.max_constraints = 1000
-    this.constraintsBuf = new Float32Array(this.max_constraints * 6).fill(NaN) // [0]:type, [1]:val, [2]:pt1, [3]:pt2, [4]:lk1, [5]:lk2
+
+    // [0]:type, [1]:val, [2]:pt1, [3]:pt2, [4]:lk1, [5]:lk2
+    this.constraintsBuf = new Float32Array(this.max_constraints * 6).fill(NaN)
 
     this.subsequent = false;
     this.ptsBufPt = 0;
@@ -199,7 +205,7 @@ export class Sketcher extends THREE.Group {
       this.camera
     );
 
-    const hoverPts = this.raycaster.intersectObjects(this.geomGroup.children)
+    const hoverPts = this.raycaster.intersectObjects(this.children)
 
     if (hoverPts.length) {
       let minDist = Infinity;
@@ -233,7 +239,7 @@ export class Sketcher extends THREE.Group {
     if (this.hovered) {
       this.selected.add(this.hovered)
       if (this.hovered.type === "Points") {
-        this.grabPtIdx = this.geomGroup.children.indexOf(
+        this.grabPtIdx = this.children.indexOf(
           this.hovered
         )
         this.domElement.addEventListener('pointermove', this.onDrag);
@@ -251,7 +257,10 @@ export class Sketcher extends THREE.Group {
   onDrag(e) {
     const mouseLoc = this.getLocation(e);
 
-    this.ptsBuf.set(mouseLoc.slice(0,2),this.objIdx.get(this.geomGroup.children[this.grabPtIdx].id)*2)
+    this.ptsBuf.set(
+      mouseLoc,
+      this.objIdx.get(this.children[this.grabPtIdx].id) * 3
+    )
 
     this.solve()
     this.dispatchEvent({ type: 'change' })
@@ -261,13 +270,13 @@ export class Sketcher extends THREE.Group {
   onRelease() {
     this.domElement.removeEventListener('pointermove', this.onDrag)
     this.domElement.removeEventListener('pointerup', this.onRelease)
-    this.geomGroup.children[this.grabPtIdx].geometry.computeBoundingSphere()
+    this.children[this.grabPtIdx].geometry.computeBoundingSphere()
   }
 
 
 
   deleteSelected() {
-    let minI = this.geomGroup.children.length;
+    let minI = this.children.length;
 
     for (let obj of this.selected) {
       minI = Math.min(minI, this.delete(obj))
@@ -282,7 +291,7 @@ export class Sketcher extends THREE.Group {
   }
 
   deleteConstraints(c_id) {
-    for (let ob of this.constraints.get(c_id)[0]) {
+    for (let ob of this.constraints.get(c_id)[2]) {
       if (ob == -1) continue
       ob.constraints.delete(c_id)
     }
@@ -294,8 +303,8 @@ export class Sketcher extends THREE.Group {
     for (let [key, obj] of this.constraints) {
       this.constraintsBuf.set(
         [
-          this.contraintNum[obj[1]], obj[2],
-          ...obj[0].map(ele => this.objIdx.get(ele.id) || -1),
+          this.contraintNum[obj[0]], obj[1],
+          ...obj[2].map(ele => this.objIdx.get(ele.id) ?? -1),
         ],
         (i) * 6
       )
@@ -306,8 +315,8 @@ export class Sketcher extends THREE.Group {
     for (let [key, obj] of this.linkedObjs) {
       this.linksBuf.set(
         [
-          this.linkNum[obj[1]],
-          ...obj[0].map(ele => this.objIdx.get(ele.id) ?? -1),
+          this.linkNum[obj[0]],
+          ...obj[1].map(ele => this.objIdx.get(ele.id) ?? -1),
         ],
         (i) * 5
       )
@@ -318,13 +327,13 @@ export class Sketcher extends THREE.Group {
 
   delete(obj) {
 
-    const link = this.linkedObjs.get(obj.l_id)
+    const link = this.linkedObjs.get(obj.l_id)[1]
 
-    let i = this.geomGroup.children.indexOf(link[0][0])
+    let i = this.children.indexOf(link[0])
     if (i == -1) return Infinity
 
-    for (let j = 0; j < link[0].length; j++) {
-      const obj = this.geomGroup.children[i + j]
+    for (let j = 0; j < link.length; j++) {
+      const obj = this.children[i + j]
       obj.geometry.dispose()
       obj.material.dispose()
 
@@ -333,7 +342,7 @@ export class Sketcher extends THREE.Group {
       }
     }
 
-    this.geomGroup.children.splice(i, link[0].length)
+    this.children.splice(i, link.length)
 
     this.linkedObjs.delete(obj.l_id)
 
@@ -341,12 +350,12 @@ export class Sketcher extends THREE.Group {
   }
 
   updatePointsBuffer(startingIdx = 0) {
-    for (let i = startingIdx; i < this.geomGroup.children.length; i++) {
-      const obj = this.geomGroup.children[i]
+    for (let i = startingIdx; i < this.children.length; i++) {
+      const obj = this.children[i]
       this.objIdx.set(obj.id, i)
       if (obj.type == "Points") {
-        this.ptsBuf[2 * i] = obj.geometry.attributes.position.array[0]
-        this.ptsBuf[2 * i + 1] = obj.geometry.attributes.position.array[1]
+        this.ptsBuf[3 * i] = obj.geometry.attributes.position.array[0]
+        this.ptsBuf[3 * i + 1] = obj.geometry.attributes.position.array[1]
       }
     }
   }
@@ -360,7 +369,7 @@ export class Sketcher extends THREE.Group {
       this.domElement.removeEventListener('pointermove', this.beforeClick_2);
       this.domElement.removeEventListener('pointerdown', this.onClick_2);
 
-      this.delete(this.geomGroup.children[this.geomGroup.children.length - 1])
+      this.delete(this.children[this.children.length - 1])
 
       this.dispatchEvent({ type: 'change' })
       this.subsequent = false
@@ -376,62 +385,38 @@ export class Sketcher extends THREE.Group {
       this.camera
     );
     // return this.worldToLocal(this.raycaster.ray.intersectPlane(this.plane)).toArray()
-    return this.raycaster.ray.intersectPlane(this.plane).applyMatrix4(this.inverse).toArray()
+    return this.raycaster.ray.intersectPlane(this.plane)
+      .applyMatrix4(this.inverse).toArray()
   }
 
   onClick_1(e) {
     if (e.buttons !== 1) return
     const mouseLoc = this.getLocation(e);
 
-    this.p1Geom = new THREE.BufferGeometry().setAttribute('position',
-      new THREE.BufferAttribute(new Float32Array(mouseLoc), 3)
-    )
-    this.p1 = new THREE.Points(this.p1Geom,
-      new THREE.PointsMaterial().copy(this.pointMaterial)
-    );
-    this.p1.matrixAutoUpdate = false;
-    this.p1.constraints = new Set()
-
-    this.p2Geom = new THREE.BufferGeometry().setAttribute('position',
-      new THREE.BufferAttribute(new Float32Array(3), 3)
-    )
-    this.p2 = new THREE.Points(
-      this.p2Geom,
-      new THREE.PointsMaterial().copy(this.pointMaterial)
-    );
-    this.p2.matrixAutoUpdate = false;
-    this.p2.constraints = new Set()
-
-    let toPush;
 
     if (this.mode == "line") {
-      this.lineGeom = new THREE.BufferGeometry().setAttribute('position',
-        new THREE.BufferAttribute(new Float32Array(6), 3)
-      );
-      this.lineGeom.attributes.position.set(mouseLoc)
-      this.line = new THREE.Line(this.lineGeom,
-        new THREE.LineBasicMaterial().copy(this.lineMaterial)
-      );
-      this.line.constraints = new Set()
-      this.line.frustumCulled = false;
 
-      toPush = [this.p1, this.p2, this.line];
-
-      if (this.subsequent) {
-
-        this.constraints.set(this.c_id,
-          [
-            [this.geomGroup.children[this.geomGroup.children.length - 2], this.p1, -1, -1],
-            'coincident', -1
-          ]
-        )
-
-        this.p1.constraints.add(this.c_id)
-        this.geomGroup.children[this.geomGroup.children.length - 2].constraints.add(this.c_id)
-        this.c_id += 1
-      }
+      sketchLine.call(this, mouseLoc)
 
     } else if (this.mode == "arc") {
+      this.p1Geom = new THREE.BufferGeometry().setAttribute('position',
+        new THREE.BufferAttribute(new Float32Array(mouseLoc), 3)
+      )
+      this.p1 = new THREE.Points(this.p1Geom,
+        new THREE.PointsMaterial().copy(this.pointMaterial)
+      );
+      this.p1.matrixAutoUpdate = false;
+      this.p1.constraints = new Set()
+
+      this.p2Geom = new THREE.BufferGeometry().setAttribute('position',
+        new THREE.BufferAttribute(new Float32Array(3), 3)
+      )
+      this.p2 = new THREE.Points(
+        this.p2Geom,
+        new THREE.PointsMaterial().copy(this.pointMaterial)
+      );
+      this.p2.matrixAutoUpdate = false;
+      this.p2.constraints = new Set()
 
       this.arcGeom = new THREE.BufferGeometry().setAttribute('position',
         new THREE.BufferAttribute(new Float32Array(3 * 37), 3)
@@ -449,16 +434,16 @@ export class Sketcher extends THREE.Group {
         new THREE.PointsMaterial().copy(this.pointMaterial)
       );
 
-      toPush = [this.p1, this.p2, this.p3, this.arc]
+      this.toPush = [this.p1, this.p2, this.p3, this.arc]
     }
 
 
-    this.updatePoint = this.geomGroup.children.length
-    this.geomGroup.add(...toPush)
+    this.updatePoint = this.children.length
+    this.add(...this.toPush)
 
-    this.linkedObjs.set(this.l_id, [toPush, this.mode])
+    this.linkedObjs.set(this.l_id, [this.mode, this.toPush])
 
-    for (let obj of toPush) {
+    for (let obj of this.toPush) {
       obj.l_id = this.l_id
     }
     this.l_id += 1
@@ -528,37 +513,42 @@ export class Sketcher extends THREE.Group {
 
   solve() {
 
-    const pts_buffer = Module._malloc(this.ptsBuf.length * this.ptsBuf.BYTES_PER_ELEMENT)
+    const pts_buffer =
+      Module._malloc(this.ptsBuf.length * this.ptsBuf.BYTES_PER_ELEMENT)
     Module.HEAPF32.set(this.ptsBuf, pts_buffer >> 2)
 
-    const constraints_buffer = Module._malloc(this.constraintsBuf.length * this.constraintsBuf.BYTES_PER_ELEMENT)
+    const constraints_buffer =
+      Module._malloc(this.constraintsBuf.length * this.constraintsBuf.BYTES_PER_ELEMENT)
     Module.HEAPF32.set(this.constraintsBuf, constraints_buffer >> 2)
 
-    const links_buffer = Module._malloc(this.linksBuf.length * this.linksBuf.BYTES_PER_ELEMENT)
+    const links_buffer =
+      Module._malloc(this.linksBuf.length * this.linksBuf.BYTES_PER_ELEMENT)
     Module.HEAPF32.set(this.linksBuf, links_buffer >> 2)
 
-    Module["_solver"](this.geomGroup.children.length, pts_buffer, this.constraints.size, constraints_buffer, this.linkedObjs.size, links_buffer)
+    Module["_solver"](
+      this.children.length, pts_buffer,
+      this.constraints.size, constraints_buffer,
+      this.linkedObjs.size, links_buffer)
 
     let ptr = pts_buffer >> 2;
 
 
-    for (let i = 0; i < this.geomGroup.children.length; i += 1) {
+    for (let i = 0; i < this.children.length; i += 1) {
 
-      const pos = this.geomGroup.children[i].geometry.attributes.position;
-      // console.log(pos.array)
+      const pos = this.children[i].geometry.attributes.position;
       if (isNaN(Module.HEAPF32[ptr])) {
-        pos.array[0] = Module.HEAPF32[ptr - 4]
-        pos.array[1] = Module.HEAPF32[ptr - 3]
-        pos.array[3] = Module.HEAPF32[ptr - 2]
-        pos.array[4] = Module.HEAPF32[ptr - 1]
+        pos.array[0] = Module.HEAPF32[ptr - 6]
+        pos.array[1] = Module.HEAPF32[ptr - 5]
+        pos.array[3] = Module.HEAPF32[ptr - 3]
+        pos.array[4] = Module.HEAPF32[ptr - 2]
       } else {
         pos.array[0] = Module.HEAPF32[ptr]
         pos.array[1] = Module.HEAPF32[ptr + 1]
       }
-      ptr += 2;
-
+      ptr += 3;
       pos.needsUpdate = true;
     }
+
 
     this.dispatchEvent({ type: 'change' })
 
