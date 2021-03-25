@@ -77,42 +77,53 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
   {
     if (isnan((float)*p_ptr))
     {
-      p_ptr+=3;
+      p_ptr += 3;
       continue;
     }
     sys.param[sys.params++] = Slvs_MakeParam(ph++, g, (float)*p_ptr++);
     sys.param[sys.params++] = Slvs_MakeParam(ph++, g, (float)*p_ptr++);
     sys.entity[sys.entities++] = Slvs_MakePoint2d(i, g, 200, ph - 1, ph - 2);
-    p_ptr+=1;
+    p_ptr += 1;
   }
 
   for (int i = 0; i < nLinks; i++)
   {
-    if (*l_ptr++ == 0)
+
+    switch ((int)*l_ptr++)
     {
+    case 0:
       sys.entity[sys.entities++] = Slvs_MakeLineSegment(lh++, g,
-                                                        200, (int)*l_ptr, (int)*(l_ptr+1));
-      l_ptr += 4;
-    } else {
-      l_ptr += 4;
+                                                        200, (int)*l_ptr, (int)*(l_ptr + 1));
+      break;
+    case 1:
+      /* And arc, centered at point 303, starting at point 304, ending at
+     * point 305. */
+      sys.entity[sys.entities++] = Slvs_MakeArcOfCircle(lh++, g, 200, 102,
+                                                        (int)*(l_ptr + 2), (int)*(l_ptr), (int)*(l_ptr + 1));
+      break;
+    default:
+      break;
     }
+
+    l_ptr += 4;
   }
 
   for (int i = 0; i < nConst; i++)
   {
     if ((int)*c_ptr == 0)
     {
-      c_ptr+=2;
+      c_ptr += 2;
       sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
           con_id++, g,
           SLVS_C_POINTS_COINCIDENT,
           200,
           0.0,
-          (int)*c_ptr, (int)*(c_ptr+1), 0, 0);
+          (int)*c_ptr, (int)*(c_ptr + 1), 0, 0);
 
       c_ptr += 4;
-
-    } else {
+    }
+    else
+    {
       c_ptr += 6;
     }
   }
@@ -128,12 +139,12 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
     {
       if (isnan((float)*buf_pt_start))
       {
-        buf_pt_start+=3;
+        buf_pt_start += 3;
         continue;
       }
       *buf_pt_start++ = (float)sys.param[p_start++].val;
       *buf_pt_start++ = (float)sys.param[p_start++].val;
-      buf_pt_start+=1;
+      buf_pt_start += 1;
     }
   }
   else

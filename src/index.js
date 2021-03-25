@@ -30,7 +30,7 @@
 import * as THREE from '../node_modules/three/src/Three';
 import { OrbitControls } from './OrbitControls'
 import { TrackballControls } from './trackball'
-import { Sketcher } from './Sketcher'
+import { Sketcher } from './sketcher/Sketcher'
 import GUI from '../node_modules/dat.gui/src/dat/gui/GUI.js'
 import Stats from '../node_modules/three/examples/jsm/libs/stats.module.js';
 
