@@ -3,9 +3,7 @@ const path = require('path');
 module.exports = {
   entry: './src/index.js',
 
-  plugins: [
-  ],
-
+  
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -30,7 +28,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ["@babel/preset-react"]
+            presets: ["@babel/preset-react"],
           }
         }
       },
@@ -38,7 +36,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '*']
-  }
+  },
 };
 
 

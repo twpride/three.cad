@@ -5,12 +5,12 @@ import { OrbitControls } from './OrbitControls'
 import { TrackballControls } from './trackball'
 import { Sketcher } from './sketcher/Sketcher'
 import Stats from './stats.module.js';
-
-import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom'
+import React from 'react'
 import { createStore, applyMiddleware } from 'redux'
 
 import { Root } from './app.jsx'
+
 
 function main(store) {
   var stats = new Stats();
@@ -114,13 +114,11 @@ console.log(store.getState())
 // main(store);
 main(store);
 
-
 document.addEventListener('DOMContentLoaded', () => {
 
-  const root = document.getElementById('react');
   ReactDOM.render(
     React.createElement(Root, { store: store }, null)
-    , root
+    , document.getElementById('react')
   );
 
 });

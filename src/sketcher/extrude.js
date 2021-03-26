@@ -1,5 +1,4 @@
-import * as THREE from 'three/src/Three'
-
+import * as THREE from '../../node_modules/three/src/Three';
 
 export function extrude() {
 
@@ -64,7 +63,7 @@ export function extrude() {
   const phong = new THREE.MeshPhongMaterial( { color: 0x156289, emissive: 0x072534, side: THREE.DoubleSide, flatShading: true } );
   const mesh = new THREE.Mesh(geometry, phong);
   this.add(mesh)
-  
+  this.dispatchEvent({ type: 'change' }) 
   // this.sketch.visible = false
 }
 

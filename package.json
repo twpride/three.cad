@@ -3,7 +3,7 @@
     "start": "webpack serve --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "get-bundle-size": "webpack --profile --json > stats.json --config webpack.prod.js && webpack-bundle-analyzer stats.json dist/",
-    "deploy": "gh-pages -d dist -t true"
+    "deploy": "webpack --config webpack.prod.js && gh-pages -d dist -t true"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.12.13",

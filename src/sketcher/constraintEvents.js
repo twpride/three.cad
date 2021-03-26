@@ -1,6 +1,4 @@
-import * as THREE from 'three/src/Three'
 
-import { lineMaterial, pointMaterial } from './Sketcher'
 
 export function addDimension(ent1, ent2, distance) {
 

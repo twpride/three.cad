@@ -1,7 +1,6 @@
 
-import { Matrix4 } from 'three';
 
-import * as THREE from 'three/src/Three'
+import * as THREE from '../../node_modules/three/src/Three';
 
 import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear } from './drawEvents'
 import { onHover, onDrag, onPick, onRelease } from './pickEvents'
