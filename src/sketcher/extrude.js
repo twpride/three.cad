@@ -27,7 +27,7 @@ export function extrude() {
     for (let i = 0; i < 2; i++) {
       let d = linkedObj[1][i]
       if (d == -1 || d == node) continue;
-      if (d == children[1]) {
+      if (d == children[0]) {
         console.log('pair found')
       };
       findTouching(d)
@@ -53,7 +53,7 @@ export function extrude() {
   }
 
 
-  findPair(children[1])
+  findPair(children[0])
 
   const shape = new THREE.Shape(v2s);
 
@@ -64,7 +64,8 @@ export function extrude() {
   const phong = new THREE.MeshPhongMaterial( { color: 0x156289, emissive: 0x072534, side: THREE.DoubleSide, flatShading: true } );
   const mesh = new THREE.Mesh(geometry, phong);
   this.add(mesh)
-
+  
+  // this.sketch.visible = false
 }
 
 
