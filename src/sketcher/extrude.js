@@ -7,14 +7,13 @@ export function extrude() {
 
   let constraints = this.constraints;
   let linkedObjs = this.linkedObjs;
-  let children = this.children;
+  let children = this.sketch.children;
   let visited = new Set()
   let v2s = []
 
   function findPair(node) {
     visited.add(node)
     let linkedObj = linkedObjs.get(node.l_id)
-    console.log(linkedObj)
     let arr;
     if (linkedObj[0] == 'line') {
       arr = linkedObj[1][2].geometry.attributes.position.array
@@ -43,7 +42,7 @@ export function extrude() {
       for (let d of constraints.get(t)[2]) {
         if (d == -1 || d == node) continue;
         if (d == children[1]) {
-          console.log('touching found')
+          console.log('loop found')
         } else {
           if (!visited.has(d)) {
             findPair(d)

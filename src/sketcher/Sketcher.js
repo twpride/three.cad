@@ -33,6 +33,9 @@ class Sketcher extends THREE.Group {
     this.orientSketcher(plane)
     this.add(new THREE.PlaneHelper(this.plane, 1, 0xffff00));
 
+    this.sketch = new THREE.Group();
+    this.add(this.sketch);
+
     this.raycaster = new THREE.Raycaster();
     this.raycaster.params.Line.threshold = 0.4;
     this.raycaster.params.Points.threshold = 2;
@@ -141,7 +144,7 @@ class Sketcher extends THREE.Group {
 
 
   deleteSelected() {
-    let minI = this.children.length;
+    let minI = this.sketch.children.length;
 
     for (let obj of this.selected) {
       minI = Math.min(minI, this.delete(obj))
@@ -195,10 +198,10 @@ class Sketcher extends THREE.Group {
     if (!link) return Infinity;
     link = link[1]
 
-    let i = this.children.indexOf(link[0])
+    let i = this.sketch.children.indexOf(link[0])
 
     for (let j = 0; j < link.length; j++) {
-      const obj = this.children[i + j]
+      const obj = this.sketch.children[i + j]
       obj.geometry.dispose()
       obj.material.dispose()
 
@@ -207,7 +210,7 @@ class Sketcher extends THREE.Group {
       }
     }
 
-    this.children.splice(i, link.length)
+    this.sketch.children.splice(i, link.length)
 
     this.linkedObjs.delete(obj.l_id)
 
@@ -215,8 +218,8 @@ class Sketcher extends THREE.Group {
   }
 
   updatePointsBuffer(startingIdx = 0) {
-    for (let i = startingIdx; i < this.children.length; i++) {
-      const obj = this.children[i]
+    for (let i = startingIdx; i < this.sketch.children.length; i++) {
+      const obj = this.sketch.children[i]
       this.objIdx.set(obj.id, i)
       if (obj.type == "Points") {
         this.ptsBuf.set(obj.geometry.attributes.position.array, 3 * i)
@@ -256,16 +259,16 @@ class Sketcher extends THREE.Group {
     Module.HEAPF32.set(this.linksBuf, links_buffer >> 2)
 
     Module["_solver"](
-      this.children.length, pts_buffer,
+      this.sketch.children.length, pts_buffer,
       this.constraints.size, constraints_buffer,
       this.linkedObjs.size, links_buffer)
 
     let ptr = pts_buffer >> 2;
 
 
-    for (let i = 0; i < this.children.length; i += 1) {
+    for (let i = 0; i < this.sketch.children.length; i += 1) {
 
-      const pos = this.children[i].geometry.attributes.position;
+      const pos = this.sketch.children[i].geometry.attributes.position;
       if (isNaN(Module.HEAPF32[ptr])) {
 
         pos.array[0] = Module.HEAPF32[ptr - 6]

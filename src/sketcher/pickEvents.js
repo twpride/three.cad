@@ -21,7 +21,7 @@ export function onHover(e) {
     this.camera
   );
 
-  const hoverPts = this.raycaster.intersectObjects(this.children)
+  const hoverPts = this.raycaster.intersectObjects(this.sketch.children)
 
   // console.log(hoverPts)
   if (hoverPts.length) {
