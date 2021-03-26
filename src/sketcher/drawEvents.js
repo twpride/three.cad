@@ -2,9 +2,9 @@
 import { sketchArc, sketchArc2 } from './sketchArc'
 import { sketchLine, sketchLine2 } from './sketchLine'
 
-export function onClick_1(e) {
+export function drawOnClick1(e) {
   if (e.buttons !== 1) return
-  this.domElement.removeEventListener('pointerdown', this.onClick_1)
+  this.domElement.removeEventListener('pointerdown', this.drawOnClick1)
   const mouseLoc = this.getLocation(e);
 
   if (this.mode == "line") {
@@ -22,12 +22,12 @@ export function onClick_1(e) {
   }
   this.l_id += 1
 
-  this.domElement.addEventListener('pointermove', this.beforeClick_2)
-  this.domElement.addEventListener('pointerdown', this.onClick_2)
+  this.domElement.addEventListener('pointermove', this.drawPreClick2)
+  this.domElement.addEventListener('pointerdown', this.drawOnClick2)
 }
 
 
-export function beforeClick_2(e) {
+export function drawPreClick2(e) {
   const mouseLoc = this.getLocation(e);
 
   if (this.mode == "line") {
@@ -39,10 +39,10 @@ export function beforeClick_2(e) {
   this.dispatchEvent({ type: 'change' })
 }
 
-export function onClick_2(e) {
+export function drawOnClick2(e) {
   if (e.buttons !== 1) return;
-  this.domElement.removeEventListener('pointermove', this.beforeClick_2);
-  this.domElement.removeEventListener('pointerdown', this.onClick_2);
+  this.domElement.removeEventListener('pointermove', this.drawPreClick2);
+  this.domElement.removeEventListener('pointerdown', this.drawOnClick2);
 
   this.updatePointsBuffer(this.updatePoint)
   this.updateOtherBuffers()
@@ -50,20 +50,20 @@ export function onClick_2(e) {
   if (this.mode == "line") {
 
     this.subsequent = true
-    this.onClick_1(e)
+    this.drawOnClick1(e)
 
   } else if (this.mode == "arc") {
     // this.domElement.addEventListener('pointermove', this.beforeClick_3)
   }
 }
 
-export function clear() {
+export function drawClear() {
   if (this.mode == "") return
 
   if (this.mode == "line") {
-    this.domElement.removeEventListener('pointerdown', this.onClick_1)
-    this.domElement.removeEventListener('pointermove', this.beforeClick_2);
-    this.domElement.removeEventListener('pointerdown', this.onClick_2);
+    this.domElement.removeEventListener('pointerdown', this.drawOnClick1)
+    this.domElement.removeEventListener('pointermove', this.drawPreClick2);
+    this.domElement.removeEventListener('pointerdown', this.drawOnClick2);
 
     this.delete(this.children[this.children.length - 1])
 

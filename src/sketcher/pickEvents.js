@@ -2,8 +2,15 @@ import * as THREE from 'three/src/Three'
 
 export function onHover(e) {
   if (this.mode || e.buttons) return
-  if (this.hovered && !this.selected.has(this.hovered)) {
-    this.hovered.material.color.set(0x555555)
+
+  if (this.hovered.length) {
+    for (let ob of this.hovered) {
+      if (ob && !this.selected.has(ob)) {
+        ob.material.color.set(0x555555)
+      }
+    }
+    this.hovered = []
+    this.dispatchEvent({ type: 'change' })
   }
 
   this.raycaster.setFromCamera(
@@ -15,28 +22,31 @@ export function onHover(e) {
   );
 
   const hoverPts = this.raycaster.intersectObjects(this.children)
-  // console.log(hoverPts)
 
+  // console.log(hoverPts)
   if (hoverPts.length) {
     let minDist = Infinity;
-    let idx = 0
+    let idx = []
     for (let i = 0; i < hoverPts.length; i++) {
-      if (hoverPts[i].distanceToRay && hoverPts[i].distanceToRay <= minDist) {
+      if (!hoverPts[i].distanceToRay) continue;
+      if (hoverPts[i].distanceToRay < minDist) {
         minDist = hoverPts[i].distanceToRay
-        idx = i
+        idx = [i]
+      } else if (hoverPts[i].distanceToRay == minDist) {
+        idx.push(i)
       }
     }
 
-    hoverPts[idx].object.material.color.set(0xff0000)
-    this.hovered = hoverPts[idx].object
+
+    // if (!idx.length) idx.push(0)
+
+    for (let i of idx) {
+      hoverPts[i].object.material.color.set(0x00ff00)
+      // hoverPts[i].object.material.color.set(0xff0000)
+      this.hovered.push(hoverPts[i].object)
+    }
     this.dispatchEvent({ type: 'change' })
     return
-  }
-
-
-  if (this.hovered) {
-    this.hovered = null;
-    this.dispatchEvent({ type: 'change' })
   }
 
 }
@@ -45,12 +55,13 @@ export function onHover(e) {
 export function onPick(e) {
   if (this.mode || e.buttons != 1) return
 
-  if (this.hovered) {
-    this.selected.add(this.hovered)
-    if (this.hovered.type === "Points") {
-      this.grabPtIdx = this.children.indexOf(
-        this.hovered
-      )
+  if (this.hovered.length) {
+
+    for (let h of this.hovered) {
+      this.selected.add(h)
+    }
+
+    if (this.hovered[0].type == "Points") {
       this.domElement.addEventListener('pointermove', this.onDrag);
       this.domElement.addEventListener('pointerup', this.onRelease)
     }
@@ -66,10 +77,12 @@ export function onPick(e) {
 export function onDrag(e) {
   const mouseLoc = this.getLocation(e);
 
-  this.ptsBuf.set(
-    mouseLoc,
-    this.objIdx.get(this.children[this.grabPtIdx].id) * 3
-  )
+  for (let h of this.hovered) {
+    this.ptsBuf.set(
+      mouseLoc,
+      this.objIdx.get(h.id) * 3
+    )
+  }
 
   this.solve()
   this.dispatchEvent({ type: 'change' })
@@ -79,6 +92,10 @@ export function onDrag(e) {
 export function onRelease() {
   this.domElement.removeEventListener('pointermove', this.onDrag)
   this.domElement.removeEventListener('pointerup', this.onRelease)
-  this.children[this.grabPtIdx].geometry.computeBoundingSphere()
+
+  for (let ii of this.hovered) {
+    ii.geometry.computeBoundingSphere()
+  }
+
 }
 

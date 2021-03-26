@@ -3,14 +3,18 @@ import { Matrix4 } from 'three';
 
 import * as THREE from 'three/src/Three'
 
-import { onClick_1, onClick_2, beforeClick_2, clear } from './drawEvents'
+import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear } from './drawEvents'
 import { onHover, onDrag, onPick, onRelease } from './pickEvents'
+import { addDimension, setCoincident } from './constraintEvents'
+import { get3PtArc } from './sketchArc'
+import { extrude } from './extrude'
 
 
 const lineMaterial = new THREE.LineBasicMaterial({
   linewidth: 2,
   color: 0x555555,
 })
+
 
 const pointMaterial = new THREE.PointsMaterial({
   color: 0x555555,
@@ -31,7 +35,7 @@ class Sketcher extends THREE.Group {
 
     this.raycaster = new THREE.Raycaster();
     this.raycaster.params.Line.threshold = 0.4;
-    this.raycaster.params.Points.threshold = 0.4;
+    this.raycaster.params.Points.threshold = 2;
 
     // [0]:x, [1]:y, [2]:z
     this.objIdx = new Map()
@@ -55,13 +59,13 @@ class Sketcher extends THREE.Group {
     this.constraintsBuf = new Float32Array(this.max_constraints * 6).fill(NaN)
     this.contraintNum = {
       'coincident': 0,
-      'parallel': 1
+      'distance': 1
     }
 
 
-    this.onClick_1 = onClick_1.bind(this);
-    this.beforeClick_2 = beforeClick_2.bind(this);
-    this.onClick_2 = onClick_2.bind(this);
+    this.drawOnClick1 = drawOnClick1.bind(this);
+    this.drawPreClick2 = drawPreClick2.bind(this);
+    this.drawOnClick2 = drawOnClick2.bind(this);
 
     this.onHover = onHover.bind(this);
     this.onPick = onPick.bind(this);
@@ -77,6 +81,7 @@ class Sketcher extends THREE.Group {
     this.mode = ""
     this.subsequent = false;
     this.selected = new Set()
+    this.hovered = []
     this.target = new THREE.Vector3();
   }
 
@@ -94,22 +99,31 @@ class Sketcher extends THREE.Group {
   onKeyPress(e) {
     switch (e.key) {
       case 'Escape':
-        clear.bind(this)()
+        drawClear.bind(this)()
         this.mode = ""
         break;
       case 'l':
         if (this.mode == 'line') {
-          this.clear()
+          drawClear.bind(this)()
         }
-        this.domElement.addEventListener('pointerdown', this.onClick_1)
+        this.domElement.addEventListener('pointerdown', this.drawOnClick1)
         this.mode = "line"
         break;
       case 'a':
-        this.domElement.addEventListener('pointerdown', this.onClick_1)
+        this.domElement.addEventListener('pointerdown', this.drawOnClick1)
         this.mode = "arc"
         break;
-      case 'd':
+      case 'x':
         this.deleteSelected()
+        break;
+      case 'c':
+        setCoincident.call(this)
+        this.updateOtherBuffers()
+        this.solve()
+        this.mode = ""
+        break;
+      case 'e':
+        extrude.call(this)
         break;
       case '=':
         this.plane.applyMatrix4(new Matrix4().makeRotationY(0.1))
@@ -133,7 +147,8 @@ class Sketcher extends THREE.Group {
       minI = Math.min(minI, this.delete(obj))
     }
 
-    this.updatePointsBuffer(minI)
+    // this.updatePointsBuffer(minI)
+    this.updatePointsBuffer()
     this.updateOtherBuffers()
 
     this.selected.clear()
@@ -265,12 +280,27 @@ class Sketcher extends THREE.Group {
       pos.needsUpdate = true;
     }
 
-
-    this.dispatchEvent({ type: 'change' })
-
     Module._free(pts_buffer)
     Module._free(links_buffer)
     Module._free(constraints_buffer)
+
+
+    for (let [k, obj] of this.linkedObjs) {
+      if (obj[0] == 'line') continue;
+      const [p1, p2, c, arc] = obj[1]
+
+      const points = get3PtArc(
+        p1.geometry.attributes.position.array,
+        p2.geometry.attributes.position.array,
+        c.geometry.attributes.position.array
+      );
+
+      arc.geometry.attributes.position.set(points)
+      arc.needsUpdate = true;
+    }
+
+
+    this.dispatchEvent({ type: 'change' })
   }
 
 }

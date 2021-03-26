@@ -47,7 +47,7 @@ function main() {
 
   const canvas = document.querySelector('#c');
   const view1Elem = document.querySelector('#view1');
-  const view2Elem = document.querySelector('#view2');
+  // const view2Elem = document.querySelector('#view2');
   const renderer = new THREE.WebGLRenderer({ canvas });
 
   const scene = new THREE.Scene();
@@ -68,8 +68,8 @@ function main() {
   // const controls = new TrackballControls(camera, view1Elem);
   controls.target.set(0, 0, 0);
   controls.update()
-  const cameraHelper = new THREE.CameraHelper(camera);
-  helpersGroup.add(cameraHelper);
+  // const cameraHelper = new THREE.CameraHelper(camera);
+  // helpersGroup.add(cameraHelper);
 
 
   // const camera2 = new THREE.PerspectiveCamera(
@@ -78,6 +78,13 @@ function main() {
   //   0.1, // near
   //   500, // far
   // );
+
+  // const c2size = 10;
+  // const c2near = 5;
+  // const c2far = 200;
+  // const camera2 = new THREE.OrthographicCamera(-c2size, c2size, c2size, -c2size, c2near, c2far);
+  // camera2.zoom = 0.5
+
   // camera2.position.set(16, 28, 40);
   // camera2.lookAt(0, 5, 0);
   // const controls2 = new OrbitControls(camera2, view2Elem);
@@ -94,18 +101,28 @@ function main() {
   window.sketcher = sketcher
   scene.add(sketcher)
 
+
+  const color = 0xFFFFFF;
+  const intensity = 1;
+
+  const light1 = new THREE.DirectionalLight(color, intensity);
+  light1.position.set(10, 10, 10);
+  scene.add(light1);
+  // const lightHelper = new THREE.DirectionalLightHelper(light1, 5);
+  // helpersGroup.add(lightHelper);
+
+  const light2 = new THREE.DirectionalLight(color, intensity);
+  light2.position.set(-10, -10, -5);
+  scene.add(light2);
+  // const lightHelper2 = new THREE.DirectionalLightHelper(light2, 5);
+  // helpersGroup.add(lightHelper2);
+
   {
     const color = 0xFFFFFF;
     const intensity = 1;
-    const light = new THREE.DirectionalLight(color, intensity);
-    light.position.set(0, 10, 0);
-    light.target.position.set(-5, 0, 0);
+    const light = new THREE.AmbientLight(color, intensity);
     scene.add(light);
-    scene.add(light.target);
   }
-
-
-
 
 
   function resizeRendererToDisplaySize(renderer) {
@@ -151,8 +168,12 @@ function main() {
       camera.left = -aspect;
       camera.right = aspect;
       camera.updateProjectionMatrix();
-      cameraHelper.update();
-      cameraHelper.visible = false;
+      // cameraHelper.update();
+      // cameraHelper.visible = false;
+      // lightHelper.visible = false;
+      // lightHelper2.visible = false;
+
+      scene.background.set(0xb0b0b0);
       renderer.render(scene, camera);
     }
     // {
@@ -160,6 +181,9 @@ function main() {
     //   camera2.aspect = aspect;
     //   camera2.updateProjectionMatrix();
     //   cameraHelper.visible = true;
+    //   lightHelper.visible = true;
+    //   lightHelper2.visible = true;
+    //   scene.background.set(0x000040);
     //   renderer.render(scene, camera2);
     // }
 
