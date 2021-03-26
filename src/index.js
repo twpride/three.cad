@@ -10,10 +10,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware } from 'redux'
 
-import { App } from './app.jsx'
+import { Root } from './app.jsx'
 
 function main(store) {
-
   var stats = new Stats();
   stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.getElementById('stats').appendChild(stats.dom);
@@ -22,6 +21,7 @@ function main(store) {
   const renderer = new THREE.WebGLRenderer({ canvas });
 
   const scene = new THREE.Scene();
+  window.scene = scene;
   scene.background = new THREE.Color(0xb0b0b0);
 
   const helpersGroup = new THREE.Group();
@@ -112,15 +112,15 @@ console.log(store.getState())
 
 
 // main(store);
-main();
+main(store);
 
 
-// document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
-//   const root = document.getElementById('react');
-//   ReactDOM.render(
-//     React.createElement(App, { store: store }, null)
-//     , root
-//   );
+  const root = document.getElementById('react');
+  ReactDOM.render(
+    React.createElement(Root, { store: store }, null)
+    , root
+  );
 
-// });
+});

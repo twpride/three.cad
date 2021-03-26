@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "webpack --watch --config webpack.dev.js",
+    "start": "webpack serve --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "get-bundle-size": "webpack --profile --json > stats.json --config webpack.prod.js && webpack-bundle-analyzer stats.json dist/",
     "deploy": "gh-pages -d dist -t true"
@@ -22,6 +22,7 @@
     "webpack": "^5.26.3",
     "webpack-bundle-analyzer": "^4.4.0",
     "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2",
     "webpack-merge": "^5.7.3"
   }
 }

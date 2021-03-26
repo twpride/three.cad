@@ -2,10 +2,18 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
+import './app.scss'
 
-
-export const App = ({ store }) => (
+export const Root = ({ store }) => (
   <Provider store={store}>
-    <div>hellodddddd</div>
+    <App></App>
   </Provider>
 );
+
+
+const App = () => {
+
+  return <>
+    <div>in the world where</div>
+  </>
+}
