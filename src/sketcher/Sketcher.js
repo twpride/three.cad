@@ -37,8 +37,8 @@ class Sketcher extends THREE.Group {
     this.add(this.sketch);
 
     this.raycaster = new THREE.Raycaster();
-    this.raycaster.params.Line.threshold = 0.4;
-    this.raycaster.params.Points.threshold = 2;
+    this.raycaster.params.Line.threshold = 0.8;
+    this.raycaster.params.Points.threshold = 1.5;
 
     // [0]:x, [1]:y, [2]:z
     this.objIdx = new Map()

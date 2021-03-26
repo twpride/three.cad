@@ -57,7 +57,7 @@ export function extrude() {
 
   const shape = new THREE.Shape(v2s);
 
-  const extrudeSettings = { amount: 8, bevelEnabled: false};
+  const extrudeSettings = { depth: 8, bevelEnabled: false};
 
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
 

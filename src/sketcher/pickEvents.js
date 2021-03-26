@@ -3,16 +3,6 @@ import * as THREE from 'three/src/Three'
 export function onHover(e) {
   if (this.mode || e.buttons) return
 
-  if (this.hovered.length) {
-    for (let ob of this.hovered) {
-      if (ob && !this.selected.has(ob)) {
-        ob.material.color.set(0x555555)
-      }
-    }
-    this.hovered = []
-    // this.dispatchEvent({ type: 'change' })
-  }
-
   this.raycaster.setFromCamera(
     new THREE.Vector2(
       (e.clientX / window.innerWidth) * 2 - 1,
@@ -23,10 +13,9 @@ export function onHover(e) {
 
   const hoverPts = this.raycaster.intersectObjects(this.sketch.children)
 
-  // console.log(hoverPts)
+  let idx = []
   if (hoverPts.length) {
     let minDist = Infinity;
-    let idx = []
     for (let i = 0; i < hoverPts.length; i++) {
       if (!hoverPts[i].distanceToRay) continue;
       if (hoverPts[i].distanceToRay < minDist) {
@@ -36,19 +25,38 @@ export function onHover(e) {
         idx.push(i)
       }
     }
-
-
-    // if (!idx.length) idx.push(0)
-
-    for (let i of idx) {
-      hoverPts[i].object.material.color.set(0x00ff00)
-      // hoverPts[i].object.material.color.set(0xff0000)
-      this.hovered.push(hoverPts[i].object)
-    }
-    this.dispatchEvent({ type: 'change' })
-    return
+    if (!idx.length) idx.push(0)
   }
 
+  if (idx.length) {
+    if (hoverPts[idx[0]].object != this.hovered[0]) {
+
+      for (let ob of this.hovered) {
+        if (ob && !this.selected.has(ob)) {
+          ob.material.color.set(0x555555)
+        }
+      }
+      this.hovered = []
+
+      for (let i of idx) {
+        hoverPts[i].object.material.color.set(0x00ff00)
+        this.hovered.push(hoverPts[i].object)
+      }
+      // console.log('render1')
+      this.dispatchEvent({ type: 'change' })
+    }
+  } else {
+    if (this.hovered.length) {
+      for (let ob of this.hovered) {
+        if (ob && !this.selected.has(ob)) {
+          ob.material.color.set(0x555555)
+        }
+      }
+      this.hovered = []
+      // console.log('render2')
+      this.dispatchEvent({ type: 'change' })
+    }
+  }
 }
 
 

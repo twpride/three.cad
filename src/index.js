@@ -4,16 +4,19 @@ import * as THREE from '../node_modules/three/src/Three';
 import { OrbitControls } from './OrbitControls'
 import { TrackballControls } from './trackball'
 import { Sketcher } from './sketcher/Sketcher'
-import Stats from '../node_modules/three/examples/jsm/libs/stats.module.js';
+import Stats from './stats.module.js';
 
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore, applyMiddleware } from 'redux'
 
+import { App } from './app.jsx'
 
-
-function main() {
+function main(store) {
 
   var stats = new Stats();
   stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-  document.body.appendChild(stats.dom);
+  document.getElementById('stats').appendChild(stats.dom);
 
   const canvas = document.querySelector('#c');
   const renderer = new THREE.WebGLRenderer({ canvas });
@@ -31,7 +34,7 @@ function main() {
   const far = 50;
   const camera = new THREE.OrthographicCamera(-size, size, size, -size, near, far);
   camera.zoom = 0.1;
-  camera.position.set(0, 0, 20);
+  camera.position.set(0, 0, 30);
 
   // const controls = new OrbitControls(camera, view1Elem);
   const controls = new TrackballControls(camera, canvas);
@@ -89,4 +92,35 @@ function main() {
   render();
 }
 
+function todos(state = [], action) {
+  switch (action.type) {
+    case 'ADD_TODO':
+      return state.concat([action.text])
+    default:
+      return state
+  }
+}
+
+const store = createStore(todos, ['Use Redux'])
+
+store.dispatch({
+  type: 'ADD_TODO',
+  text: 'Read the docs'
+})
+
+console.log(store.getState())
+
+
+// main(store);
 main();
+
+
+// document.addEventListener('DOMContentLoaded', () => {
+
+//   const root = document.getElementById('react');
+//   ReactDOM.render(
+//     React.createElement(App, { store: store }, null)
+//     , root
+//   );
+
+// });
