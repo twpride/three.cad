@@ -75,4 +75,14 @@ export function setCoincident() {
     toComb[i - 1].constraints.add(this.c_id)
   }
 
+  this.updateOtherBuffers()
+  this.solve()
+ 
+  // update state of points
+  for (let obj of this.selected) {
+    obj.geometry.computeBoundingSphere()
+    obj.material.color.set(0x555555)
+  }
+  this.selected.clear()
+  this.dispatchEvent({ type: 'change' })
 }

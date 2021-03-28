@@ -154,13 +154,23 @@ class Sketcher extends THREE.Group {
         this.deleteSelected()
         break;
       case 'c':
+
         setCoincident.call(this)
-        this.updateOtherBuffers()
-        this.solve()
+
         this.mode = ""
         break;
       case 'e':
         extrude.call(this)
+        break;
+      case 'z':
+        var string = JSON.stringify(this.toJSON());
+        window.string = string;
+        alert("Size of sample is: " + string.length);
+        var compressed = LZString.compress(string);
+        alert("Size of compressed sample is: " + compressed.length);
+        string = LZString.decompress(compressed);
+        alert("Sample is: " + string);
+
         break;
     }
   }

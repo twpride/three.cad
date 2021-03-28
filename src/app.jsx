@@ -4,7 +4,7 @@ import React from 'react';
 import './app.scss'
 
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { renderInst } from './index'
+// import { renderInst } from './index'
 
 export const Root = ({ store }) => (
   <Provider store={store}>

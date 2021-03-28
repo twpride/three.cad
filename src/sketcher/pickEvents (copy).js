@@ -29,6 +29,7 @@ export function onHover(e) {
   }
 
   if (idx.length) {
+    console.log(idx)
     if (hoverPts[idx[0]].object != this.hovered[0]) {
 
       for (let x = 0; x < this.hovered.length; x++) {
@@ -39,6 +40,7 @@ export function onHover(e) {
       }
       this.hovered = []
 
+      console.log(idx.length)
       for (let x = 0; x < idx.length; x++) {
         const i = idx[x]
         hoverPts[i].object.material.color.set(0x00ff00)

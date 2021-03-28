@@ -3,12 +3,26 @@ const path = require('path');
 module.exports = {
   entry: './src/index.js',
 
-  
+
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     // clean: true,
   },
+
+
+  entry: {
+    // redux: './src/redux.js',
+    index: './src/index.js',
+    renderer: './src/Renderer.js',
+  },
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+
+
+
   module: {
     rules: [
       {
