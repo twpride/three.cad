@@ -17,9 +17,12 @@ const App = () => {
   const sketches = useSelector(state => state.sketches)
 
   return <>
-    <button onClick={() => dispatch({ type: 'toggle', payload: true })}> true</button>
-    <button onClick={() => dispatch({ type: 'toggle', payload: false })}> false </button>
-    <button onClick={renderInst.addSketch}> addsketch </button>
+
+    <div className='buttons-group'>
+      <button onClick={() => dispatch({ type: 'toggle', payload: true })}> true</button>
+      <button onClick={() => dispatch({ type: 'toggle', payload: false })}> false </button>
+      <button onClick={renderInst.addSketch}> addsketch </button>
+    </div>
 
     <div className='feature-tree'>
       {sketches.map((e, idx) => (

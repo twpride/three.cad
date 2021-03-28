@@ -12,9 +12,8 @@ export function onHover(e) {
   );
 
   const hoverPts = this.raycaster.intersectObjects(this.children)
-  
+
   let idx = []
-  console.log(hoverPts)
   if (hoverPts.length) {
     let minDist = Infinity;
     for (let i = 0; i < hoverPts.length; i++) {
@@ -30,6 +29,7 @@ export function onHover(e) {
   }
 
   if (idx.length) {
+    console.log(idx)
     if (hoverPts[idx[0]].object != this.hovered[0]) {
 
       for (let x = 0; x < this.hovered.length; x++) {

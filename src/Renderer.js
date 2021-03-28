@@ -23,7 +23,8 @@ export function Renderer(store) {
   this.raycaster = new THREE.Raycaster();
 
   window.scene = this.scene;
-  this.scene.background = new THREE.Color(0xb0b0b0);
+  this.scene.background = new THREE.Color(0x888888);
+  // this.scene.background = new THREE.Color(0xffffff);
 
   const helpersGroup = new THREE.Group();
   helpersGroup.name= "helpersGroup"
@@ -169,18 +170,9 @@ async function addSketch() {
 
   // window.sketcher = sketcher
 
+  this.render()
   this.store.dispatch({ type: 'rx-new-sketch', idx: this.scene.children.length - 1 })
 
-}
-
-async function down2() {
-  const result = []
-  for (let i = 0; i < 3; i++) {
-    const pt = await new Promise((res, rej) => {
-      this.canvas.addEventListener('pointermove', (e) => res(getPoint(e, this.camera)), { once: true })
-    })
-    result.push(pt)
-  }
 }
 
 
