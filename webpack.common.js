@@ -12,7 +12,7 @@ module.exports = {
 
 
   entry: {
-    // redux: './src/redux.js',
+    redux: './src/redux.js',
     index: './src/index.js',
     renderer: './src/Renderer.js',
   },

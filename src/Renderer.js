@@ -10,6 +10,7 @@ import Stats from './utils/stats.module.js';
 import { add3DPoint } from './datums'
 
 
+
 export function Renderer(store) {
   this.store = store
   // this.stats = new Stats();
