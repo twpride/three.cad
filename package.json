@@ -3,7 +3,7 @@
     "start": "webpack serve --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "get-bundle-size": "webpack --profile --json > stats.json --config webpack.prod.js && webpack-bundle-analyzer stats.json dist/",
-    "deploy": "webpack --config webpack.prod.js && gh-pages -d dist -t true"
+    "deploy": "webpack --config webpack.prod.js && gh-pages -d dist -t true -m"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.12.13",
@@ -14,6 +14,7 @@
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.3",
     "redux": "^4.0.5",
+    "redux-logger": "^3.0.6",
     "sass": "^1.32.8",
     "sass-loader": "^11.0.1",
     "stats-js": "^1.0.1",

@@ -6,7 +6,7 @@ export function extrude() {
 
   let constraints = this.constraints;
   let linkedObjs = this.linkedObjs;
-  let children = this.sketch.children;
+  let children = this.children;
   let visited = new Set()
   let v2s = []
 
@@ -26,7 +26,7 @@ export function extrude() {
     for (let i = 0; i < 2; i++) {
       let d = linkedObj[1][i]
       if (d == -1 || d == node) continue;
-      if (d == children[0]) {
+      if (d == children[1]) {
         console.log('pair found')
       };
       findTouching(d)
@@ -52,19 +52,48 @@ export function extrude() {
   }
 
 
-  findPair(children[0])
+  findPair(children[1])
 
   const shape = new THREE.Shape(v2s);
 
-  const extrudeSettings = { depth: 8, bevelEnabled: false};
+  const extrudeSettings = { depth: 8, bevelEnabled: false };
 
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
 
-  const phong = new THREE.MeshPhongMaterial( { color: 0x156289, emissive: 0x072534, side: THREE.DoubleSide, flatShading: true } );
+  const phong = new THREE.MeshPhongMaterial({ color: 0x156289, emissive: 0x072534, side: THREE.DoubleSide, flatShading: true });
   const mesh = new THREE.Mesh(geometry, phong);
+
+
+  const wireframe = new THREE.WireframeGeometry(geometry);
+
+
+
+
+  const pointMaterial = new THREE.PointsMaterial({
+    color: 0x555555,
+    size: 4,
+  })
+
+
+
+
+  const pts = new THREE.Points(wireframe, pointMaterial);
+  this.add(pts)
+
+
+
+  // const line = new THREE.LineSegments( wireframe );
+  // line.material.depthTest = true;
+  // line.material.linewidth = 4;
+
+  // line.material.opacity = 0.25;
+  // // line.material.transparent = true;
+  // line.material.transparent = false;
+  // this.add(line)
+
   this.add(mesh)
-  this.dispatchEvent({ type: 'change' }) 
-  // this.sketch.visible = false
+  this.dispatchEvent({ type: 'change' })
+  // this.visible = false
 }
 
 

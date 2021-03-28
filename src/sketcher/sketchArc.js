@@ -101,8 +101,9 @@ export function get3PtArc(p1, p2, c, divisions = 36) {
   const radius = Math.sqrt(v1[0] ** 2 + v1[1] ** 2)
 
   let deltaAngle = a2 - a1
-  if (deltaAngle <0) deltaAngle += Math.PI*2
+  if (deltaAngle <=0) deltaAngle += Math.PI*2
   // console.log(deltaAngle)
+  
   let points = new Float32Array((divisions + 1) * 3)
 
   for (let d = 0; d <= divisions; d++) {

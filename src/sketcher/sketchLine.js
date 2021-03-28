@@ -41,12 +41,12 @@ export function sketchLine(mouseLoc) {
     this.constraints.set(++this.c_id,
       [
         'coincident', -1,
-        [this.sketch.children[this.sketch.children.length - 2], p1, -1, -1]
+        [this.children[this.children.length - 2], p1, -1, -1]
       ]
     )
 
     p1.constraints.add(this.c_id)
-    this.sketch.children[this.sketch.children.length - 2].constraints.add(this.c_id)
+    this.children[this.children.length - 2].constraints.add(this.c_id)
 
   }
 
