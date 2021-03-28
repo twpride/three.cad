@@ -30,9 +30,7 @@
       display: block;
     }
 
-    #react {
-      position: absolute;
-    }
+
   </style>
 
 </head>
@@ -40,9 +38,12 @@
 <body>
   <div id="react"></div>
   <canvas id="c"></canvas>
-
-  <script src="bundle.js" type="module"></script>
+  <script src="redux.bundle.js"></script>
+  <script src="renderer.bundle.js"></script>
+  <script src="index.bundle.js"></script>
   <script src="solver.js"></script>
+  <script src="lz-string.min.js"></script>
+  <!-- <script src="lz-string.js"></script> -->
   <div id="stats"></div>
 </body>
 
