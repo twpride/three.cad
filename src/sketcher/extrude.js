@@ -1,12 +1,10 @@
 import * as THREE from '../../node_modules/three/src/Three';
+import {pointMaterial} from '../utils/static'
+export function extrude(sketch) {
 
-export function extrude() {
-
-
-
-  let constraints = this.constraints;
-  let linkedObjs = this.linkedObjs;
-  let children = this.children;
+  let constraints = sketch.constraints;
+  let linkedObjs = sketch.linkedObjs;
+  let children = sketch.children;
   let visited = new Set()
   let v2s = []
 
@@ -55,44 +53,27 @@ export function extrude() {
   findPair(children[1])
 
   const shape = new THREE.Shape(v2s);
-
   const extrudeSettings = { depth: 8, bevelEnabled: false };
-
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-
   const phong = new THREE.MeshPhongMaterial({ color: 0x156289, emissive: 0x072534, side: THREE.DoubleSide, flatShading: true });
-  const mesh = new THREE.Mesh(geometry, phong);
+  const mesh = new THREE.Mesh(geometry, phong)
+  // mesh.applyMatrix4(sketch.inverse)
+  // mesh.matrix.premultiply(sketch.matrix).multiply(sketch.inverse)
 
+  mesh.matrixAutoUpdate = false;
+  mesh.matrix.multiply(sketch.matrix)
+  this.scene.add(mesh)
 
   const wireframe = new THREE.WireframeGeometry(geometry);
 
-
-
-
-  const pointMaterial = new THREE.PointsMaterial({
-    color: 0x555555,
-    size: 4,
-  })
-
-
-
-
   const pts = new THREE.Points(wireframe, pointMaterial);
-  this.add(pts)
+  pts.matrixAutoUpdate = false;
+  pts.matrix.multiply(sketch.matrix)
+  this.scene.add(pts)
 
+  this.render()
 
-
-  // const line = new THREE.LineSegments( wireframe );
-  // line.material.depthTest = true;
-  // line.material.linewidth = 4;
-
-  // line.material.opacity = 0.25;
-  // // line.material.transparent = true;
-  // line.material.transparent = false;
-  // this.add(line)
-
-  this.add(mesh)
-  this.dispatchEvent({ type: 'change' })
+  // this.dispatchEvent({ type: 'change' })
   // this.visible = false
 }
 

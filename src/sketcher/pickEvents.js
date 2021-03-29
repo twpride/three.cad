@@ -1,9 +1,10 @@
 import * as THREE from '../../node_modules/three/src/Three';
+import {raycaster} from '../utils/static';
 
 export function onHover(e) {
   if (this.mode || e.buttons) return
 
-  this.raycaster.setFromCamera(
+  raycaster.setFromCamera(
     new THREE.Vector2(
       (e.clientX / window.innerWidth) * 2 - 1,
       - (e.clientY / window.innerHeight) * 2 + 1
@@ -11,7 +12,7 @@ export function onHover(e) {
     this.camera
   );
 
-  const hoverPts = this.raycaster.intersectObjects(this.children)
+  const hoverPts = raycaster.intersectObjects(this.children)
 
   let idx = []
   if (hoverPts.length) {

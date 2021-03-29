@@ -14,7 +14,7 @@ export const Root = ({ store }) => (
 
 const App = () => {
   const dispatch = useDispatch()
-  const sketches = useSelector(state => state.sketches)
+  const treeEntries = useSelector(state => state.treeEntries)
 
   return <>
 
@@ -22,11 +22,16 @@ const App = () => {
       <button onClick={() => dispatch({ type: 'toggle', payload: true })}> true</button>
       <button onClick={() => dispatch({ type: 'toggle', payload: false })}> false </button>
       <button onClick={renderInst.addSketch}> addsketch </button>
+      <button onClick={()=>renderInst.extrude(4)}> extrude </button>
     </div>
 
     <div className='feature-tree'>
-      {sketches.map((e, idx) => (
-        <div key={idx}>{e}</div>
+      {treeEntries.allIds.map((entId, idx) => (
+        <div key={idx}
+        onClick={()=>{
+          renderInst.extrude(treeEntries.byId[entId])
+        }}
+        >{entId}</div>
       ))}
     </div>
 

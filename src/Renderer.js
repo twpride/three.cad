@@ -1,6 +1,6 @@
 
 
-
+  
 import * as THREE from 'three/src/Three';
 // import { OrbitControls } from './utils/OrbitControls'
 import { TrackballControls } from './utils/trackball'
@@ -8,6 +8,7 @@ import { Sketcher } from './sketcher/Sketcher'
 import Stats from './utils/stats.module.js';
 
 import { add3DPoint } from './datums'
+import {extrude} from './sketcher/extrude'
 
 
 
@@ -114,6 +115,7 @@ export function Renderer(store) {
   this.render = render.bind(this)
   this.resizeCanvas = resizeCanvas.bind(this)
   this.addSketch = addSketch.bind(this)
+  this.extrude = extrude.bind(this)
   // this.waitPoint = waitPoint.bind(this)
 
   controls.addEventListener('change', this.render);
@@ -163,16 +165,15 @@ async function addSketch() {
 
 
 
-  window.addEventListener('keydown', sketcher.onKeyPress)
-  this.canvas.addEventListener('pointerdown', sketcher.onPick)
-  this.canvas.addEventListener('pointermove', sketcher.onHover)
 
+
+  sketcher.activate()
   sketcher.addEventListener('change', this.render);
 
   window.sketcher = sketcher
 
   this.render()
-  this.store.dispatch({ type: 'rx-new-sketch', idx: this.scene.children.length - 1 })
+  this.store.dispatch({ type: 'rx-sketch', obj:sketcher })
 
 }
 

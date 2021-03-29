@@ -1,5 +1,5 @@
 import * as THREE from '../../node_modules/three/src/Three';
-import {lineMaterial, pointMaterial} from './Sketcher'
+import {lineMaterial, pointMaterial} from '../utils/static'
 
 export function sketchLine(mouseLoc) {
 

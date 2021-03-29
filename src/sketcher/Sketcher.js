@@ -7,20 +7,14 @@ import { onHover, onDrag, onPick, onRelease } from './pickEvents'
 import { addDimension, setCoincident } from './constraintEvents'
 import { get3PtArc } from './sketchArc'
 import { extrude } from './extrude'
+import {_vec2, _vec3, raycaster} from '../utils/static'
 
 
-const lineMaterial = new THREE.LineBasicMaterial({
-  linewidth: 2,
-  color: 0x555555,
-})
 
-
-const pointMaterial = new THREE.PointsMaterial({
-  color: 0x555555,
-  size: 4,
-})
 
 class Sketcher extends THREE.Group {
+
+
   constructor(camera, domElement, store) {
     super()
     this.camera = camera;
@@ -30,15 +24,10 @@ class Sketcher extends THREE.Group {
 
     this.sub = new THREE.Group();
     this.add(this.sub);
-
-    this.plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-    this.sketchNormal = new THREE.Vector3(0, 0, 1)
-
-
     const axesHelper = new THREE.AxesHelper(2);
     this.sub.add(axesHelper);
 
-
+    this.plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
 
     // [0]:x, [1]:y, [2]:z
@@ -51,20 +40,15 @@ class Sketcher extends THREE.Group {
     this.l_id = 0;
     this.max_links = 1000
     this.linksBuf = new Float32Array(this.max_links * 5).fill(NaN)
-    this.linkNum = {
-      'line': 0,
-      'arc': 1
-    }
+
 
     // [0]:type, [1]:val, [2]:pt1, [3]:pt2, [4]:lk1, [5]:lk2
     this.constraints = new Map()
     this.c_id = 0;
     this.max_constraints = 1000
     this.constraintsBuf = new Float32Array(this.max_constraints * 6).fill(NaN)
-    this.contraintNum = {
-      'coincident': 0,
-      'distance': 1
-    }
+
+
 
 
     this.drawOnClick1 = drawOnClick1.bind(this);
@@ -75,40 +59,35 @@ class Sketcher extends THREE.Group {
     this.onPick = onPick.bind(this);
     this.onDrag = onDrag.bind(this);
     this.onRelease = onRelease.bind(this);
-
     this.onKeyPress = this.onKeyPress.bind(this);
 
-    // window.addEventListener('keydown', this.onKeyPress)
-    // domElement.addEventListener('pointerdown', this.onPick)
-    // domElement.addEventListener('pointermove', this.onHover)
 
-    this.raycaster = new THREE.Raycaster();
-    this.raycaster.params.Line.threshold = 0.8;
-    this.raycaster.params.Points.threshold = 1.5;
+    this.matrixAutoUpdate=false;
+
     this.selected = new Set()
     this.hovered = []
 
     this.mode = ""
     this.subsequent = false;
-    this.target = new THREE.Vector3();
   }
 
 
 
 
+  activate() {
+    window.addEventListener('keydown', this.onKeyPress)
+    this.domElement.addEventListener('pointerdown', this.onPick)
+    this.domElement.addEventListener('pointermove', this.onHover)
+  }
+
+
   align(origin, x_dir, y_dir) {
     // this.updateWorldMatrix(true, false);
-
     const up = new THREE.Vector3().subVectors(y_dir, origin).normalize();
-
     const _m1 = new THREE.Matrix4()
-
     const te = _m1.elements;
-
     const _x = new THREE.Vector3().subVectors(x_dir, origin).normalize();
-
     const _z = new THREE.Vector3().crossVectors(_x, up).normalize();
-
     const _y = new THREE.Vector3().crossVectors(_z, _x);
 
     te[0] = _x.x; te[4] = _y.x; te[8] = _z.x;
@@ -116,7 +95,6 @@ class Sketcher extends THREE.Group {
     te[2] = _x.z; te[6] = _y.z; te[10] = _z.z;
 
     this.quaternion.setFromRotationMatrix(_m1);
-
     const parent = this.parent;
     _m1.extractRotation(parent.matrixWorld);
     const _q1 = new THREE.Quaternion().setFromRotationMatrix(_m1);
@@ -124,11 +102,8 @@ class Sketcher extends THREE.Group {
 
     this.updateMatrix();
     this.matrix.setPosition(origin)
-
     this.plane.applyMatrix4(this.matrix)
-
     this.inverse = this.matrix.clone().invert()
-
   }
 
 
@@ -175,8 +150,6 @@ class Sketcher extends THREE.Group {
     }
   }
 
-
-
   deleteSelected() {
     let minI = this.children.length;
 
@@ -205,7 +178,7 @@ class Sketcher extends THREE.Group {
     for (let [key, obj] of this.constraints) {
       this.constraintsBuf.set(
         [
-          this.contraintNum[obj[0]], obj[1],
+          this.constraintNum[obj[0]], obj[1],
           ...obj[2].map(ele => this.objIdx.get(ele.id) ?? -1),
         ],
         (i) * 6
@@ -261,22 +234,19 @@ class Sketcher extends THREE.Group {
     }
   }
 
-
   getLocation(e) {
-    this.raycaster.setFromCamera(
-      new THREE.Vector2(
+    raycaster.setFromCamera(
+      _vec2.set(
         (e.clientX / window.innerWidth) * 2 - 1,
         - (e.clientY / window.innerHeight) * 2 + 1
       ),
       this.camera
     );
 
-    this.raycaster.ray.intersectPlane(this.plane, this.target).applyMatrix4(this.inverse)
+    raycaster.ray.intersectPlane(this.plane, _vec3).applyMatrix4(this.inverse)
 
-    return this.target.toArray()
+    return _vec3.toArray()
   }
-
-
 
   solve() {
 
@@ -350,4 +320,19 @@ class Sketcher extends THREE.Group {
 
 
 
-export { Sketcher, lineMaterial, pointMaterial }
+Object.assign(Sketcher.prototype,
+  {
+    linkNum: {
+      'line': 0,
+      'arc': 1
+    },
+    constraintNum: {
+      'coincident': 0,
+      'distance': 1
+    },
+  }
+)
+
+
+
+export { Sketcher }

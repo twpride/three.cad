@@ -1,18 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
-
-
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    // clean: true,
-  },
-
-
   entry: {
-    redux: './src/redux.js',
     index: './src/index.js',
     renderer: './src/Renderer.js',
   },
@@ -20,9 +9,6 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
-
-
-
   module: {
     rules: [
       {
@@ -43,6 +29,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ["@babel/preset-react"],
+            plugins: ["@babel/plugin-proposal-class-properties"]
           }
         }
       },
