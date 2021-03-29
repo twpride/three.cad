@@ -13,9 +13,9 @@ import { add3DPoint } from './datums'
 
 export function Renderer(store) {
   this.store = store
-  // this.stats = new Stats();
-  // this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-  // document.getElementById('stats').appendChild(this.stats.dom);
+  this.stats = new Stats();
+  this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+  document.getElementById('stats').appendChild(this.stats.dom);
 
   this.canvas = document.querySelector('#c');
   this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
@@ -123,7 +123,7 @@ export function Renderer(store) {
 }
 
 function render() {
-  // this.stats.begin();
+  this.stats.begin();
   if (this.resizeCanvas(this.renderer)) {
     const canvas = this.renderer.domElement;
     this.camera.left = -canvas.clientWidth / canvas.clientHeight;
@@ -131,7 +131,7 @@ function render() {
     this.camera.updateProjectionMatrix();
   }
   this.renderer.render(scene, this.camera);
-  // this.stats.end();
+  this.stats.end();
 }
 
 function resizeCanvas(renderer) {
