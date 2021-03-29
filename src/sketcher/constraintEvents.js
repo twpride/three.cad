@@ -68,7 +68,7 @@ export function setCoincident() {
     this.constraints.set(++this.c_id,
       [
         'coincident', -1,
-        [toComb[i - 1], toComb[i], -1, -1]
+        [toComb[i - 1].id, toComb[i].id, -1, -1]  ///////
       ]
     )
     toComb[i].constraints.add(this.c_id)

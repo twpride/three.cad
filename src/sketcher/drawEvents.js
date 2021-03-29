@@ -16,7 +16,7 @@ export function drawOnClick1(e) {
   this.updatePoint = this.children.length
   this.add(...this.toPush)
 
-  this.linkedObjs.set(this.l_id, [this.mode, this.toPush])
+  this.linkedObjs.set(this.l_id, [this.mode, this.toPush.map(e=>e.id)])
   for (let obj of this.toPush) {
     obj.l_id = this.l_id
   }
@@ -65,7 +65,7 @@ export function drawClear() {
     this.domElement.removeEventListener('pointermove', this.drawPreClick2);
     this.domElement.removeEventListener('pointerdown', this.drawOnClick2);
 
-    this.delete(this.children[this.children.length - 1])
+    this.delete(this.updatePoint)
 
     this.dispatchEvent({ type: 'change' })
     this.subsequent = false

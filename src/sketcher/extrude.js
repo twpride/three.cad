@@ -1,10 +1,11 @@
 import * as THREE from '../../node_modules/three/src/Three';
-import {pointMaterial} from '../utils/static'
+import { pointMaterial } from '../utils/static'
 export function extrude(sketch) {
 
   let constraints = sketch.constraints;
   let linkedObjs = sketch.linkedObjs;
   let children = sketch.children;
+  let objIdx = sketch.objIdx;
   let visited = new Set()
   let v2s = []
 
@@ -13,16 +14,18 @@ export function extrude(sketch) {
     let linkedObj = linkedObjs.get(node.l_id)
     let arr;
     if (linkedObj[0] == 'line') {
-      arr = linkedObj[1][2].geometry.attributes.position.array
+      // console.log(children, objIdx, linkedObj)
+      arr = children[objIdx.get(linkedObj[1][2])].geometry.attributes.position.array
     } else if (linkedObj[0] == 'arc') {
-      arr = linkedObj[1][3].geometry.attributes.position.array
+      arr = children[objIdx.get(linkedObj[1][3])].geometry.attributes.position.array
     }
     for (let i = 0; i < arr.length; i += 3) {
       v2s.push(new THREE.Vector2(arr[i], arr[i + 1]))
     }
 
     for (let i = 0; i < 2; i++) {
-      let d = linkedObj[1][i]
+      // let d = linkedObj[1][i]
+      let d = children[objIdx.get(linkedObj[1][i])]
       if (d == -1 || d == node) continue;
       if (d == children[1]) {
         console.log('pair found')
@@ -36,8 +39,10 @@ export function extrude(sketch) {
   function findTouching(node) {
     for (let t of node.constraints) {
       if (constraints.get(t)[0] != 'coincident') continue
-      for (let d of constraints.get(t)[2]) {
-        if (d == -1 || d == node) continue;
+      for (let c of constraints.get(t)[2]) {
+        if (c == -1) continue;
+        const d = children[objIdx.get(c)]
+        if (d == node) continue;
         if (d == children[1]) {
           console.log('loop found')
         } else {

@@ -7,7 +7,7 @@ import { onHover, onDrag, onPick, onRelease } from './pickEvents'
 import { addDimension, setCoincident } from './constraintEvents'
 import { get3PtArc } from './sketchArc'
 import { extrude } from './extrude'
-import {_vec2, _vec3, raycaster} from '../utils/static'
+import { _vec2, _vec3, raycaster } from '../utils/static'
 
 
 
@@ -62,7 +62,7 @@ class Sketcher extends THREE.Group {
     this.onKeyPress = this.onKeyPress.bind(this);
 
 
-    this.matrixAutoUpdate=false;
+    this.matrixAutoUpdate = false;
 
     this.selected = new Set()
     this.hovered = []
@@ -151,24 +151,57 @@ class Sketcher extends THREE.Group {
   }
 
   deleteSelected() {
-    let minI = this.children.length;
 
-    for (let obj of this.selected) {
-      minI = Math.min(minI, this.delete(obj))
-    }
+    const toDelete = [...this.selected]
+      .filter(e => e.type == 'Line')
+      .sort((a, b) => b.id - a.id)
+      .map(e => {
+        const i = this.objIdx.get(e.id)
+        this.delete(i)
+        return i
+      })
 
-    // this.updatePointsBuffer(minI)
-    this.updatePointsBuffer()
+
+    this.updatePointsBuffer(toDelete[0])
+    // this.updatePointsBuffer()
     this.updateOtherBuffers()
 
     this.selected.clear()
     this.dispatchEvent({ type: 'change' })
   }
 
+  delete(i) {
+    const obj = this.children[i]
+    let link = this.linkedObjs.get(obj.l_id)
+    if (!link) return;
+    link = link[1]
+
+    console.log('delete',link.length)
+    for (let j = 0; j < link.length; j++) {
+      const obj = this.children[i + j]
+      obj.geometry.dispose()
+      obj.material.dispose()
+
+      for (let c_id of obj.constraints) {
+        console.log(j,c_id)
+        this.deleteConstraints(c_id)
+      }
+    }
+
+    this.children.splice(i, link.length)
+
+    this.linkedObjs.delete(obj.l_id)
+
+  }
+
+
   deleteConstraints(c_id) {
-    for (let ob of this.constraints.get(c_id)[2]) {
-      if (ob == -1) continue
-      ob.constraints.delete(c_id)
+    for (let idx of this.constraints.get(c_id)[2]) { //////////
+      if (idx == -1) continue
+      const ob = this.children[this.objIdx.get(idx)]
+      if (ob) {
+        ob.constraints.delete(c_id)
+      }
     }
     this.constraints.delete(c_id)
   }
@@ -179,7 +212,7 @@ class Sketcher extends THREE.Group {
       this.constraintsBuf.set(
         [
           this.constraintNum[obj[0]], obj[1],
-          ...obj[2].map(ele => this.objIdx.get(ele.id) ?? -1),
+          ...obj[2].map(ele => this.objIdx.get(ele) ?? -1),
         ],
         (i) * 6
       )
@@ -191,7 +224,7 @@ class Sketcher extends THREE.Group {
       this.linksBuf.set(
         [
           this.linkNum[obj[0]],
-          ...obj[1].map(ele => this.objIdx.get(ele.id) ?? -1),
+          ...obj[1].map(ele => this.objIdx.get(ele) ?? -1),
         ],
         (i) * 5
       )
@@ -200,29 +233,7 @@ class Sketcher extends THREE.Group {
 
   }
 
-  delete(obj) {
-    let link = this.linkedObjs.get(obj.l_id)
-    if (!link) return Infinity;
-    link = link[1]
 
-    let i = this.children.indexOf(link[0])
-
-    for (let j = 0; j < link.length; j++) {
-      const obj = this.children[i + j]
-      obj.geometry.dispose()
-      obj.material.dispose()
-
-      for (let c_id of obj.constraints) {
-        this.deleteConstraints(c_id)
-      }
-    }
-
-    this.children.splice(i, link.length)
-
-    this.linkedObjs.delete(obj.l_id)
-
-    return i
-  }
 
   updatePointsBuffer(startingIdx = 0) {
     for (let i = startingIdx; i < this.children.length; i++) {
@@ -299,7 +310,7 @@ class Sketcher extends THREE.Group {
     */
     for (let [k, obj] of this.linkedObjs) {
       if (obj[0] != 'arc') continue;
-      const [p1, p2, c, arc] = obj[1]
+      const [p1, p2, c, arc] = obj[1].map(e => this.children[this.objIdx.get(e)])
 
       const points = get3PtArc(
         p1.geometry.attributes.position.array,
