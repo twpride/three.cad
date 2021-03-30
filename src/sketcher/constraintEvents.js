@@ -18,41 +18,6 @@ export function addDimension(ent1, ent2, distance) {
 }
 
 
-
-// function findTouching(node) {
-//   const res = [node]
-//   for (let t of node.constraints) {
-//     if (this.constraints.get(t)[0] != 'coincident') continue
-//     for (let i = 0; i < 2; i++) {
-//       let d = this.constraints.get(t)[2][i]
-//       if (d != node) res.push(d)
-//     }
-//   }
-//   return res
-// }
-
-
-// export function setCoincident(ent1, ent2) {
-
-//   for (let n1 of findTouching.call(this,ent1)) {
-//     for (let n2 of findTouching.call(this,ent2)) {
-//       this.constraints.set(++this.c_id,
-//         [
-//           'coincident', -1,
-//           [n1, n2, -1, -1]
-//         ]
-//       )
-//       n1.constraints.add(this.c_id)
-//       n2.constraints.add(this.c_id)
-//     }
-//   }
-
-// }
-
-
-
-
-
 export function setCoincident() {
   const s = new Set()
   const toComb = []
@@ -83,6 +48,6 @@ export function setCoincident() {
     obj.geometry.computeBoundingSphere()
     obj.material.color.set(0x555555)
   }
-  this.selected.clear()
+  this.selected = []
   this.dispatchEvent({ type: 'change' })
 }

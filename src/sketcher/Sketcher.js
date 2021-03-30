@@ -3,10 +3,9 @@
 import * as THREE from '../../node_modules/three/src/Three';
 
 import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear } from './drawEvents'
-import { onHover, onDrag, onPick, onRelease } from './sketchMouseEvents'
+import { onHover, onDrag, onPick, onRelease } from '../utils/mouseEvents'
 import { addDimension, setCoincident } from './constraintEvents'
 import { get3PtArc } from './sketchArc'
-import { extrude } from './extrude'
 import { _vec2, _vec3, raycaster } from '../utils/static'
 
 
@@ -15,12 +14,12 @@ import { _vec2, _vec3, raycaster } from '../utils/static'
 class Sketcher extends THREE.Group {
 
 
-  constructor(camera, domElement, store) {
+  constructor(camera, canvas, store) {
     super()
-    this.name = "sketch"
+    this.name = "Sketch"
     this.matrixAutoUpdate = false;
     this.camera = camera;
-    this.domElement = domElement;
+    this.canvas = canvas;
     this.store = store;
 
     this.sub = new THREE.Group();
@@ -28,7 +27,11 @@ class Sketcher extends THREE.Group {
     const axesHelper = new THREE.AxesHelper(2);
     this.sub.add(axesHelper);
 
+    
+
     this.plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+
+
 
     // [0]:x, [1]:y, [2]:z
     this.objIdx = new Map()
@@ -47,7 +50,8 @@ class Sketcher extends THREE.Group {
     this.bindHandlers()
 
 
-    this.selected = new Set()
+    // this.selected = new Set()
+    this.selected = []
     this.hovered = []
     this.mode = ""
     this.subsequent = false;
@@ -70,27 +74,25 @@ class Sketcher extends THREE.Group {
 
   activate() {
     window.addEventListener('keydown', this.onKeyPress)
-    this.domElement.addEventListener('pointerdown', this.onPick)
-    this.domElement.addEventListener('pointermove', this.onHover)
+    this.canvas.addEventListener('pointerdown', this.onPick)
+    this.canvas.addEventListener('pointermove', this.onHover)
     this.store.dispatch({ type: 'set-active-sketch', sketch: this })
   }
 
   deactivate() {
     window.removeEventListener('keydown', this.onKeyPress)
-    this.domElement.removeEventListener('pointerdown', this.onPick)
-    this.domElement.removeEventListener('pointermove', this.onHover)
+    this.canvas.removeEventListener('pointerdown', this.onPick)
+    this.canvas.removeEventListener('pointermove', this.onHover)
     this.store.dispatch({ type: 'exit-sketch' })
   }
 
 
   align(origin, x_dir, y_dir) {
-    // this.updateWorldMatrix(true, false);
-    const up = new THREE.Vector3().subVectors(y_dir, origin).normalize();
-    const _m1 = new THREE.Matrix4()
+    const up = _vec3.subVectors(y_dir, origin).normalize();
     const te = _m1.elements;
-    const _x = new THREE.Vector3().subVectors(x_dir, origin).normalize();
-    const _z = new THREE.Vector3().crossVectors(_x, up).normalize();
-    const _y = new THREE.Vector3().crossVectors(_z, _x);
+    _x.subVectors(x_dir, origin).normalize();
+    _z.crossVectors(_x, up).normalize();
+    _y.crossVectors(_z, _x);
 
     te[0] = _x.x; te[4] = _y.x; te[8] = _z.x;
     te[1] = _x.y; te[5] = _y.y; te[9] = _z.y;
@@ -99,11 +101,11 @@ class Sketcher extends THREE.Group {
     this.quaternion.setFromRotationMatrix(_m1);
     const parent = this.parent;
     _m1.extractRotation(parent.matrixWorld);
-    const _q1 = new THREE.Quaternion().setFromRotationMatrix(_m1);
+    _q1.setFromRotationMatrix(_m1);
     this.quaternion.premultiply(_q1.invert());
-
     this.updateMatrix();
     this.matrix.setPosition(origin)
+
     this.plane.applyMatrix4(this.matrix)
     this.inverse = this.matrix.clone().invert()
   }
@@ -120,11 +122,11 @@ class Sketcher extends THREE.Group {
         if (this.mode == 'line') {
           drawClear.bind(this)()
         }
-        this.domElement.addEventListener('pointerdown', this.drawOnClick1)
+        this.canvas.addEventListener('pointerdown', this.drawOnClick1)
         this.mode = "line"
         break;
       case 'a':
-        this.domElement.addEventListener('pointerdown', this.drawOnClick1)
+        this.canvas.addEventListener('pointerdown', this.drawOnClick1)
         this.mode = "arc"
         break;
       case 'x':
@@ -136,9 +138,7 @@ class Sketcher extends THREE.Group {
 
         this.mode = ""
         break;
-      case 'e':
-        extrude.call(this)
-        break;
+
       case 'z':
         var string = JSON.stringify(this.toJSON());
         window.string = string;
@@ -167,7 +167,7 @@ class Sketcher extends THREE.Group {
     this.updatePointsBuffer(toDelete[toDelete.length - 1])
     this.updateOtherBuffers()
 
-    this.selected.clear()
+    this.selected = []
     this.dispatchEvent({ type: 'change' })
   }
 
@@ -328,7 +328,11 @@ class Sketcher extends THREE.Group {
 
 }
 
-
+const _m1 = new THREE.Matrix4()
+const _q1 = new THREE.Quaternion()
+const _x = new THREE.Vector3();
+const _y = new THREE.Vector3();
+const _z = new THREE.Vector3();
 
 
 Object.assign(Sketcher.prototype,

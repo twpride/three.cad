@@ -1,5 +1,5 @@
-import * as THREE from '../../node_modules/three/src/Three';
-import { pointMaterial } from '../utils/static'
+import * as THREE from 'three/src/Three';
+import { color, ptObj } from './utils/static'
 export function extrude(sketch) {
 
   let constraints = sketch.constraints;
@@ -8,13 +8,13 @@ export function extrude(sketch) {
   let objIdx = sketch.objIdx;
   let visited = new Set()
   let v2s = []
+  let offSetPts = []
 
   function findPair(node) {
     visited.add(node)
     let linkedObj = linkedObjs.get(node.l_id)
     let arr;
     if (linkedObj[0] == 'line') {
-      // console.log(children, objIdx, linkedObj)
       arr = children[objIdx.get(linkedObj[1][2])].geometry.attributes.position.array
     } else if (linkedObj[0] == 'arc') {
       arr = children[objIdx.get(linkedObj[1][3])].geometry.attributes.position.array
@@ -22,6 +22,9 @@ export function extrude(sketch) {
     for (let i = 0; i < arr.length; i += 3) {
       v2s.push(new THREE.Vector2(arr[i], arr[i + 1]))
     }
+
+    offSetPts.push(arr[0], arr[1])
+    offSetPts.push(arr[arr.length - 3], arr[arr.length - 2])
 
     for (let i = 0; i < 2; i++) {
       // let d = linkedObj[1][i]
@@ -60,21 +63,28 @@ export function extrude(sketch) {
   const shape = new THREE.Shape(v2s);
   const extrudeSettings = { depth: 8, bevelEnabled: false };
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  const phong = new THREE.MeshPhongMaterial({ color: 0x156289, emissive: 0x072534, side: THREE.DoubleSide, flatShading: true });
+  const phong = new THREE.MeshPhongMaterial({
+    color: color.extrude,
+    emissive: color.emissive,
+    flatShading: true
+  });
   const mesh = new THREE.Mesh(geometry, phong)
-  // mesh.applyMatrix4(sketch.inverse)
-  // mesh.matrix.premultiply(sketch.matrix).multiply(sketch.inverse)
+
+  for (let i = 0; i < offSetPts.length; i += 2) {
+    if (
+      offSetPts[i] == offSetPts[i - 2] &&
+      offSetPts[i + 1] == offSetPts[i - 1]
+    ) continue;
+    mesh.add(
+      ptObj([offSetPts[i], offSetPts[i + 1], 8])
+    )
+  }
+
 
   mesh.matrixAutoUpdate = false;
   mesh.matrix.multiply(sketch.matrix)
-  this.scene.add(mesh)
+  this.add(mesh)
 
-  const wireframe = new THREE.WireframeGeometry(geometry);
-
-  const pts = new THREE.Points(wireframe, pointMaterial);
-  // pts.matrixAutoUpdate = false;
-  // pts.matrix.multiply(sketch.matrix)
-  mesh.add(pts)
 
   this.render()
 

@@ -2,41 +2,24 @@
 import * as THREE from '../../node_modules/three/src/Three';
 import {lineMaterial, pointMaterial} from '../utils/static'
 
+import {ptObj, lineObj} from '../utils/static'
+
+const n = 30
+
 export function sketchArc(mouseLoc) {
-  const p1Geom = new THREE.BufferGeometry().setAttribute('position',
-    new THREE.BufferAttribute(new Float32Array(mouseLoc), 3)
-  )
-  const p1 = new THREE.Points(p1Geom,
-    new THREE.PointsMaterial().copy(pointMaterial)
-  );
+
+  const p1 = ptObj(mouseLoc)
   p1.matrixAutoUpdate = false;
   p1.constraints = new Set()
-
-  const p2Geom = new THREE.BufferGeometry().setAttribute('position',
-    new THREE.BufferAttribute(new Float32Array(3), 3)
-  )
-  const p2 = new THREE.Points(
-    p2Geom,
-    new THREE.PointsMaterial().copy(pointMaterial)
-  );
+  
+  const p2 = ptObj()
   p2.matrixAutoUpdate = false;
   p2.constraints = new Set()
 
-  const arcGeom = new THREE.BufferGeometry().setAttribute('position',
-    new THREE.BufferAttribute(new Float32Array(3 * 37), 3)
-  )
-
-  const arc = new THREE.Line(arcGeom,
-    new THREE.LineBasicMaterial().copy(lineMaterial)
-  );
+  const arc = lineObj(n)
   arc.frustumCulled = false;
 
-  const p3Geom = new THREE.BufferGeometry().setAttribute('position',
-    new THREE.BufferAttribute(new Float32Array(3), 3)
-  )
-  const p3 = new THREE.Points(p3Geom,
-    new THREE.PointsMaterial().copy(pointMaterial)
-  );
+  const p3 = ptObj()
 
   return [p1, p2, p3, arc]
 }
@@ -61,7 +44,7 @@ export function sketchArc2(mouseLoc, toPush) {
   p3.geometry.computeBoundingSphere()
 }
 
-export function get2PtArc(p1, p2, divisions = 36) {
+export function get2PtArc(p1, p2, divisions = n) {
 
   const dx = p2[0] - p1[0]
   const dy = p2[1] - p1[1]
@@ -90,7 +73,7 @@ export function get2PtArc(p1, p2, divisions = 36) {
 }
 
 
-export function get3PtArc(p1, p2, c, divisions = 36) {
+export function get3PtArc(p1, p2, c, divisions = n) {
 
   const v1 = [p1[0] - c[0], p1[1] - c[1]]
   const v2 = [p2[0] - c[0], p2[1] - c[1]]

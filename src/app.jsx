@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import './app.scss'
 
 import { Provider, useDispatch, useSelector } from 'react-redux'
-// import { renderInst } from './index'
+// import { sc } from './index'
 
 export const Root = ({ store }) => (
   <Provider store={store}>
@@ -15,7 +15,8 @@ export const Root = ({ store }) => (
 
 
 function treeId2Obj(id) {
-  return renderInst.scene.getObjectById(parseInt(id.slice(1)))
+  // return sc.scene.getObjectById(parseInt(id.slice(1)))
+  return sc.getObjectById(parseInt(id.slice(1)))
 }
 
 const App = () => {
@@ -30,8 +31,12 @@ const App = () => {
 
   useEffect(() => {
     if (!activeSketch) {
-      renderInst.canvas.addEventListener('pointermove', renderInst.onHover)
-      return () => renderInst.canvas.removeEventListener('pointermove', renderInst.onHover)
+      sc.canvas.addEventListener('pointermove', sc.onHover)
+      sc.canvas.addEventListener('pointerdown', sc.onPick)
+      return () => { 
+        sc.canvas.removeEventListener('pointermove', sc.onHover) 
+        sc.canvas.removeEventListener('pointerdown', sc.onPick) 
+      }
     }
   }, [activeSketch])
 
@@ -42,9 +47,9 @@ const App = () => {
         <button onClick={() => treeId2Obj(activeSketch).deactivate()}>
           Exit sketch
         </button> :
-        <button onClick={renderInst.addSketch}> addsketch </button>
+        <button onClick={sc.addSketch}> addsketch </button>
       }
-      <button onClick={() => renderInst.extrude(treeId2Obj(activeSketch))}> extrude </button>
+      <button onClick={() => sc.extrude(treeId2Obj(activeSketch))}> extrude </button>
       {/* <button onClick={() => setState('')}> test </button> */}
     </div>
 

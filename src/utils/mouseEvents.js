@@ -1,5 +1,5 @@
 import * as THREE from 'three/src/Three';
-import {raycaster} from '../utils/static';
+import { raycaster, color } from './static';
 
 export function onHover(e) {
   if (this.mode || e.buttons) return
@@ -12,10 +12,16 @@ export function onHover(e) {
     this.camera
   );
 
-  const hoverPts = raycaster.intersectObjects(this.children)
+  let hoverPts;
+  if (this.name == 'Scene') {
+    hoverPts = raycaster.intersectObjects(this.children, true)
+  } else {
+    hoverPts = raycaster.intersectObjects(this.children)
+  }
 
   let idx = []
   if (hoverPts.length) {
+    // console.log(hoverPts)
     let minDist = Infinity;
     for (let i = 0; i < hoverPts.length; i++) {
       if (!hoverPts[i].distanceToRay) continue;
@@ -34,7 +40,7 @@ export function onHover(e) {
 
       for (let x = 0; x < this.hovered.length; x++) {
         const obj = this.hovered[x]
-        if (obj && !this.selected.has(obj)) {
+        if (obj && !this.selected.includes(obj)) {
           obj.material.color.set(0x555555)
         }
       }
@@ -42,7 +48,7 @@ export function onHover(e) {
 
       for (let x = 0; x < idx.length; x++) {
         const i = idx[x]
-        hoverPts[i].object.material.color.set(0x00ff00)
+        hoverPts[i].object.material.color.set(color.hover)
         this.hovered.push(hoverPts[i].object)
       }
 
@@ -54,7 +60,8 @@ export function onHover(e) {
 
       for (let x = 0; x < this.hovered.length; x++) {
         const obj = this.hovered[x]
-        if (obj && !this.selected.has(obj)) {
+        if (obj && !this.selected.includes(obj)) {
+          // console.log(obj)
           obj.material.color.set(0x555555)
         }
       }
@@ -72,21 +79,18 @@ export function onPick(e) {
 
   if (this.hovered.length) {
 
-    for (let x = 0; x < this.hovered.length; x++) {
-      const obj = this.hovered[x]
-      this.selected.add(obj)
-    }
+    this.selected.push(this.hovered[this.hovered.length-1])
 
     if (this.hovered[0].type == "Points") {
-      this.domElement.addEventListener('pointermove', this.onDrag);
-      this.domElement.addEventListener('pointerup', this.onRelease)
+      this.canvas.addEventListener('pointermove', this.onDrag);
+      this.canvas.addEventListener('pointerup', this.onRelease)
     }
   } else {
     for (let obj of this.selected) {
       obj.material.color.set(0x555555)
     }
     this.dispatchEvent({ type: 'change' })
-    this.selected.clear()
+    this.selected = []
   }
 }
 
@@ -107,8 +111,8 @@ export function onDrag(e) {
 
 
 export function onRelease() {
-  this.domElement.removeEventListener('pointermove', this.onDrag)
-  this.domElement.removeEventListener('pointerup', this.onRelease)
+  this.canvas.removeEventListener('pointermove', this.onDrag)
+  this.canvas.removeEventListener('pointerup', this.onRelease)
 
   for (let x = 0; x < this.hovered.length; x++) {
     const obj = this.hovered[x]

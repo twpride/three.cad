@@ -46,7 +46,7 @@ export function add3DPoint(e) {
     if (hoverPts[idx[0]].object != this.hovered[0]) {
 
       for (let ob of this.hovered) {
-        if (ob && !this.selected.has(ob)) {
+        if (ob && !this.selected.includes(ob)) {
           ob.material.color.set(0x555555)
         }
       }
@@ -62,7 +62,7 @@ export function add3DPoint(e) {
   } else {
     if (this.hovered.length) {
       for (let ob of this.hovered) {
-        if (ob && !this.selected.has(ob)) {
+        if (ob && !this.selected.includes(ob)) {
           ob.material.color.set(0x555555)
         }
       }
