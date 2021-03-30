@@ -72,14 +72,14 @@ export function extrude(sketch) {
   const wireframe = new THREE.WireframeGeometry(geometry);
 
   const pts = new THREE.Points(wireframe, pointMaterial);
-  pts.matrixAutoUpdate = false;
-  pts.matrix.multiply(sketch.matrix)
-  this.scene.add(pts)
+  // pts.matrixAutoUpdate = false;
+  // pts.matrix.multiply(sketch.matrix)
+  mesh.add(pts)
 
   this.render()
 
-  // this.dispatchEvent({ type: 'change' })
-  // this.visible = false
+  // sketch.visible = false
+  this.store.dispatch({ type: 'rx-extrusion', mesh, sketch })
 }
 
 

@@ -65,7 +65,7 @@ export function drawClear() {
     this.domElement.removeEventListener('pointermove', this.drawPreClick2);
     this.domElement.removeEventListener('pointerdown', this.drawOnClick2);
 
-    this.delete(this.updatePoint)
+    this.delete(this.children[this.updatePoint])
 
     this.dispatchEvent({ type: 'change' })
     this.subsequent = false

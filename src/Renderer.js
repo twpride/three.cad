@@ -1,7 +1,7 @@
 
 
   
-import * as THREE from 'three/src/Three';
+import * as THREE from '../node_modules/three/src/Three';
 // import { OrbitControls } from './utils/OrbitControls'
 import { TrackballControls } from './utils/trackball'
 import { Sketcher } from './sketcher/Sketcher'
@@ -162,10 +162,6 @@ async function addSketch() {
   this.scene.add(sketcher)
 
   sketcher.align(...result)
-
-
-
-
 
   sketcher.activate()
   sketcher.addEventListener('change', this.render);

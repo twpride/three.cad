@@ -10,26 +10,30 @@ import logger from 'redux-logger'
 let _entId = 0
 
 function reducer(state = {}, action) {
+  let id;
   switch (action.type) {
     case 'toggle':
       return { ...state, toggle: action.payload }
     case 'rx-sketch':
+      id = 's' + action.obj.id
       return {
         ...state, treeEntries: {
-          byId: { ...state.treeEntries.byId, ['s' + ++_entId]: action.obj },
-          allIds: [...state.treeEntries.allIds, 's' + _entId]
-        }
+          byId: { ...state.treeEntries.byId, [id]: action.obj },
+          allIds: [...state.treeEntries.allIds, id]
+        },
+        env: id
       }
     case 'rx-extrusion':
+      id = 'e' + action.mesh.id
       return {
         ...state,
         treeEntries: {
-          byId: { ...state.treeEntries.byId, ['e' + ++_entId]: action.obj },
-          allIds: [...state.treeEntries.allIds, 'e' + _entId]
+          byId: { ...state.treeEntries.byId, [id]: action.mesh },
+          allIds: [...state.treeEntries.allIds, id]
         },
         mesh2sketch: {
           ...state.mesh2sketch,
-          [action.skId]: _entId
+          ['s' + action.sketch.id]: id
         }
       }
     case 'incsk':

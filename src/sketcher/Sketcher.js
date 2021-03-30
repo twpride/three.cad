@@ -17,9 +17,9 @@ class Sketcher extends THREE.Group {
 
   constructor(camera, domElement, store) {
     super()
+    this.name = "sketch"
     this.camera = camera;
     this.domElement = domElement;
-    this.matrixAutoUpdate = false;
     this.store = store;
 
     this.sub = new THREE.Group();
@@ -29,26 +29,19 @@ class Sketcher extends THREE.Group {
 
     this.plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
-
     // [0]:x, [1]:y, [2]:z
     this.objIdx = new Map()
-    this.max_pts = 1000
     this.ptsBuf = new Float32Array(this.max_pts * 3).fill(NaN)
 
     // [0]:type, [1]:pt1, [2]:pt2, [3]:pt3, [4]:pt4
     this.linkedObjs = new Map()
     this.l_id = 0;
-    this.max_links = 1000
     this.linksBuf = new Float32Array(this.max_links * 5).fill(NaN)
-
 
     // [0]:type, [1]:val, [2]:pt1, [3]:pt2, [4]:lk1, [5]:lk2
     this.constraints = new Map()
     this.c_id = 0;
-    this.max_constraints = 1000
     this.constraintsBuf = new Float32Array(this.max_constraints * 6).fill(NaN)
-
-
 
 
     this.drawOnClick1 = drawOnClick1.bind(this);
@@ -63,10 +56,8 @@ class Sketcher extends THREE.Group {
 
 
     this.matrixAutoUpdate = false;
-
     this.selected = new Set()
     this.hovered = []
-
     this.mode = ""
     this.subsequent = false;
   }
@@ -152,38 +143,36 @@ class Sketcher extends THREE.Group {
 
   deleteSelected() {
 
+
+
     const toDelete = [...this.selected]
       .filter(e => e.type == 'Line')
       .sort((a, b) => b.id - a.id)
-      .map(e => {
-        const i = this.objIdx.get(e.id)
-        this.delete(i)
-        return i
+      .map(obj => {
+        return this.delete(obj)
       })
 
 
-    this.updatePointsBuffer(toDelete[0])
-    // this.updatePointsBuffer()
+    this.updatePointsBuffer(toDelete[toDelete.length - 1])
     this.updateOtherBuffers()
 
     this.selected.clear()
     this.dispatchEvent({ type: 'change' })
   }
 
-  delete(i) {
-    const obj = this.children[i]
+  delete(obj) {
     let link = this.linkedObjs.get(obj.l_id)
     if (!link) return;
     link = link[1]
 
-    console.log('delete',link.length)
+    let i = this.objIdx.get(link[0]) || this.updatePoint // hacky, see drawEvent.js for updatePoint def
+
     for (let j = 0; j < link.length; j++) {
       const obj = this.children[i + j]
       obj.geometry.dispose()
       obj.material.dispose()
 
       for (let c_id of obj.constraints) {
-        console.log(j,c_id)
         this.deleteConstraints(c_id)
       }
     }
@@ -192,6 +181,7 @@ class Sketcher extends THREE.Group {
 
     this.linkedObjs.delete(obj.l_id)
 
+    return i
   }
 
 
@@ -341,6 +331,9 @@ Object.assign(Sketcher.prototype,
       'coincident': 0,
       'distance': 1
     },
+    max_pts: 1000,
+    max_links: 1000,
+    max_constraints: 1000,
   }
 )
 
