@@ -1,4 +1,4 @@
-import * as THREE from '../../node_modules/three/src/Three';
+import * as THREE from 'three/src/Three';
 import {raycaster} from '../utils/static';
 
 export function onHover(e) {

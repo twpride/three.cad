@@ -21,7 +21,14 @@ function reducer(state = {}, action) {
           byId: { ...state.treeEntries.byId, [id]: action.obj },
           allIds: [...state.treeEntries.allIds, id]
         },
-        env: id
+      }
+    case 'set-active-sketch':
+      return {
+        ...state, activeSketch:'s'+action.sketch.id
+      }
+    case 'exit-sketch':
+      return {
+        ...state, activeSketch:''
       }
     case 'rx-extrusion':
       id = 'e' + action.mesh.id
@@ -36,8 +43,6 @@ function reducer(state = {}, action) {
           ['s' + action.sketch.id]: id
         }
       }
-    case 'incsk':
-      return { ...state, id: _sketchID++ }
     default:
       return state
   }

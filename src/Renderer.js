@@ -1,6 +1,6 @@
 
 
-  
+
 import * as THREE from '../node_modules/three/src/Three';
 // import { OrbitControls } from './utils/OrbitControls'
 import { TrackballControls } from './utils/trackball'
@@ -8,9 +8,17 @@ import { Sketcher } from './sketcher/Sketcher'
 import Stats from './utils/stats.module.js';
 
 import { add3DPoint } from './datums'
-import {extrude} from './sketcher/extrude'
+import { extrude } from './sketcher/extrude'
+import { onHover } from './mouseEvents';
 
 
+// class Scene extends THREE.Scene {
+
+
+//   constructor() {
+    
+//   }
+// }
 
 export function Renderer(store) {
   this.store = store
@@ -29,7 +37,7 @@ export function Renderer(store) {
   // this.scene.background = new THREE.Color(0xffffff);
 
   const helpersGroup = new THREE.Group();
-  helpersGroup.name= "helpersGroup"
+  helpersGroup.name = "helpersGroup"
   this.scene.add(helpersGroup);
   const axesHelper = new THREE.AxesHelper(5);
   helpersGroup.add(axesHelper);
@@ -46,8 +54,6 @@ export function Renderer(store) {
   controls.target.set(0, 0, 0);
   controls.update()
 
-
-
   const color = 0xFFFFFF;
   const intensity = 1;
   const light1 = new THREE.DirectionalLight(color, intensity);
@@ -61,54 +67,6 @@ export function Renderer(store) {
   this.scene.add(ambient);
 
 
-
-
-  // this.defaultPlanes = [
-  //   new THREE.Plane(new THREE.Vector3(0, 0, 1), 0),
-  //   new THREE.Plane(new THREE.Vector3(0, 1, 0), 0),
-  //   new THREE.Plane(new THREE.Vector3(1, 0, 0), 0),
-  // ]
-
-  // this.defaultPlanes.forEach(pl => {
-  //   const helper = new THREE.PlaneHelper(pl, 10, 0xffffff)
-  //   this.scene.add(helper);
-  // })
-
-
-
-
-
-
-
-
-  const unsubscribe = store.subscribe(handleChange.bind(this))
-
-  let state;
-  function handleChange() {
-    let prevState = state
-    state = store.getState()
-
-    // if (prevState.sketches.length < state.sketches.length) {
-
-
-    // }
-
-    // if (state.toggle) {
-    //   window.addEventListener('keydown', this.sketcher.onKeyPress)
-    //   canvas.addEventListener('pointerdown', this.sketcher.onPick)
-    //   canvas.addEventListener('pointermove', this.sketcher.onHover)
-    //   canvas.removeEventListener('pointerdown', this.add3DPoint)
-    // } else {
-    //   window.removeEventListener('keydown', this.sketcher.onKeyPress)
-    //   canvas.removeEventListener('pointerdown', this.sketcher.onPick)
-    //   canvas.removeEventListener('pointermove', this.sketcher.onHover)
-    //   canvas.addEventListener('pointerdown', this.add3DPoint)
-    // }
-
-  }
-
-
-
   this.hovered = []
   this.selected = new Set()
 
@@ -116,7 +74,8 @@ export function Renderer(store) {
   this.resizeCanvas = resizeCanvas.bind(this)
   this.addSketch = addSketch.bind(this)
   this.extrude = extrude.bind(this)
-  // this.waitPoint = waitPoint.bind(this)
+
+  this.onHover = onHover.bind(this);
 
   controls.addEventListener('change', this.render);
   controls.addEventListener('start', this.render);
@@ -169,11 +128,9 @@ async function addSketch() {
   window.sketcher = sketcher
 
   this.render()
-  this.store.dispatch({ type: 'rx-sketch', obj:sketcher })
+  this.store.dispatch({ type: 'rx-sketch', obj: sketcher })
 
 }
-
-
 
 function getPoint(e, camera) {
   const mouse = new THREE.Vector2(

@@ -3,7 +3,7 @@
 import * as THREE from '../../node_modules/three/src/Three';
 
 import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear } from './drawEvents'
-import { onHover, onDrag, onPick, onRelease } from './pickEvents'
+import { onHover, onDrag, onPick, onRelease } from './sketchMouseEvents'
 import { addDimension, setCoincident } from './constraintEvents'
 import { get3PtArc } from './sketchArc'
 import { extrude } from './extrude'
@@ -18,6 +18,7 @@ class Sketcher extends THREE.Group {
   constructor(camera, domElement, store) {
     super()
     this.name = "sketch"
+    this.matrixAutoUpdate = false;
     this.camera = camera;
     this.domElement = domElement;
     this.store = store;
@@ -43,7 +44,17 @@ class Sketcher extends THREE.Group {
     this.c_id = 0;
     this.constraintsBuf = new Float32Array(this.max_constraints * 6).fill(NaN)
 
+    this.bindHandlers()
 
+
+    this.selected = new Set()
+    this.hovered = []
+    this.mode = ""
+    this.subsequent = false;
+  }
+
+
+  bindHandlers() {
     this.drawOnClick1 = drawOnClick1.bind(this);
     this.drawPreClick2 = drawPreClick2.bind(this);
     this.drawOnClick2 = drawOnClick2.bind(this);
@@ -54,21 +65,21 @@ class Sketcher extends THREE.Group {
     this.onRelease = onRelease.bind(this);
     this.onKeyPress = this.onKeyPress.bind(this);
 
-
-    this.matrixAutoUpdate = false;
-    this.selected = new Set()
-    this.hovered = []
-    this.mode = ""
-    this.subsequent = false;
   }
-
-
 
 
   activate() {
     window.addEventListener('keydown', this.onKeyPress)
     this.domElement.addEventListener('pointerdown', this.onPick)
     this.domElement.addEventListener('pointermove', this.onHover)
+    this.store.dispatch({ type: 'set-active-sketch', sketch: this })
+  }
+
+  deactivate() {
+    window.removeEventListener('keydown', this.onKeyPress)
+    this.domElement.removeEventListener('pointerdown', this.onPick)
+    this.domElement.removeEventListener('pointermove', this.onHover)
+    this.store.dispatch({ type: 'exit-sketch' })
   }
 
 
@@ -222,7 +233,6 @@ class Sketcher extends THREE.Group {
     }
 
   }
-
 
 
   updatePointsBuffer(startingIdx = 0) {
