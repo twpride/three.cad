@@ -10,8 +10,10 @@ import Stats from './utils/stats.module.js';
 import { add3DPoint } from './datums'
 import { extrude } from './extrude'
 import { onHover, onPick } from './utils/mouseEvents';
-import { _vec2, _vec3 } from './utils/static'
+import { _vec2, _vec3, color } from './utils/static'
 import { Vector3 } from 'three/src/Three';
+
+import CSG from "./utils/three-csg.js"
 
 const eq = (a1, a2) => {
   if (a1.length != a2.length) return false
@@ -51,10 +53,11 @@ export class Scene extends THREE.Scene {
     const axesHelper = new THREE.AxesHelper(0.4);
     helpersGroup.add(axesHelper);
 
+    // console.log(color)
     const pxy = new THREE.Mesh(
       new THREE.PlaneGeometry(5, 5),
       new THREE.MeshBasicMaterial({
-        color: 0xff0000,
+        color: color.Plane,
         opacity: 0.2,
         side: THREE.DoubleSide,
         transparent: true,
@@ -77,16 +80,15 @@ export class Scene extends THREE.Scene {
 
 
 
-    const color = 0xFFFFFF;
     const intensity = 1;
-    const light1 = new THREE.DirectionalLight(color, intensity);
+    const light1 = new THREE.DirectionalLight(color.lighting, intensity);
     light1.position.set(10, 10, 10);
     this.add(light1);
 
-    const light2 = new THREE.DirectionalLight(color, intensity);
+    const light2 = new THREE.DirectionalLight(color.lighting, intensity);
     light2.position.set(-10, -10, -5);
     this.add(light2);
-    const ambient = new THREE.AmbientLight(color, intensity);
+    const ambient = new THREE.AmbientLight(color.lighting, intensity);
     this.add(ambient);
 
 
@@ -198,4 +200,31 @@ async function addSketch() {
 }
 
 window.sc = new Scene(store);
+window.loader = new THREE.ObjectLoader();
 
+
+
+// const mm = []
+// for (let i = 1; i <= 3; i++) {
+//   const obj = loader.parse(JSON.parse(localStorage.getItem(i.toString())))
+//   mm.push(obj)
+//   sc.add(mm[mm.length - 1])
+//   obj.visible = false
+// }
+
+
+
+//  //Create a bsp tree from each of the meshes
+ 
+// let bspA = CSG.fromMesh( mm[0] )                        
+// let bspB = CSG.fromMesh( mm[2] )
+
+// // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
+ 
+// let bspResult = bspA.subtract(bspB)
+
+// //Get the resulting mesh from the result bsp, and assign meshA.material to the resulting mesh
+
+// let meshResult = CSG.toMesh( bspResult, mm[0].matrix,  mm[0].material )
+
+// sc.add(meshResult)

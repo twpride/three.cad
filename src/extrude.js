@@ -12,7 +12,7 @@ export function extrude(sketch) {
 
   function findPair(node) {
     visited.add(node)
-    let linkedObj = linkedObjs.get(node.l_id)
+    let linkedObj = linkedObjs.get(node.userData.l_id)
     let arr;
     if (linkedObj[0] == 'line') {
       arr = children[objIdx.get(linkedObj[1][2])].geometry.attributes.position.array
@@ -40,7 +40,7 @@ export function extrude(sketch) {
 
 
   function findTouching(node) {
-    for (let t of node.constraints) {
+    for (let t of node.userData.constraints) {
       if (constraints.get(t)[0] != 'coincident') continue
       for (let c of constraints.get(t)[2]) {
         if (c == -1) continue;
@@ -64,11 +64,12 @@ export function extrude(sketch) {
   const extrudeSettings = { depth: 8, bevelEnabled: false };
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
   const phong = new THREE.MeshPhongMaterial({
-    color: color.extrude,
+    color: color.Extrude,
     emissive: color.emissive,
     flatShading: true
   });
   const mesh = new THREE.Mesh(geometry, phong)
+  mesh.name = "Extrude"
 
   for (let i = 0; i < offSetPts.length; i += 2) {
     if (

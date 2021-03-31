@@ -172,7 +172,7 @@ class Sketcher extends THREE.Group {
   }
 
   delete(obj) {
-    let link = this.linkedObjs.get(obj.l_id)
+    let link = this.linkedObjs.get(obj.userData.l_id)
     if (!link) return;
     link = link[1]
 
@@ -183,14 +183,14 @@ class Sketcher extends THREE.Group {
       obj.geometry.dispose()
       obj.material.dispose()
 
-      for (let c_id of obj.constraints) {
+      for (let c_id of obj.userData.constraints) {
         this.deleteConstraints(c_id)
       }
     }
 
     this.children.splice(i, link.length)
 
-    this.linkedObjs.delete(obj.l_id)
+    this.linkedObjs.delete(obj.userData.l_id)
 
     return i
   }
@@ -201,7 +201,8 @@ class Sketcher extends THREE.Group {
       if (idx == -1) continue
       const ob = this.children[this.objIdx.get(idx)]
       if (ob) {
-        ob.constraints.delete(c_id)
+        // ob.constraints.delete(c_id)
+        ob.userData.constraints.splice(ob.userData.constraints.indexOf(c_id), 1)
       }
     }
     this.constraints.delete(c_id)

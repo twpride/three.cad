@@ -10,16 +10,18 @@ export function sketchArc(mouseLoc) {
 
   const p1 = ptObj(mouseLoc)
   p1.matrixAutoUpdate = false;
-  p1.constraints = new Set()
+  p1.userData.constraints = []
   
   const p2 = ptObj()
   p2.matrixAutoUpdate = false;
-  p2.constraints = new Set()
+  p2.userData.constraints = []
 
   const arc = lineObj(n)
   arc.frustumCulled = false;
 
   const p3 = ptObj()
+  p3.matrixAutoUpdate = false;
+  p3.userData.constraints = []
 
   return [p1, p2, p3, arc]
 }

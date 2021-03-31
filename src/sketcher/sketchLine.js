@@ -6,16 +6,16 @@ export function sketchLine(mouseLoc) {
   const p1 = ptObj()
   
   p1.matrixAutoUpdate = false;
-  p1.constraints = new Set()
+  p1.userData.constraints = []
 
   const p2 = ptObj()
   p2.matrixAutoUpdate = false;
-  p2.constraints = new Set()
+  p2.userData.constraints = []
 
   const line = lineObj()
   line.matrixAutoUpdate = false;
   line.frustumCulled = false;
-  line.constraints = new Set()
+  line.userData.constraints = []
 
 
   line.geometry.attributes.position.set(mouseLoc)
@@ -30,8 +30,9 @@ export function sketchLine(mouseLoc) {
       ]
     )
 
-    p1.constraints.add(this.c_id)
-    this.children[this.children.length - 2].constraints.add(this.c_id)
+    p1.userData.constraints.push(this.c_id)
+    console.log(this.children[this.children.length - 2].userData.constraints,'here')
+    this.children[this.children.length - 2].userData.constraints.push(this.c_id)
 
   }
 

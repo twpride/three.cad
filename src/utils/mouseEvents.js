@@ -21,7 +21,6 @@ export function onHover(e) {
 
   let idx = []
   if (hoverPts.length) {
-    // console.log(hoverPts)
     let minDist = Infinity;
     for (let i = 0; i < hoverPts.length; i++) {
       if (!hoverPts[i].distanceToRay) continue;
@@ -40,7 +39,8 @@ export function onHover(e) {
 
       const obj = this.hovered[this.hovered.length - 1]
       if (obj && !this.selected.includes(obj)) {
-        obj.material.color.set(0x555555)
+        // obj.material.color.set(0x555555)
+        obj.material.color.set(color[obj.name])
       }
       this.hovered = []
 
@@ -58,7 +58,7 @@ export function onHover(e) {
 
       const obj = this.hovered[this.hovered.length - 1]
       if (obj && !this.selected.includes(obj)) {
-        obj.material.color.set(0x555555)
+        obj.material.color.set(color[obj.name])
       }
       this.hovered = []
 
@@ -82,7 +82,8 @@ export function onPick(e) {
     }
   } else {
     for (let obj of this.selected) {
-      obj.material.color.set(0x555555)
+      // obj.material.color.set(0x555555)
+      obj.material.color.set(color[obj.name])
     }
     this.dispatchEvent({ type: 'change' })
     this.selected = []

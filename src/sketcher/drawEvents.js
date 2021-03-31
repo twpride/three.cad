@@ -18,7 +18,7 @@ export function drawOnClick1(e) {
 
   this.linkedObjs.set(this.l_id, [this.mode, this.toPush.map(e=>e.id)])
   for (let obj of this.toPush) {
-    obj.l_id = this.l_id
+    obj.userData.l_id = this.l_id
   }
   this.l_id += 1
 

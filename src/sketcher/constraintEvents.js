@@ -12,9 +12,8 @@ export function addDimension(ent1, ent2, distance) {
     ]
   )
 
-  ent1.constraints.add(this.c_id)
-  ent2.constraints.add(this.c_id)
-
+  ent1.userData.constraints.push(this.c_id)
+  ent2.userData.constraints.push(this.c_id)
 }
 
 
@@ -36,8 +35,8 @@ export function setCoincident() {
         [toComb[i - 1].id, toComb[i].id, -1, -1]  ///////
       ]
     )
-    toComb[i].constraints.add(this.c_id)
-    toComb[i - 1].constraints.add(this.c_id)
+    toComb[i].userData.constraints.push(this.c_id)
+    toComb[i - 1].userData.constraints.push(this.c_id)
   }
 
   this.updateOtherBuffers()
