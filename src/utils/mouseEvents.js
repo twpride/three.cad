@@ -38,19 +38,17 @@ export function onHover(e) {
   if (idx.length) {
     if (hoverPts[idx[0]].object != this.hovered[0]) {
 
-      for (let x = 0; x < this.hovered.length; x++) {
-        const obj = this.hovered[x]
-        if (obj && !this.selected.includes(obj)) {
-          obj.material.color.set(0x555555)
-        }
+      const obj = this.hovered[this.hovered.length - 1]
+      if (obj && !this.selected.includes(obj)) {
+        obj.material.color.set(0x555555)
       }
       this.hovered = []
 
       for (let x = 0; x < idx.length; x++) {
         const i = idx[x]
-        hoverPts[i].object.material.color.set(color.hover)
         this.hovered.push(hoverPts[i].object)
       }
+      this.hovered[this.hovered.length - 1].material.color.set(color.hover)
 
       // console.log('render1')
       this.dispatchEvent({ type: 'change' })
@@ -58,12 +56,9 @@ export function onHover(e) {
   } else {
     if (this.hovered.length) {
 
-      for (let x = 0; x < this.hovered.length; x++) {
-        const obj = this.hovered[x]
-        if (obj && !this.selected.includes(obj)) {
-          // console.log(obj)
-          obj.material.color.set(0x555555)
-        }
+      const obj = this.hovered[this.hovered.length - 1]
+      if (obj && !this.selected.includes(obj)) {
+        obj.material.color.set(0x555555)
       }
       this.hovered = []
 
@@ -79,7 +74,7 @@ export function onPick(e) {
 
   if (this.hovered.length) {
 
-    this.selected.push(this.hovered[this.hovered.length-1])
+    this.selected.push(this.hovered[this.hovered.length - 1])
 
     if (this.hovered[0].type == "Points") {
       this.canvas.addEventListener('pointermove', this.onDrag);
