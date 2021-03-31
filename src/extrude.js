@@ -27,8 +27,11 @@ export function extrude(sketch) {
     offSetPts.push(arr[arr.length - 3], arr[arr.length - 2])
 
     for (let i = 0; i < 2; i++) {
-      // let d = linkedObj[1][i]
-      let d = children[objIdx.get(linkedObj[1][i])]
+      let d = children[
+        objIdx.get(
+          linkedObj[1][i]
+        )
+      ]
       if (d == -1 || d == node) continue;
       if (d == children[1]) {
         console.log('pair found')
@@ -64,12 +67,13 @@ export function extrude(sketch) {
   const extrudeSettings = { depth: 8, bevelEnabled: false };
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
   const phong = new THREE.MeshPhongMaterial({
-    color: color.Extrude,
+    color: color.m,
     emissive: color.emissive,
     flatShading: true
   });
   const mesh = new THREE.Mesh(geometry, phong)
-  mesh.name = "Extrude"
+  // mesh.name = "Extrude"
+  mesh.name = 'm' + nid++
 
   for (let i = 0; i < offSetPts.length; i += 2) {
     if (

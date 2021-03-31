@@ -13,10 +13,10 @@ export function onHover(e) {
   );
 
   let hoverPts;
-  if (this.name == 'Scene') {
-    hoverPts = raycaster.intersectObjects(this.children, true)
-  } else {
+  if (this.name[0]=='s') {
     hoverPts = raycaster.intersectObjects(this.children)
+  } else {
+    hoverPts = raycaster.intersectObjects(this.children, true)
   }
 
   let idx = []
@@ -40,7 +40,7 @@ export function onHover(e) {
       const obj = this.hovered[this.hovered.length - 1]
       if (obj && !this.selected.includes(obj)) {
         // obj.material.color.set(0x555555)
-        obj.material.color.set(color[obj.name])
+        obj.material.color.set(color[obj.name[0]])
       }
       this.hovered = []
 
@@ -58,7 +58,7 @@ export function onHover(e) {
 
       const obj = this.hovered[this.hovered.length - 1]
       if (obj && !this.selected.includes(obj)) {
-        obj.material.color.set(color[obj.name])
+        obj.material.color.set(color[obj.name[0]])
       }
       this.hovered = []
 
@@ -83,7 +83,7 @@ export function onPick(e) {
   } else {
     for (let obj of this.selected) {
       // obj.material.color.set(0x555555)
-      obj.material.color.set(color[obj.name])
+      obj.material.color.set(color[obj.name[0]])
     }
     this.dispatchEvent({ type: 'change' })
     this.selected = []
@@ -97,7 +97,7 @@ export function onDrag(e) {
     const obj = this.hovered[x]
     this.ptsBuf.set(
       mouseLoc,
-      this.objIdx.get(obj.id) * 3
+      this.objIdx.get(obj.name) * 3
     )
   }
 

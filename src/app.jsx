@@ -16,7 +16,7 @@ export const Root = ({ store }) => (
 
 function treeId2Obj(id) {
   // return sc.scene.getObjectById(parseInt(id.slice(1)))
-  return sc.getObjectById(parseInt(id.slice(1)))
+  return sc.getObjectByName(id)
 }
 
 const App = () => {
@@ -54,9 +54,10 @@ const App = () => {
     </div>
 
     <div className='feature-tree'>
-      {treeEntries.allIds.map((entId, idx) => (
+      {treeEntries.map((entId, idx) => (
         <div key={idx}
           onClick={() => {
+            console.log('here',treeId2Obj(entId))
             if (activeSketch) {
               treeId2Obj(activeSketch).deactivate()
             }

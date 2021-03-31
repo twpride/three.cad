@@ -15,20 +15,20 @@ const color = {
   hover: 0x00ff00,
   lighting: 0xFFFFFF,
   emissive: 0x072534,
-  Plane: 0xf5bc42,
-  Line: 0x555555,
-  Points: 0x555555,
-  Extrude: 0x156289,
+  d: 0xf5bc42, //datums: planes
+  p: 0x555555, //points
+  l: 0x555555, //lines
+  m: 0x156289, //mesh: extrude
 }
 
 const lineMaterial = new THREE.LineBasicMaterial({
   linewidth: 2,
-  color: color.Line,
+  color: color.l,
 })
 
 
 const pointMaterial = new THREE.PointsMaterial({
-  color: color.Points,
+  color: color.p,
   size: 4,
 })
 
@@ -40,7 +40,7 @@ const ptObj = (n) => {
     ),
     pointMaterial.clone()
   );
-  ret.name = 'Points'
+  ret.name = 'p' + nid++
   return ret
 }
 
@@ -51,7 +51,7 @@ const lineObj = (n = 1) => {
     ),
     lineMaterial.clone()
   );
-  ret.name = 'Line'
+  ret.name = 'l' + nid++
   return ret
 }
 

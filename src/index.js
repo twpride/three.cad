@@ -10,39 +10,34 @@ import logger from 'redux-logger'
 let _entId = 0
 
 function reducer(state = {}, action) {
-  let id;
   switch (action.type) {
     case 'toggle':
       return { ...state, toggle: action.payload }
     case 'rx-sketch':
-      id = 's' + action.obj.id
       return {
-        ...state, treeEntries: {
-          byId: { ...state.treeEntries.byId, [id]: action.obj },
-          allIds: [...state.treeEntries.allIds, id]
-        },
+        ...state, treeEntries: [...state.treeEntries, action.obj.name]
+        ,
       }
     case 'set-active-sketch':
       return {
-        ...state, activeSketch:'s'+action.sketch.id
+        ...state, activeSketch: action.sketch.name
       }
     case 'exit-sketch':
       return {
-        ...state, activeSketch:''
+        ...state, activeSketch: ''
       }
     case 'rx-extrusion':
-      id = 'e' + action.mesh.id
       return {
         ...state,
-        treeEntries: {
-          byId: { ...state.treeEntries.byId, [id]: action.mesh },
-          allIds: [...state.treeEntries.allIds, id]
-        },
+        treeEntries: [...state.treeEntries, action.mesh.name]
+        ,
         mesh2sketch: {
           ...state.mesh2sketch,
-          ['s' + action.sketch.id]: id
+          [action.sketch.name]: action.mesh.name
         }
       }
+    case 'restore-state':
+      return action.state
     default:
       return state
   }
@@ -52,15 +47,10 @@ function reducer(state = {}, action) {
 
 
 const preloadedState = {
-  treeEntries: {
-    byId: {
-      // "s1": obj,
-      // "s1": obj2,
-    },
-    allIds: [
-      // 's1','m1'
-    ]
-  },
+  treeEntries: [
+    // 's1','m1'
+  ]
+  ,
 }
 
 

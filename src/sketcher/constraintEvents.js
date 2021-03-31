@@ -32,7 +32,7 @@ export function setCoincident() {
     this.constraints.set(++this.c_id,
       [
         'coincident', -1,
-        [toComb[i - 1].id, toComb[i].id, -1, -1]  ///////
+        [toComb[i - 1].name, toComb[i].name, -1, -1]  ///////
       ]
     )
     toComb[i].userData.constraints.push(this.c_id)

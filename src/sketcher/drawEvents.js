@@ -16,7 +16,7 @@ export function drawOnClick1(e) {
   this.updatePoint = this.children.length
   this.add(...this.toPush)
 
-  this.linkedObjs.set(this.l_id, [this.mode, this.toPush.map(e=>e.id)])
+  this.linkedObjs.set(this.l_id, [this.mode, this.toPush.map(e=>e.name)])
   for (let obj of this.toPush) {
     obj.userData.l_id = this.l_id
   }

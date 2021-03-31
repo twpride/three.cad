@@ -1,7 +1,8 @@
 
 
 
-import * as THREE from 'three/src/Three';
+// import * as THREE from 'three/src/Three';
+import * as THREE from '../node_modules/three/src/Three';
 // import { OrbitControls } from './utils/OrbitControls'
 import { TrackballControls } from './utils/trackball'
 import { Sketcher } from './sketcher/Sketcher'
@@ -23,13 +24,13 @@ const eq = (a1, a2) => {
   return true
 }
 
+window.nid = 0
 
 export class Scene extends THREE.Scene {
   constructor(store) {
     super()
-    this.name = 'Scene'
-    this.store = store;
 
+    this.store = store;
     this.canvas = document.querySelector('#c');
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
 
@@ -57,7 +58,7 @@ export class Scene extends THREE.Scene {
     const pxy = new THREE.Mesh(
       new THREE.PlaneGeometry(5, 5),
       new THREE.MeshBasicMaterial({
-        color: color.Plane,
+        color: color.d,
         opacity: 0.2,
         side: THREE.DoubleSide,
         transparent: true,
@@ -65,7 +66,8 @@ export class Scene extends THREE.Scene {
         toneMapped: false
       })
     );
-    pxy.name = "Plane"
+
+    pxy.name = 'd' + nid++
     helpersGroup.add(pxy);
 
     const pyz = pxy.clone().rotateY(Math.PI / 2);
@@ -94,7 +96,6 @@ export class Scene extends THREE.Scene {
 
 
     this.render = render.bind(this);
-    this.resizeCanvas = resizeCanvas.bind(this);
     this.addSketch = addSketch.bind(this);
     this.extrude = extrude.bind(this);
     this.onHover = onHover.bind(this);
@@ -116,6 +117,46 @@ export class Scene extends THREE.Scene {
 
     this.render();
   }
+
+  resizeCanvas(renderer) {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    const needResize = canvas.width !== width || canvas.height !== height;
+    if (needResize) {
+      renderer.setSize(width, height, false);
+    }
+    return needResize;
+  }
+
+  saveState() {
+
+    localStorage.setItem(
+      'sv', JSON.stringify([id, this.store.getState(), this.children.slice(4)])
+    )
+
+  }
+
+  loadState() {
+
+    const [curId, state, treeItems] = JSON.parse(
+      localStorage.getItem('sv')
+    )
+
+    window.id = curId
+    this.store.dispatch({ type: 'restore-state', state })
+
+
+    for (let i = 0; i < treeItems.length; i++) {
+      const obj = loader.parse(treeItems[i])
+      console.log(obj)
+      sc.add(obj)
+      // obj.visible = false
+    }
+
+
+  }
+
 }
 
 function render() {
@@ -130,16 +171,6 @@ function render() {
   this.stats.end();
 }
 
-function resizeCanvas(renderer) {
-  const canvas = renderer.domElement;
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
-  const needResize = canvas.width !== width || canvas.height !== height;
-  if (needResize) {
-    renderer.setSize(width, height, false);
-  }
-  return needResize;
-}
 
 
 async function addSketch() {
@@ -154,9 +185,9 @@ async function addSketch() {
           window.addEventListener('keydown', (e) => rej(e), { once: true })
         })
 
-        if (pt.type == 'Points') {
+        if (pt.name[0] == 'p') {
           references.push(pt)
-        } else if (pt.name == 'Plane') {
+        } else if (pt.name[0] == 'd') {
           references = [pt]
           break;
         }
@@ -170,9 +201,9 @@ async function addSketch() {
     }
   }
 
-  const sketcher = new Sketcher(this.camera, this.canvas, this.store)
+  const sketcher = new Sketcher(this.camera, this.canvas, this.store, nid++)
 
-  if (references.length == 1 && references[0].name == 'Plane') {
+  if (references.length == 1 && references[0].name[0] == 'd') {
     this.add(sketcher)
     sketcher.matrix = references[0].matrix
     sketcher.plane.applyMatrix4(sketcher.matrix)
@@ -204,23 +235,16 @@ window.loader = new THREE.ObjectLoader();
 
 
 
-// const mm = []
-// for (let i = 1; i <= 3; i++) {
-//   const obj = loader.parse(JSON.parse(localStorage.getItem(i.toString())))
-//   mm.push(obj)
-//   sc.add(mm[mm.length - 1])
-//   obj.visible = false
-// }
 
 
 
 //  //Create a bsp tree from each of the meshes
- 
+
 // let bspA = CSG.fromMesh( mm[0] )                        
 // let bspB = CSG.fromMesh( mm[2] )
 
 // // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
- 
+
 // let bspResult = bspA.subtract(bspB)
 
 // //Get the resulting mesh from the result bsp, and assign meshA.material to the resulting mesh

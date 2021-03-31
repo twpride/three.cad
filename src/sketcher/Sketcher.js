@@ -7,6 +7,7 @@ import { onHover, onDrag, onPick, onRelease } from '../utils/mouseEvents'
 import { addDimension, setCoincident } from './constraintEvents'
 import { get3PtArc } from './sketchArc'
 import { _vec2, _vec3, raycaster } from '../utils/static'
+import { replacer, reviver } from '../utils/mapJSONReplacer'
 
 
 
@@ -14,9 +15,9 @@ import { _vec2, _vec3, raycaster } from '../utils/static'
 class Sketcher extends THREE.Group {
 
 
-  constructor(camera, canvas, store) {
+  constructor(camera, canvas, store, nid) {
     super()
-    this.name = "Sketch"
+    this.name = "s" + nid
     this.matrixAutoUpdate = false;
     this.camera = camera;
     this.canvas = canvas;
@@ -27,7 +28,7 @@ class Sketcher extends THREE.Group {
     const axesHelper = new THREE.AxesHelper(2);
     this.sub.add(axesHelper);
 
-    
+
 
     this.plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
@@ -239,7 +240,7 @@ class Sketcher extends THREE.Group {
   updatePointsBuffer(startingIdx = 0) {
     for (let i = startingIdx; i < this.children.length; i++) {
       const obj = this.children[i]
-      this.objIdx.set(obj.id, i)
+      this.objIdx.set(obj.name, i)
       if (obj.type == "Points") {
         this.ptsBuf.set(obj.geometry.attributes.position.array, 3 * i)
       }
@@ -325,6 +326,15 @@ class Sketcher extends THREE.Group {
 
 
     this.dispatchEvent({ type: 'change' })
+  }
+
+  toJSON() {
+    this.userData = {
+      constraints: JSON.stringify(this.constraints, replacer),
+      linkedObjs: JSON.stringify(this.linkedObjs, replacer),
+      objIdx: JSON.stringify(this.objIdx, replacer)
+    }
+    return super.toJSON()
   }
 
 }
