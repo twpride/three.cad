@@ -15,28 +15,29 @@ function reducer(state = {}, action) {
       return {
         ...state,
         treeEntries: {
-          byId: { ...state.treeEntries.byId, [action.obj.sketch.name]: action.obj },
-          allIds: [...state.treeEntries.allIds, action.obj.sketch.name]
+          byNid: { ...state.treeEntries.byNid, [action.obj.obj3d.name]: action.obj },
+          allNids: [...state.treeEntries.allNids, action.obj.obj3d.name]
         }
       }
     case 'set-active-sketch':
+      console.log('action',action)
       return {
-        ...state, activeSketch: action.sketch
+        ...state, activeSketchNid: action.sketch
       }
     case 'exit-sketch':
       return {
-        ...state, activeSketch: ''
+        ...state, activeSketchNid: ''
       }
     case 'rx-extrusion':
       return {
         ...state,
         treeEntries: {
-          byId: { ...state.treeEntries.byId, [action.mesh.name]: action.mesh },
-          allIds: [...state.treeEntries.allIds, action.mesh.name]
+          byNid: { ...state.treeEntries.byNid, [action.mesh.name]: action.mesh },
+          allNids: [...state.treeEntries.allNids, action.mesh.name]
         },
         mesh2sketch: {
           ...state.mesh2sketch,
-          [action.sketch.sketch.name]: action.mesh.name
+          [action.sketch.obj3d.name]: action.mesh.name
         }
       }
     case 'restore-state':
@@ -51,8 +52,8 @@ function reducer(state = {}, action) {
 
 const preloadedState = {
   treeEntries: {
-    byId: {},
-    allIds: []
+    byNid: {},
+    allNids: []
   }
 }
 

@@ -18,7 +18,7 @@ export const Root = ({ store }) => (
 const App = () => {
   const dispatch = useDispatch()
   const treeEntries = useSelector(state => state.treeEntries)
-  const activeSketch = useSelector(state => state.activeSketch)
+  const activeSketchNid = useSelector(state => state.activeSketchNid)
 
   // const [state, setState] = useState('x')
   // useEffect(()=>{
@@ -26,7 +26,7 @@ const App = () => {
   // },[state])
 
   useEffect(() => {
-    if (!activeSketch) {
+    if (!activeSketchNid) {
       sc.canvas.addEventListener('pointermove', sc.onHover)
       sc.canvas.addEventListener('pointerdown', sc.onPick)
       return () => { 
@@ -34,29 +34,29 @@ const App = () => {
         sc.canvas.removeEventListener('pointerdown', sc.onPick) 
       }
     }
-  }, [activeSketch])
+  }, [activeSketchNid])
 
   return <>
 
     <div className='buttons-group'>
-      {activeSketch ?
-        <button onClick={() => activeSketch.deactivate()}>
+      {activeSketchNid ?
+        <button onClick={() => treeEntries.byNid[activeSketchNid].deactivate()}>
           Exit sketch
         </button> :
         <button onClick={sc.addSketch}> addsketch </button>
       }
-      <button onClick={() => sc.extrude(activeSketch)}> extrude </button>
+      <button onClick={() => sc.extrude(treeEntries.byNid[activeSketchNid])}> extrude </button>
       {/* <button onClick={() => setState('')}> test </button> */}
     </div>
 
     <div className='feature-tree'>
-      { treeEntries.allIds.map((entId, idx) => (
+      { treeEntries.allNids.map((entId, idx) => (
         <div key={idx}
           onClick={() => {
-            if (activeSketch) {
-              activeSketch.deactivate()
+            if (activeSketchNid) {
+              treeEntries.byNid[activeSketchNid].deactivate()
             }
-            treeEntries.byId[entId].activate()
+            treeEntries.byNid[entId].activate()
           }
           }
         >{entId}</div>

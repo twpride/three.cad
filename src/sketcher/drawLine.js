@@ -26,12 +26,12 @@ export function drawLine(mouseLoc) {
     this.constraints.set(++this.c_id,
       [
         'coincident', -1,
-        [this.sketch.children[this.sketch.children.length - 2].name, p1.name, -1, -1]
+        [this.obj3d.children[this.obj3d.children.length - 2].name, p1.name, -1, -1]
       ]
     )
 
     p1.userData.constraints.push(this.c_id)
-    this.sketch.children[this.sketch.children.length - 2].userData.constraints.push(this.c_id)
+    this.obj3d.children[this.obj3d.children.length - 2].userData.constraints.push(this.c_id)
 
   }
 

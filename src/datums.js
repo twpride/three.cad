@@ -23,7 +23,7 @@ export function add3DPoint(e) {
   );
 
   // const hoverPts = this.raycaster.intersectObjects(this.sketch.children)
-  const hoverPts = this.raycaster.intersectObjects(this.sketcher.children)
+  const hoverPts = this.raycaster.intersectObjects(this.sketch.children)
 
   console.log(hoverPts)
 

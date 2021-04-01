@@ -4,7 +4,7 @@ export function extrude(sketch) {
 
   let constraints = sketch.constraints;
   let linkedObjs = sketch.linkedObjs;
-  let children = sketch.sketch.children;
+  let children = sketch.obj3d.children;
   let objIdx = sketch.objIdx;
   let visited = new Set()
   let v2s = []
@@ -89,8 +89,8 @@ export function extrude(sketch) {
 
 
   mesh.matrixAutoUpdate = false;
-  mesh.matrix.multiply(sketch.sketch.matrix)
-  this.sketch.add(mesh)
+  mesh.matrix.multiply(sketch.obj3d.matrix)
+  this.obj3d.add(mesh)
 
 
   this.render()
