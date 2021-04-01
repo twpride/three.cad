@@ -38,16 +38,22 @@ const App = () => {
 
   return <>
 
-    <div className='buttons-group'>
+    <div className='absolute left-0 flex flex-col'>
+    {/* <div className='buttons-group'> */}
       {activeSketchNid ?
-        <button onClick={() => treeEntries.byNid[activeSketchNid].deactivate()}>
+        <div
+        className='btn-blue'
+         onClick={() => treeEntries.byNid[activeSketchNid].deactivate()}>
           Exit sketch
-        </button> :
-        <button onClick={sc.addSketch}> addsketch </button>
+        </div> :
+        <div 
+        className='btn-blue'
+        onClick={sc.addSketch}> addsketch </div>
       }
       <button onClick={() => sc.extrude(treeEntries.byNid[activeSketchNid])}> extrude </button>
       {/* <button onClick={() => setState('')}> test </button> */}
     </div>
+
 
     <div className='absolute right-0'>
       {treeEntries.allNids.map((entId, idx) => (
