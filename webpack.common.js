@@ -1,4 +1,6 @@
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const tailwindcss = require('tailwindcss')
 
 module.exports = {
   entry: {
@@ -9,15 +11,24 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
+  plugins: [new MiniCssExtractPlugin()],
   module: {
     rules: [
       {
         test: /\.css$/i,
-        exclude: /node_modules/,
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [tailwindcss],
+              },
+            },
+          },
+        ],
       },
-
-
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
@@ -25,7 +36,6 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ["@babel/preset-react"],
-            plugins: ["@babel/plugin-proposal-class-properties"]
           }
         }
       },
@@ -35,5 +45,3 @@ module.exports = {
     extensions: ['.js', '.jsx', '*']
   },
 };
-
-

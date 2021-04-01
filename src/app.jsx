@@ -42,12 +42,12 @@ const App = () => {
     {/* <div className='buttons-group'> */}
       {activeSketchNid ?
         <div
-        className='btn-blue'
+        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer'
          onClick={() => treeEntries.byNid[activeSketchNid].deactivate()}>
           Exit sketch
         </div> :
         <div 
-        className='btn-blue'
+        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer'
         onClick={sc.addSketch}> addsketch </div>
       }
       <button onClick={() => sc.extrude(treeEntries.byNid[activeSketchNid])}> extrude </button>
