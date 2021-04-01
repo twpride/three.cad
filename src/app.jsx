@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import './app.scss'
+import './app.css'
 
 import { Provider, useDispatch, useSelector } from 'react-redux'
 // import { sc } from './index'
@@ -29,9 +29,9 @@ const App = () => {
     if (!activeSketchNid) {
       sc.canvas.addEventListener('pointermove', sc.onHover)
       sc.canvas.addEventListener('pointerdown', sc.onPick)
-      return () => { 
-        sc.canvas.removeEventListener('pointermove', sc.onHover) 
-        sc.canvas.removeEventListener('pointerdown', sc.onPick) 
+      return () => {
+        sc.canvas.removeEventListener('pointermove', sc.onHover)
+        sc.canvas.removeEventListener('pointerdown', sc.onPick)
       }
     }
   }, [activeSketchNid])
@@ -49,9 +49,9 @@ const App = () => {
       {/* <button onClick={() => setState('')}> test </button> */}
     </div>
 
-    <div className='feature-tree'>
-      { treeEntries.allNids.map((entId, idx) => (
-        <div key={idx}
+    <div className='absolute right-0'>
+      {treeEntries.allNids.map((entId, idx) => (
+        <div className='text-red-700 text-4xl' key={idx}
           onClick={() => {
             if (activeSketchNid) {
               treeEntries.byNid[activeSketchNid].deactivate()
@@ -59,7 +59,9 @@ const App = () => {
             treeEntries.byNid[entId].activate()
           }
           }
-        >{entId}</div>
+        >
+          {entId}
+        </div>
       ))}
     </div>
 

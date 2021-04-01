@@ -1,9 +1,8 @@
 
-#react {
-  // position: absolute;
-  // right:0;
-  // bottom:0;
-}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 .buttons-group {
   position: absolute;
@@ -13,9 +12,8 @@
 }
 
 
-.feature-tree {
+/* .feature-tree {
   color: red;
   position: absolute;
   right:0;
-  // bottom:0;
-}
+} */
