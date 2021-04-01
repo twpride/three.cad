@@ -13,10 +13,10 @@ export function onHover(e) {
   );
 
   let hoverPts;
-  if (this.name[0]=='s') {
-    hoverPts = raycaster.intersectObjects(this.children)
+  if (this.sketch.name[0]=='s') {
+    hoverPts = raycaster.intersectObjects(this.sketch.children)
   } else {
-    hoverPts = raycaster.intersectObjects(this.children, true)
+    hoverPts = raycaster.intersectObjects(this.sketch.children, true)
   }
 
   let idx = []
@@ -51,7 +51,7 @@ export function onHover(e) {
       this.hovered[this.hovered.length - 1].material.color.set(color.hover)
 
       // console.log('render1')
-      this.dispatchEvent({ type: 'change' })
+      this.sketch.dispatchEvent({ type: 'change' })
     }
   } else {
     if (this.hovered.length) {
@@ -63,7 +63,7 @@ export function onHover(e) {
       this.hovered = []
 
       // console.log('render2')
-      this.dispatchEvent({ type: 'change' })
+      this.sketch.dispatchEvent({ type: 'change' })
     }
   }
 }
@@ -85,7 +85,7 @@ export function onPick(e) {
       // obj.material.color.set(0x555555)
       obj.material.color.set(color[obj.name[0]])
     }
-    this.dispatchEvent({ type: 'change' })
+    this.sketch.dispatchEvent({ type: 'change' })
     this.selected = []
   }
 }
@@ -102,7 +102,7 @@ export function onDrag(e) {
   }
 
   this.solve()
-  this.dispatchEvent({ type: 'change' })
+  this.sketch.dispatchEvent({ type: 'change' })
 }
 
 

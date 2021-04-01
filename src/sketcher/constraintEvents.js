@@ -48,5 +48,5 @@ export function setCoincident() {
     obj.material.color.set(0x555555)
   }
   this.selected = []
-  this.dispatchEvent({ type: 'change' })
+  this.sketch.dispatchEvent({ type: 'change' })
 }

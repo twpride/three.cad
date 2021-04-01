@@ -13,8 +13,8 @@ export function drawOnClick1(e) {
     this.toPush = sketchArc(mouseLoc)
   }
 
-  this.updatePoint = this.children.length
-  this.add(...this.toPush)
+  this.updatePoint = this.sketch.children.length
+  this.sketch.add(...this.toPush)
 
   this.linkedObjs.set(this.l_id, [this.mode, this.toPush.map(e=>e.name)])
   for (let obj of this.toPush) {
@@ -36,7 +36,7 @@ export function drawPreClick2(e) {
     sketchArc2(mouseLoc, this.toPush)
   }
 
-  this.dispatchEvent({ type: 'change' })
+  this.sketch.dispatchEvent({ type: 'change' })
 }
 
 export function drawOnClick2(e) {
@@ -65,9 +65,9 @@ export function drawClear() {
     this.canvas.removeEventListener('pointermove', this.drawPreClick2);
     this.canvas.removeEventListener('pointerdown', this.drawOnClick2);
 
-    this.delete(this.children[this.updatePoint])
+    this.delete(this.sketch.children[this.updatePoint])
 
-    this.dispatchEvent({ type: 'change' })
+    this.sketch.dispatchEvent({ type: 'change' })
     this.subsequent = false
   }
 }

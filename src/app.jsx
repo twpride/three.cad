@@ -14,10 +14,6 @@ export const Root = ({ store }) => (
 
 
 
-function treeId2Obj(id) {
-  // return sc.scene.getObjectById(parseInt(id.slice(1)))
-  return sc.getObjectByName(id)
-}
 
 const App = () => {
   const dispatch = useDispatch()
@@ -44,24 +40,23 @@ const App = () => {
 
     <div className='buttons-group'>
       {activeSketch ?
-        <button onClick={() => treeId2Obj(activeSketch).deactivate()}>
+        <button onClick={() => activeSketch.deactivate()}>
           Exit sketch
         </button> :
         <button onClick={sc.addSketch}> addsketch </button>
       }
-      <button onClick={() => sc.extrude(treeId2Obj(activeSketch))}> extrude </button>
+      <button onClick={() => sc.extrude(activeSketch)}> extrude </button>
       {/* <button onClick={() => setState('')}> test </button> */}
     </div>
 
     <div className='feature-tree'>
-      {treeEntries.map((entId, idx) => (
+      { treeEntries.allIds.map((entId, idx) => (
         <div key={idx}
           onClick={() => {
-            console.log('here',treeId2Obj(entId))
             if (activeSketch) {
-              treeId2Obj(activeSketch).deactivate()
+              activeSketch.deactivate()
             }
-            treeId2Obj(entId).activate()
+            treeEntries.byId[entId].activate()
           }
           }
         >{entId}</div>

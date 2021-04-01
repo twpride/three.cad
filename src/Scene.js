@@ -26,9 +26,8 @@ const eq = (a1, a2) => {
 
 window.nid = 0
 
-export class Scene extends THREE.Scene {
+export class Scene {
   constructor(store) {
-    super()
 
     this.store = store;
     this.canvas = document.querySelector('#c');
@@ -46,11 +45,12 @@ export class Scene extends THREE.Scene {
     controls.target.set(0, 0, 0);
     controls.update();
 
+    this.sketch = new THREE.Scene()
 
-    this.background = new THREE.Color(0x888888);
+    this.sketch.background = new THREE.Color(0x888888);
     const helpersGroup = new THREE.Group();
     helpersGroup.name = "helpersGroup";
-    this.add(helpersGroup);
+    this.sketch.add(helpersGroup);
     const axesHelper = new THREE.AxesHelper(0.4);
     helpersGroup.add(axesHelper);
 
@@ -85,13 +85,13 @@ export class Scene extends THREE.Scene {
     const intensity = 1;
     const light1 = new THREE.DirectionalLight(color.lighting, intensity);
     light1.position.set(10, 10, 10);
-    this.add(light1);
+    this.sketch.add(light1);
 
     const light2 = new THREE.DirectionalLight(color.lighting, intensity);
     light2.position.set(-10, -10, -5);
-    this.add(light2);
+    this.sketch.add(light2);
     const ambient = new THREE.AmbientLight(color.lighting, intensity);
-    this.add(ambient);
+    this.sketch.add(ambient);
 
 
 
@@ -101,7 +101,7 @@ export class Scene extends THREE.Scene {
     this.onHover = onHover.bind(this);
     this.onPick = onPick.bind(this);
 
-    this.addEventListener('change', this.render);
+    this.sketch.addEventListener('change', this.render);
     controls.addEventListener('change', this.render);
     controls.addEventListener('start', this.render);
     window.addEventListener('resize', this.render);
@@ -132,7 +132,7 @@ export class Scene extends THREE.Scene {
   saveState() {
 
     localStorage.setItem(
-      'sv', JSON.stringify([id, this.store.getState(), this.children.slice(4)])
+      'sv', JSON.stringify([id, this.store.getState(), this.sketch.children.slice(4)])
     )
 
   }
@@ -167,7 +167,7 @@ function render() {
     this.camera.right = canvas.clientWidth / canvas.clientHeight;
     this.camera.updateProjectionMatrix();
   }
-  this.renderer.render(this, this.camera);
+  this.renderer.render(this.sketch, this.camera);
   this.stats.end();
 }
 
@@ -201,16 +201,16 @@ async function addSketch() {
     }
   }
 
-  const sketcher = new Sketcher(this.camera, this.canvas, this.store, nid++)
+  const sketcher = new Sketcher(this.camera, this.canvas, this.store)
 
   if (references.length == 1 && references[0].name[0] == 'd') {
-    this.add(sketcher)
-    sketcher.matrix = references[0].matrix
-    sketcher.plane.applyMatrix4(sketcher.matrix)
-    sketcher.inverse = sketcher.matrix.clone().invert()
+    this.sketch.add(sketcher.sketch)
+    sketcher.sketch.matrix = references[0].matrix
+    sketcher.plane.applyMatrix4(sketcher.sketch.matrix)
+    sketcher.sketch.inverse = sketcher.sketch.matrix.clone().invert()
 
   } else if (references.length == 3) {
-    this.add(sketcher)
+    this.sketch.add(sketcher.sketch)
     sketcher.align(
       ...references.map(
         el => new Vector3(...el.geometry.attributes.position.array).applyMatrix4(el.matrixWorld)
@@ -223,7 +223,7 @@ async function addSketch() {
   }
 
   sketcher.activate()
-  sketcher.addEventListener('change', this.render);
+  sketcher.sketch.addEventListener('change', this.render);
   this.render()
   this.store.dispatch({ type: 'rx-sketch', obj: sketcher })
 

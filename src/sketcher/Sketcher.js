@@ -12,26 +12,30 @@ import { replacer, reviver } from '../utils/mapJSONReplacer'
 
 
 
-class Sketcher extends THREE.Group {
+class Sketcher {
 
 
-  constructor(camera, canvas, store, nid) {
-    super()
-    this.name = "s" + nid
-    this.matrixAutoUpdate = false;
+  constructor(camera, canvas, store, sketch) {
+
+    if (sketch === undefined) {
+      this.sketch = new THREE.Group()
+      this.sketch.name = "s" + nid++
+      this.sketch.matrixAutoUpdate = false;
+    } else {
+      this.sketch = sketch
+    }
+
     this.camera = camera;
     this.canvas = canvas;
     this.store = store;
 
     this.sub = new THREE.Group();
-    this.add(this.sub);
+    this.sketch.add(this.sub);
     const axesHelper = new THREE.AxesHelper(2);
     this.sub.add(axesHelper);
 
 
-
     this.plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-
 
 
     // [0]:x, [1]:y, [2]:z
@@ -99,16 +103,16 @@ class Sketcher extends THREE.Group {
     te[1] = _x.y; te[5] = _y.y; te[9] = _z.y;
     te[2] = _x.z; te[6] = _y.z; te[10] = _z.z;
 
-    this.quaternion.setFromRotationMatrix(_m1);
-    const parent = this.parent;
+    this.sketch.quaternion.setFromRotationMatrix(_m1);
+    const parent = this.sketch.parent;
     _m1.extractRotation(parent.matrixWorld);
     _q1.setFromRotationMatrix(_m1);
-    this.quaternion.premultiply(_q1.invert());
-    this.updateMatrix();
-    this.matrix.setPosition(origin)
+    this.sketch.quaternion.premultiply(_q1.invert());
+    this.sketch.updateMatrix();
+    this.sketch.matrix.setPosition(origin)
 
-    this.plane.applyMatrix4(this.matrix)
-    this.inverse = this.matrix.clone().invert()
+    this.plane.applyMatrix4(this.sketch.matrix)
+    this.sketch.inverse = this.sketch.matrix.clone().invert()
   }
 
 
@@ -169,7 +173,7 @@ class Sketcher extends THREE.Group {
     this.updateOtherBuffers()
 
     this.selected = []
-    this.dispatchEvent({ type: 'change' })
+    this.sketch.dispatchEvent({ type: 'change' })
   }
 
   delete(obj) {
@@ -180,7 +184,7 @@ class Sketcher extends THREE.Group {
     let i = this.objIdx.get(link[0]) || this.updatePoint // hacky, see drawEvent.js for updatePoint def
 
     for (let j = 0; j < link.length; j++) {
-      const obj = this.children[i + j]
+      const obj = this.sketch.children[i + j]
       obj.geometry.dispose()
       obj.material.dispose()
 
@@ -189,7 +193,7 @@ class Sketcher extends THREE.Group {
       }
     }
 
-    this.children.splice(i, link.length)
+    this.sketch.children.splice(i, link.length)
 
     this.linkedObjs.delete(obj.userData.l_id)
 
@@ -200,7 +204,7 @@ class Sketcher extends THREE.Group {
   deleteConstraints(c_id) {
     for (let idx of this.constraints.get(c_id)[2]) { //////////
       if (idx == -1) continue
-      const ob = this.children[this.objIdx.get(idx)]
+      const ob = this.sketch.children[this.objIdx.get(idx)]
       if (ob) {
         // ob.constraints.delete(c_id)
         ob.userData.constraints.splice(ob.userData.constraints.indexOf(c_id), 1)
@@ -238,8 +242,8 @@ class Sketcher extends THREE.Group {
 
 
   updatePointsBuffer(startingIdx = 0) {
-    for (let i = startingIdx; i < this.children.length; i++) {
-      const obj = this.children[i]
+    for (let i = startingIdx; i < this.sketch.children.length; i++) {
+      const obj = this.sketch.children[i]
       this.objIdx.set(obj.name, i)
       if (obj.type == "Points") {
         this.ptsBuf.set(obj.geometry.attributes.position.array, 3 * i)
@@ -256,7 +260,7 @@ class Sketcher extends THREE.Group {
       this.camera
     );
 
-    raycaster.ray.intersectPlane(this.plane, _vec3).applyMatrix4(this.inverse)
+    raycaster.ray.intersectPlane(this.plane, _vec3).applyMatrix4(this.sketch.inverse)
 
     return _vec3.toArray()
   }
@@ -276,7 +280,7 @@ class Sketcher extends THREE.Group {
     Module.HEAPF32.set(this.linksBuf, links_buffer >> 2)
 
     Module["_solver"](
-      this.children.length, pts_buffer,
+      this.sketch.children.length, pts_buffer,
       this.constraints.size, constraints_buffer,
       this.linkedObjs.size, links_buffer)
 
@@ -286,9 +290,9 @@ class Sketcher extends THREE.Group {
     - we also sneak in updating lines children as well, by checking when ptsBuf[ptr] is NaN
     */
 
-    for (let i = 1, ptr = (pts_buffer >> 2) + 3; i < this.children.length; i += 1, ptr += 3) {
+    for (let i = 1, ptr = (pts_buffer >> 2) + 3; i < this.sketch.children.length; i += 1, ptr += 3) {
 
-      const pos = this.children[i].geometry.attributes.position;
+      const pos = this.sketch.children[i].geometry.attributes.position;
       if (isNaN(Module.HEAPF32[ptr])) {
         pos.array[0] = Module.HEAPF32[ptr - 6]
         pos.array[1] = Module.HEAPF32[ptr - 5]
@@ -312,7 +316,7 @@ class Sketcher extends THREE.Group {
     */
     for (let [k, obj] of this.linkedObjs) {
       if (obj[0] != 'arc') continue;
-      const [p1, p2, c, arc] = obj[1].map(e => this.children[this.objIdx.get(e)])
+      const [p1, p2, c, arc] = obj[1].map(e => this.sketch.children[this.objIdx.get(e)])
 
       const points = get3PtArc(
         p1.geometry.attributes.position.array,
@@ -325,14 +329,16 @@ class Sketcher extends THREE.Group {
     }
 
 
-    this.dispatchEvent({ type: 'change' })
+    this.sketch.dispatchEvent({ type: 'change' })
   }
 
   toJSON() {
     this.userData = {
       constraints: JSON.stringify(this.constraints, replacer),
       linkedObjs: JSON.stringify(this.linkedObjs, replacer),
-      objIdx: JSON.stringify(this.objIdx, replacer)
+      objIdx: JSON.stringify(this.objIdx, replacer),
+      c_id: this.c_id,
+      l_id: this.l_id
     }
     return super.toJSON()
   }

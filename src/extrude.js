@@ -4,11 +4,13 @@ export function extrude(sketch) {
 
   let constraints = sketch.constraints;
   let linkedObjs = sketch.linkedObjs;
-  let children = sketch.children;
+  let children = sketch.sketch.children;
   let objIdx = sketch.objIdx;
   let visited = new Set()
   let v2s = []
   let offSetPts = []
+  
+
 
   function findPair(node) {
     visited.add(node)
@@ -87,8 +89,8 @@ export function extrude(sketch) {
 
 
   mesh.matrixAutoUpdate = false;
-  mesh.matrix.multiply(sketch.matrix)
-  this.add(mesh)
+  mesh.matrix.multiply(sketch.sketch.matrix)
+  this.sketch.add(mesh)
 
 
   this.render()
