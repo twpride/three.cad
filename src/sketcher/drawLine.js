@@ -1,7 +1,7 @@
 import * as THREE from '../../node_modules/three/src/Three';
 import {ptObj, lineObj} from '../utils/static'
 
-export function sketchLine(mouseLoc) {
+export function drawLine(mouseLoc) {
 
   const p1 = ptObj()
   
@@ -40,7 +40,7 @@ export function sketchLine(mouseLoc) {
   return [p1, p2, line];
 }
 
-export function sketchLine2(mouseLoc, toPush) {
+export function drawLine2(mouseLoc, toPush) {
 
   const [p1, p2, line] = toPush
 

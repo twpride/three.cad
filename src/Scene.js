@@ -5,7 +5,7 @@
 import * as THREE from '../node_modules/three/src/Three';
 // import { OrbitControls } from './utils/OrbitControls'
 import { TrackballControls } from './utils/trackball'
-import { Sketcher } from './sketcher/Sketcher'
+import { TwoDEnv } from './sketcher/TwoDEnv'
 import Stats from './utils/stats.module.js';
 
 import { add3DPoint } from './datums'
@@ -201,7 +201,7 @@ async function addSketch() {
     }
   }
 
-  const sketcher = new Sketcher(this.camera, this.canvas, this.store)
+  const sketcher = new TwoDEnv(this.camera, this.canvas, this.store)
 
   if (references.length == 1 && references[0].name[0] == 'd') {
     this.sketch.add(sketcher.sketch)

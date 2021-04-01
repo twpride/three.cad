@@ -1,6 +1,6 @@
 
-import { sketchArc, sketchArc2 } from './sketchArc'
-import { sketchLine, sketchLine2 } from './sketchLine'
+import { drawArc, drawArc2 } from './drawArc'
+import { drawLine, drawLine2 } from './drawLine'
 
 export function drawOnClick1(e) {
   if (e.buttons !== 1) return
@@ -8,9 +8,9 @@ export function drawOnClick1(e) {
   const mouseLoc = this.getLocation(e);
 
   if (this.mode == "line") {
-    this.toPush = sketchLine.call(this, mouseLoc)
+    this.toPush = drawLine.call(this, mouseLoc)
   } else if (this.mode == "arc") {
-    this.toPush = sketchArc(mouseLoc)
+    this.toPush = drawArc(mouseLoc)
   }
 
   this.updatePoint = this.sketch.children.length
@@ -31,9 +31,9 @@ export function drawPreClick2(e) {
   const mouseLoc = this.getLocation(e);
 
   if (this.mode == "line") {
-    sketchLine2(mouseLoc, this.toPush)
+    drawLine2(mouseLoc, this.toPush)
   } else if (this.mode == 'arc') {
-    sketchArc2(mouseLoc, this.toPush)
+    drawArc2(mouseLoc, this.toPush)
   }
 
   this.sketch.dispatchEvent({ type: 'change' })

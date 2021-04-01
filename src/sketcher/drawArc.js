@@ -6,7 +6,7 @@ import {ptObj, lineObj} from '../utils/static'
 
 const n = 30
 
-export function sketchArc(mouseLoc) {
+export function drawArc(mouseLoc) {
 
   const p1 = ptObj(mouseLoc)
   p1.matrixAutoUpdate = false;
@@ -26,7 +26,7 @@ export function sketchArc(mouseLoc) {
   return [p1, p2, p3, arc]
 }
 
-export function sketchArc2(mouseLoc, toPush) {
+export function drawArc2(mouseLoc, toPush) {
   const [p1, p2, p3, arc] = toPush
 
   p2.geometry.attributes.position.set(mouseLoc);

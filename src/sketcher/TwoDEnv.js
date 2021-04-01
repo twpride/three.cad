@@ -5,14 +5,14 @@ import * as THREE from '../../node_modules/three/src/Three';
 import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear } from './drawEvents'
 import { onHover, onDrag, onPick, onRelease } from '../utils/mouseEvents'
 import { addDimension, setCoincident } from './constraintEvents'
-import { get3PtArc } from './sketchArc'
+import { get3PtArc } from './drawArc'
 import { _vec2, _vec3, raycaster } from '../utils/static'
 import { replacer, reviver } from '../utils/mapJSONReplacer'
 
 
 
 
-class Sketcher {
+class TwoDEnv {
 
 
   constructor(camera, canvas, store, sketch) {
@@ -352,7 +352,7 @@ const _y = new THREE.Vector3();
 const _z = new THREE.Vector3();
 
 
-Object.assign(Sketcher.prototype,
+Object.assign(TwoDEnv.prototype,
   {
     linkNum: {
       'line': 0,
@@ -370,4 +370,4 @@ Object.assign(Sketcher.prototype,
 
 
 
-export { Sketcher }
+export { TwoDEnv }
