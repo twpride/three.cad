@@ -39,7 +39,6 @@ export function onHover(e) {
 
       const obj = this.hovered[this.hovered.length - 1]
       if (obj && !this.selected.includes(obj)) {
-        // obj.material.color.set(0x555555)
         obj.material.color.set(color[obj.name[0]])
       }
       this.hovered = []

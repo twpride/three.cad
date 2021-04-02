@@ -65,6 +65,7 @@ window.store = createStore(reducer, preloadedState, applyMiddleware(logger))
 
 
 
+
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
     React.createElement(Root, { store: store }, null)
