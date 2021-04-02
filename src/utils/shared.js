@@ -1,4 +1,4 @@
-import * as THREE from '../../node_modules/three/src/Three';
+import * as THREE from 'three/src/Three';
 
 
 
@@ -56,4 +56,36 @@ const lineObj = (n = 1) => {
 }
 
 
-export { lineMaterial, pointMaterial, _vec2, _vec3, raycaster, color, ptObj, lineObj }
+async function awaitPts(n) {
+  let references = this.selected.slice()
+
+  if (references.length == 0) {
+    while (references.length < n) {
+      let pt;
+      try {
+        pt = await new Promise((res, rej) => {
+          this.canvas.addEventListener('pointerdown', () => res(this.hovered[0]), { once: true })
+          window.addEventListener('keydown', (e) => rej(e), { once: true })
+        })
+
+        if (pt.name[0] == 'p') {
+          references.push(pt)
+        } else if (pt.name[0] == 'd') {
+          references = [pt]
+          break;
+        }
+
+      } catch (e) {
+        if (e.key == 'Escape') {
+          console.log('cancelled')
+          return;
+        }
+      }
+    }
+  }
+  return references
+}
+
+
+
+export { lineMaterial, pointMaterial, _vec2, _vec3, raycaster, color, ptObj, lineObj, awaitPts }

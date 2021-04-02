@@ -11,11 +11,13 @@ import Stats from './utils/stats.module.js';
 import { add3DPoint } from './datums'
 import { extrude } from './extrude'
 import { onHover, onPick } from './utils/mouseEvents';
-import { _vec2, _vec3, color } from './utils/static'
+import { _vec2, _vec3, color, awaitPts } from './utils/shared'
 import { Vector3 } from 'three/src/Three';
 import {AxesHelper} from './utils/axes'
 
 import CSG from "./utils/three-csg.js"
+
+window.BoolOp = CSG
 
 const eq = (a1, a2) => {
   if (a1.length != a2.length) return false
@@ -102,6 +104,7 @@ export class Scene {
     this.extrude = extrude.bind(this);
     this.onHover = onHover.bind(this);
     this.onPick = onPick.bind(this);
+    this.awaitPts = awaitPts.bind(this);
 
     this.obj3d.addEventListener('change', this.render);
     controls.addEventListener('change', this.render);
@@ -183,33 +186,11 @@ function render() {
 
 
 
+
+
 async function addSketch() {
-  let references = this.selected.slice()
 
-  if (references.length == 0) {
-    while (references.length < 3) {
-      let pt;
-      try {
-        pt = await new Promise((res, rej) => {
-          this.canvas.addEventListener('pointerdown', () => res(this.hovered[0]), { once: true })
-          window.addEventListener('keydown', (e) => rej(e), { once: true })
-        })
-
-        if (pt.name[0] == 'p') {
-          references.push(pt)
-        } else if (pt.name[0] == 'd') {
-          references = [pt]
-          break;
-        }
-
-      } catch (e) {
-        if (e.key == 'Escape') {
-          console.log('cancelled')
-          return;
-        }
-      }
-    }
-  }
+  let references = await this.awaitPts(3)
 
   const sketch = new Sketch(this.camera, this.canvas, this.store)
 
@@ -240,7 +221,7 @@ async function addSketch() {
 }
 
 window.sc = new Scene(store)
-sc.loadState()
+// sc.loadState()
 
 
 
@@ -248,17 +229,4 @@ sc.loadState()
 
 
 
-//  //Create a bsp tree from each of the meshes
 
-// let bspA = CSG.fromMesh( mm[0] )                        
-// let bspB = CSG.fromMesh( mm[2] )
-
-// // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
-
-// let bspResult = bspA.subtract(bspB)
-
-// //Get the resulting mesh from the result bsp, and assign meshA.material to the resulting mesh
-
-// let meshResult = CSG.toMesh( bspResult, mm[0].matrix,  mm[0].material )
-
-// sc.add(meshResult)

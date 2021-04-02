@@ -31,7 +31,7 @@ export function setCoincident() {
   for (let i = 1; i < toComb.length; i++) {
     this.constraints.set(++this.c_id,
       [
-        'coincident', -1,
+        'points_coincident', -1,
         [toComb[i - 1].name, toComb[i].name, -1, -1]  ///////
       ]
     )

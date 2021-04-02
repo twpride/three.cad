@@ -17,7 +17,10 @@ try {
     let name = file.split('.')[0]
     name = name[0].toUpperCase() + name.slice(1)
     names.push(name)
-    const jsx = await svgr(res, { icon: true, plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx', '@svgr/plugin-prettier'] }, { componentName: name })
+    const jsx = await svgr(res, { icon: true, 
+      plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx', '@svgr/plugin-prettier'],
+      replaceAttrValues: { '#000': 'currentColor' }
+     }, { componentName: name })
     const split = jsx.split('\n')
     output.push(split.slice(1,split.length-2).join('\n'))
   }

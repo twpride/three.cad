@@ -110,8 +110,12 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
 
   for (int i = 0; i < nConst; i++)
   {
-    if ((int)*c_ptr == 0)
+
+
+
+    switch ((int)*c_ptr + 100000)
     {
+    case SLVS_C_POINTS_COINCIDENT:
       c_ptr += 2;
       sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
           con_id++, g,
@@ -121,11 +125,33 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
           (int)*c_ptr, (int)*(c_ptr + 1), 0, 0);
 
       c_ptr += 4;
-    }
-    else
-    {
+      break;
+    case 1:
+
+      break;
+    default:
       c_ptr += 6;
+      break;
     }
+
+
+
+    // if ((int)*c_ptr + 100000 == SLVS_C_POINTS_COINCIDENT)
+    // {
+    //   c_ptr += 2;
+    //   sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
+    //       con_id++, g,
+    //       SLVS_C_POINTS_COINCIDENT,
+    //       200,
+    //       0.0,
+    //       (int)*c_ptr, (int)*(c_ptr + 1), 0, 0);
+
+    //   c_ptr += 4;
+    // }
+    // else
+    // {
+    //   c_ptr += 6;
+    // }
   }
 
   /* And solve. */

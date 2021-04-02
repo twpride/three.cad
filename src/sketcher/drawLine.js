@@ -1,5 +1,5 @@
 import * as THREE from '../../node_modules/three/src/Three';
-import {ptObj, lineObj} from '../utils/static'
+import {ptObj, lineObj} from '../utils/shared'
 
 export function drawLine(mouseLoc) {
 
@@ -23,9 +23,9 @@ export function drawLine(mouseLoc) {
 
   if (this.subsequent) {
 
-    this.constraints.set(++this.c_id,
+    this.constraints.set(++this.c_id,  //??? why incremennt before not after
       [
-        'coincident', -1,
+        'points_coincident', -1,
         [this.obj3d.children[this.obj3d.children.length - 2].name, p1.name, -1, -1]
       ]
     )

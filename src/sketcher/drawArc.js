@@ -1,8 +1,8 @@
 
 import * as THREE from '../../node_modules/three/src/Three';
-import {lineMaterial, pointMaterial} from '../utils/static'
+import {lineMaterial, pointMaterial} from '../utils/shared'
 
-import {ptObj, lineObj} from '../utils/static'
+import {ptObj, lineObj} from '../utils/shared'
 
 const n = 30
 

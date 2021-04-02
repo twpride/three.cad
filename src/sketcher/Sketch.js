@@ -6,10 +6,10 @@ import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear } from './drawEven
 import { onHover, onDrag, onPick, onRelease } from '../utils/mouseEvents'
 import { addDimension, setCoincident } from './constraintEvents'
 import { get3PtArc } from './drawArc'
-import { _vec2, _vec3, raycaster } from '../utils/static'
+import { _vec2, _vec3, raycaster, awaitPts } from '../utils/shared'
 import { replacer, reviver } from '../utils/mapJSONReplacer'
-import {AxesHelper} from '../utils/axes'
-
+import { AxesHelper } from '../utils/axes'
+import { drawDimensionPre } from './drawDimension'
 
 
 
@@ -108,6 +108,9 @@ class Sketch {
     this.drawPreClick2 = drawPreClick2.bind(this);
     this.drawOnClick2 = drawOnClick2.bind(this);
 
+    this.awaitPts = awaitPts.bind(this);
+    this.drawDimensionPre = drawDimensionPre.bind(this);
+
     this.onHover = onHover.bind(this);
     this.onPick = onPick.bind(this);
     this.onDrag = onDrag.bind(this);
@@ -174,6 +177,10 @@ class Sketch {
         break;
       case 'a':
         this.canvas.addEventListener('pointerdown', this.drawOnClick1)
+        this.mode = "arc"
+        break;
+      case 'd':
+        this.drawDimensionPre()
         this.mode = "arc"
         break;
       case 'x':
@@ -333,7 +340,7 @@ class Sketch {
     */
 
     for (let i = 1, ptr = (pts_buffer >> 2) + 3; i < this.obj3d.children.length; i += 1, ptr += 3) {
-    // for (let i = 0, ptr = (pts_buffer >> 2) + 3; i < this.obj3d.children.length; i += 1, ptr += 3) {
+      // for (let i = 0, ptr = (pts_buffer >> 2) + 3; i < this.obj3d.children.length; i += 1, ptr += 3) {
 
       const pos = this.obj3d.children[i].geometry.attributes.position;
       if (isNaN(Module.HEAPF32[ptr])) {
@@ -393,8 +400,40 @@ Object.assign(Sketch.prototype,
       'arc': 1
     },
     constraintNum: {
-      'coincident': 0,
-      'distance': 1
+      points_coincident: 0,
+      pt_pt_distance: 1,
+      pt_plane_distance: 2,
+      pt_line_distance: 3,
+      pt_face_distance: 4,
+      pt_in_plane: 5,
+      pt_on_line: 6,
+      pt_on_face: 7,
+      equal_length_lines: 8,
+      length_ratio: 9,
+      eq_len_pt_line_d: 10,
+      eq_pt_ln_distances: 11,
+      equal_angle: 12,
+      equal_line_arc_len: 13,
+      symmetric: 14,
+      symmetric_horiz: 15,
+      symmetric_vert: 16,
+      symmetric_line: 17,
+      at_midpoint: 18,
+      horizontal: 19,
+      vertical: 20,
+      diameter: 21,
+      pt_on_circle: 22,
+      same_orientation: 23,
+      angle: 24,
+      parallel: 25,
+      perpendicular: 26,
+      arc_line_tangent: 27,
+      cubic_line_tangent: 28,
+      equal_radius: 29,
+      proj_pt_distance: 30,
+      where_dragged: 31,
+      curve_curve_tangent: 32,
+      length_difference: 33,
     },
     max_pts: 1000,
     max_links: 1000,
@@ -405,3 +444,5 @@ Object.assign(Sketch.prototype,
 
 
 export { Sketch }
+
+

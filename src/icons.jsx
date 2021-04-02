@@ -23,6 +23,67 @@ function Arc(props) {
   );
 }
 
+function Dimension(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      className="prefix__bi prefix__bi-intersect"
+      viewBox="0 0 16 16"
+      {...props}
+    >
+      <defs>
+        <marker
+          id="prefix__a"
+          refX={0}
+          refY={0}
+          orient="auto"
+          overflow="visible"
+        >
+          <path
+            d="M-1.154 0l1.73-1v2l-1.73-1z"
+            fillRule="evenodd"
+            stroke="currentColor"
+            strokeWidth=".2pt"
+            fill="currentColor"
+          />
+        </marker>
+        <marker
+          id="prefix__b"
+          refX={0}
+          refY={0}
+          orient="auto"
+          overflow="visible"
+        >
+          <path
+            d="M1.154 0l-1.73 1v-2l1.73 1z"
+            fillRule="evenodd"
+            stroke="currentColor"
+            strokeWidth=".2pt"
+            fill="currentColor"
+          />
+        </marker>
+      </defs>
+      <path
+        d="M4.009 10.009l6-6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        markerStart="url(#prefix__a)"
+        markerEnd="url(#prefix__b)"
+      />
+      <path
+        d="M15.485 4.516l-4-4M4.516 15.485l-4-4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={0.893}
+      />
+    </svg>
+  );
+}
+
 function Intersect(props) {
   return (
     <svg
@@ -171,4 +232,4 @@ function Union(props) {
     </svg>
   );
 }
-export { Arc, Intersect, Line, Subtract, Union };
+export { Arc, Dimension, Intersect, Line, Subtract, Union };

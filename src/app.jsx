@@ -7,8 +7,8 @@ import { Provider, useDispatch, useSelector } from 'react-redux'
 import { FaCube, FaEdit } from 'react-icons/fa'
 import { MdEdit, MdDone, MdVisibilityOff, MdVisibility } from 'react-icons/md'
 import { RiShape2Fill } from 'react-icons/ri'
-import { Union, Subtract, Intersect, Line, Arc } from './icons'
-import { color } from './utils/static'
+import * as Icon from "./icons";
+import { color } from './utils/shared'
 
 export const Root = ({ store }) => (
   <Provider store={store}>
@@ -48,11 +48,12 @@ const App = () => {
       [FaEdit, sc.addSketch, 'Sketch']
     ,
     [FaCube, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Extrude'],
-    [Union, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Union'],
-    [Subtract, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Subtract'],
-    [Intersect, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Intersect'],
-    [Line, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Line'],
-    [Arc, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Arc'],
+    [Icon.Union, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Union'],
+    [Icon.Subtract, subtract, 'Subtract'],
+    [Icon.Intersect, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Intersect'],
+    [Icon.Dimension, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Dimension'],
+    [Icon.Line, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Line'],
+    [Icon.Arc, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Arc'],
   ]
 
   return <div className='absolute left-0 w-1/6 flex flex-col'>
@@ -83,16 +84,19 @@ const TreeEntry = ({ entId }) => {
 
   const activeSketchNid = useSelector(state => state.activeSketchNid)
 
-  let entry;
-  if (entId[0]=="s") {
-    entry = treeEntries[entId].obj3d
+  let obj3d, entry;
+  
+  entry = treeEntries[entId]
+
+  if (entId[0] == "s") {
+    obj3d = treeEntries[entId].obj3d
   } else {
-    entry = treeEntries[entId]
+    obj3d = treeEntries[entId]
   }
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
-  const vis = entry.visible 
+  const vis = obj3d.visible
 
   return <div className='bg-gray-50 flex justify-between'>
     <div className='btn'
@@ -108,7 +112,7 @@ const TreeEntry = ({ entId }) => {
       vis ?
         <div className='btn'
           onClick={() => {
-            entry.visible = false;
+            obj3d.visible = false;
             sc.render()
             forceUpdate()
           }}
@@ -118,7 +122,7 @@ const TreeEntry = ({ entId }) => {
         :
         <div className='btn'
           onClick={() => {
-            entry.visible = true;
+            obj3d.visible = true;
             sc.render()
             forceUpdate()
           }}
@@ -156,6 +160,28 @@ const TreeEntry = ({ entId }) => {
 
 }
 
-const DesignLeaf = () => {
+const subtract = () => {
+  //  //Create a bsp tree from each of the meshes
+  console.log(sc.selected.length !=2 || !sc.selected.every(e=>e.name && e.name[0]=='m'),"wtf")
+  if (sc.selected.length !=2 || !sc.selected.every(e=>e.name && e.name[0]=='m')) return
+  console.log('here')
+  const [m1, m2] = sc.selected
+
+  let bspA = BoolOp.fromMesh( m1 )                        
+  let bspB = BoolOp.fromMesh( m2 )
+  m1.visible = false
+  m2.visible = false
+
+  // // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
+
+  let bspResult = bspA.subtract(bspB)
+
+  // //Get the resulting mesh from the result bsp, and assign meshA.material to the resulting mesh
+
+  let meshResult = BoolOp.toMesh( bspResult, m1.matrix,  m1.material )
+
+  sc.obj3d.add(meshResult)
+  sc.render()
 
 }
+

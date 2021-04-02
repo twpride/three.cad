@@ -1,5 +1,5 @@
 import * as THREE from 'three/src/Three';
-import { raycaster, color } from './static';
+import { raycaster, color } from './shared';
 
 export function onHover(e) {
   if (this.mode || e.buttons) return
