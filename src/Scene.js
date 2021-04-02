@@ -239,7 +239,8 @@ async function addSketch() {
 
 }
 
-window.sc = new Scene(store);
+window.sc = new Scene(store)
+sc.loadState()
 
 
 
