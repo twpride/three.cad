@@ -13,7 +13,7 @@ export function onHover(e) {
   );
 
   let hoverPts;
-  if (this.obj3d.name[0]=='s') {
+  if (this.obj3d.name[0] == 's') {
     hoverPts = raycaster.intersectObjects(this.obj3d.children)
   } else {
     hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
@@ -31,6 +31,7 @@ export function onHover(e) {
         idx.push(i)
       }
     }
+    // console.log(hoverPts, idx)
     if (!idx.length) idx.push(0)
   }
 
@@ -92,13 +93,19 @@ export function onPick(e) {
 export function onDrag(e) {
   const mouseLoc = this.getLocation(e);
 
-  for (let x = 0; x < this.hovered.length; x++) {
-    const obj = this.hovered[x]
-    this.ptsBuf.set(
-      mouseLoc,
-      this.objIdx.get(obj.name) * 3
-    )
-  }
+  // for (let x = 0; x < this.hovered.length; x++) {
+  //   const obj = this.hovered[x]
+  //   this.ptsBuf.set(
+  //     mouseLoc,
+  //     this.objIdx.get(obj.name) * 3
+  //   )
+  // }
+
+  const obj = this.hovered[this.hovered.length-1]
+  this.ptsBuf.set(
+    mouseLoc,
+    this.objIdx.get(obj.name) * 3
+  )
 
   this.solve()
   this.obj3d.dispatchEvent({ type: 'change' })

@@ -181,7 +181,6 @@ class Sketch {
         break;
       case 'd':
         this.drawDimensionPre()
-        this.mode = "arc"
         break;
       case 'x':
         this.deleteSelected()

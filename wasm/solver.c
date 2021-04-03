@@ -77,6 +77,7 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
   {
     if (isnan((float)*p_ptr))
     {
+      // printf("%i\n",i);
       p_ptr += 3;
       continue;
     }
@@ -92,13 +93,14 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
     switch ((int)*l_ptr++)
     {
     case 0:
-      sys.entity[sys.entities++] = Slvs_MakeLineSegment(lh++, g,
+      // printf("matching %i\n",(int)*(l_ptr + 2));
+      sys.entity[sys.entities++] = Slvs_MakeLineSegment((int)*(l_ptr + 2), g,
                                                         200, (int)*l_ptr, (int)*(l_ptr + 1));
       break;
     case 1:
       /* And arc, centered at point 303, starting at point 304, ending at
      * point 305. */
-      sys.entity[sys.entities++] = Slvs_MakeArcOfCircle(lh++, g, 200, 102,
+      sys.entity[sys.entities++] = Slvs_MakeArcOfCircle((int)*(l_ptr + 3), g, 200, 102,
                                                         (int)*(l_ptr + 2), (int)*(l_ptr), (int)*(l_ptr + 1));
       break;
     default:
@@ -108,50 +110,15 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
     l_ptr += 4;
   }
 
-  for (int i = 0; i < nConst; i++)
+  for (int i = 0; i < nConst; i++, c_ptr += 6)
   {
-
-
-
-    switch ((int)*c_ptr + 100000)
-    {
-    case SLVS_C_POINTS_COINCIDENT:
-      c_ptr += 2;
-      sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
-          con_id++, g,
-          SLVS_C_POINTS_COINCIDENT,
-          200,
-          0.0,
-          (int)*c_ptr, (int)*(c_ptr + 1), 0, 0);
-
-      c_ptr += 4;
-      break;
-    case 1:
-
-      break;
-    default:
-      c_ptr += 6;
-      break;
-    }
-
-
-
-    // if ((int)*c_ptr + 100000 == SLVS_C_POINTS_COINCIDENT)
-    // {
-    //   c_ptr += 2;
-    //   sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
-    //       con_id++, g,
-    //       SLVS_C_POINTS_COINCIDENT,
-    //       200,
-    //       0.0,
-    //       (int)*c_ptr, (int)*(c_ptr + 1), 0, 0);
-
-    //   c_ptr += 4;
-    // }
-    // else
-    // {
-    //   c_ptr += 6;
-    // }
+    // printf("%i here %i\n",(int)*c_ptr, nConst);
+    sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
+        con_id++, g,
+        (int)*c_ptr + 100000,
+        200,
+        *(c_ptr + 1),
+        (int)*(c_ptr + 2), (int)*(c_ptr + 3), (int)*(c_ptr + 4), (int)*(c_ptr + 5));
   }
 
   /* And solve. */

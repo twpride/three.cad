@@ -1,6 +1,28 @@
 import * as THREE from '../../node_modules/three/src/Three';
 import { ptObj, lineObj, awaitPts } from '../utils/shared'
 
+const color = {
+  hover: 0x00ff00,
+  lighting: 0xFFFFFF,
+  emissive: 0x072534,
+  d: 0xf5bc42, //datums: planes
+  p: 0x555555, //points
+  l: 0x555555, //lines
+  m: 0x156289, //mesh: extrude
+}
+
+const lineMaterial = new THREE.LineBasicMaterial({
+  linewidth: 2,
+  color: color.l,
+})
+
+
+const pointMaterial = new THREE.PointsMaterial({
+  color: color.p,
+  size: 4,
+})
+
+
 const DptObj = (n) => {
   const ret = new THREE.Points(
     new THREE.BufferGeometry().setAttribute('position',
@@ -12,6 +34,7 @@ const DptObj = (n) => {
 
   ret.matrixAutoUpdate = false;
   ret.userData.constraints = []
+  ret.userData.construction = true
 
   return ret
 }
@@ -62,12 +85,15 @@ export async function drawDimensionPre() {
   p1.userData.constraints.push(this.c_id)
   p2.userData.constraints.push(this.c_id)
 
+  // this.updateOtherBuffers()
+  // console.log(points)
 
-  for (let i = 1; i++; i < points.length) {
+  const updatePoint = this.obj3d.children.length
+  for (let i = 1; i < points.length; i++) {
     if (i % 2) {
       this.constraints.set(++this.c_id, //??? increment investigation
         [
-          'coincident', -1,
+          'points_coincident', -1,
           [points[i - 1].name, points[i].name, -1, -1]
         ]
       )
@@ -75,9 +101,10 @@ export async function drawDimensionPre() {
       points[i].userData.constraints.push(this.c_id)
 
 
-    } else {
+    } else { // even
 
-      const toPush = [...points.slice(i - 2, i), lines[i / 2 - 1]]
+      const toPush = [...points.slice(i - 1, i + 1), lines[i / 2 - 1]]
+
       this.linkedObjs.set(this.l_id, ['line', toPush.map(e => e.name)])
       for (let obj of toPush) {
         obj.userData.l_id = this.l_id
@@ -95,10 +122,29 @@ export async function drawDimensionPre() {
         lines[i / 2 - 1].userData.constraints.push(this.c_id)
       }
 
+      this.obj3d.add(...toPush) // not to be confused with this.topush
+
 
     }
 
+    if (i<=3) { // move pts to their respective spots to spread them
+      points[i].geometry.attributes.position.set(p1.geometry.attributes.position.array)
+    } else {
+      points[i].geometry.attributes.position.set(p2.geometry.attributes.position.array)
+    }
   }
+
+  lines[0].userData.construction = true
+  lines[2].userData.construction = true
+
+
+
+
+
+
+
+  this.updatePointsBuffer(updatePoint)
+  this.updateOtherBuffers()
 
   // line[1].geometry.attributes.position.set(p1.geometry.attributes.position.array)
   // line[1].geometry.attributes.position.set(p1.geometry.attributes.position.array, 3)
@@ -117,7 +163,7 @@ export async function drawDimensionPre() {
 
 
 
-  return [p1, p2, line];
+  return
 }
 
 export function drawLine(mouseLoc) {
@@ -132,7 +178,7 @@ export function drawLine(mouseLoc) {
 
     this.constraints.set(++this.c_id,
       [
-        'coincident', -1,
+        'points_coincident', -1,
         [this.obj3d.children[this.obj3d.children.length - 2].name, p1.name, -1, -1]
       ]
     )

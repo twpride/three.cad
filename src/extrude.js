@@ -13,6 +13,7 @@ export function extrude(sketch) {
 
 
   function findPair(node) {
+    if (node.userData.construction) return;
     visited.add(node)
     let linkedObj = linkedObjs.get(node.userData.l_id)
     let arr;
@@ -25,8 +26,8 @@ export function extrude(sketch) {
       v2s.push(new THREE.Vector2(arr[i], arr[i + 1]))
     }
 
-    offSetPts.push(arr[0], arr[1])
-    offSetPts.push(arr[arr.length - 3], arr[arr.length - 2])
+    offSetPts.push(arr[0], arr[1]) //make work points for sketch creation
+    // offSetPts.push(arr[arr.length - 3], arr[arr.length - 2])
 
     for (let i = 0; i < 2; i++) {
       let d = children[
@@ -46,7 +47,7 @@ export function extrude(sketch) {
 
   function findTouching(node) {
     for (let t of node.userData.constraints) {
-      if (constraints.get(t)[0] != 'coincident') continue
+      if (constraints.get(t)[0] != 'points_coincident') continue
       for (let c of constraints.get(t)[2]) {
         if (c == -1) continue;
         const d = children[objIdx.get(c)]
