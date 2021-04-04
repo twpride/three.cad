@@ -13,46 +13,42 @@ const pointMaterial = new THREE.PointsMaterial({
 
 
 export async function drawDimension() {
-  let pts;
-  // try {
+  let pts = await this.awaitPts(2)
 
-  //   pts = await this.awaitPts(2)
-  // } catch {
-
-  // }
-
-  pts = await this.awaitPts(2)
-  console.log('here', pts)
+  if (pts.length != 2) return;
 
 
 
 
-  const p1 = new THREE.Vector2(...pts[0].geometry.attributes.position.array.slice(0, 2))
-  const p2 = new THREE.Vector2(...pts[1].geometry.attributes.position.array.slice(0, 2))
-  const p3 = new THREE.Vector2()
-
-  const lineGeom = new THREE.Float32BufferAttribute(3 * 8, 3)
   const line = new THREE.LineSegments(
     new THREE.BufferGeometry().setAttribute('position',
-      lineGeom
+      new THREE.Float32BufferAttribute(3 * 8, 3)
     ),
     lineMaterial.clone()
   );
 
-  const ptGeom = new THREE.Float32BufferAttribute(3, 3)
   const point = new THREE.Points(
     new THREE.BufferGeometry().setAttribute('position',
-      ptGeom
+      new THREE.Float32BufferAttribute(3, 3)
     ),
     pointMaterial.clone()
   )
 
-  this.obj3d.children[0].add(line)
-  this.obj3d.children[0].add(point)
+  const group = this.obj3d.children[0]
+  group.add(line)
+  group.add(point)
 
 
   let dir, hyp, proj, perp, p1e, p2e, loc;
+
+  const p1 = new THREE.Vector2(...pts[0].geometry.attributes.position.array.slice(0, 2))
+  const p2 = new THREE.Vector2(...pts[1].geometry.attributes.position.array.slice(0, 2))
+  const p3 = new THREE.Vector2()
+  
   const onMove = (e) => {
+
+
+
     loc = this.getLocation(e)
     p3.set(loc.x, loc.y)
 
@@ -64,33 +60,29 @@ export async function drawDimension() {
     p1e = p1.clone().add(perp).toArray()
     p2e = p2.clone().add(perp).toArray()
 
-    lineGeom.set(p1.toArray(), 0)
-    lineGeom.set(p1e, 3)
+    const linegeom = line.geometry.attributes.position.array 
+    linegeom.set(p1.toArray(), 0)
+    linegeom.set(p1e, 3)
 
-    lineGeom.set(p1e, 6)
-    lineGeom.set(p2e, 9)
+    linegeom.set(p1e, 6)
+    linegeom.set(p2e, 9)
 
-    lineGeom.set(p2e, 12)
-    lineGeom.set(p2.toArray(), 15)
+    linegeom.set(p2e, 12)
+    linegeom.set(p2.toArray(), 15)
 
-    lineGeom.set(p1e, 18)
-    lineGeom.set(p3.toArray(), 21)
+    linegeom.set(p1e, 18)
+    linegeom.set(p3.toArray(), 21)
 
-    ptGeom.set(p3.toArray())
+    point.geometry.attributes.position.set(p3.toArray())
 
     line.geometry.attributes.position.needsUpdate = true;
     point.geometry.attributes.position.needsUpdate = true;
     sc.render()
   }
 
-
-
-
-
   let onEnd, onKey;
 
-  let ret = await new Promise((res, rej) => {
-
+  let add = await new Promise((res) => {
     onEnd = (e) => {
       res(true)
       this.updateOtherBuffers()
@@ -103,23 +95,35 @@ export async function drawDimension() {
     window.addEventListener('keydown', onKey)
   })
 
-
-  console.log(ret, 'here')
   this.canvas.removeEventListener('pointermove', onMove)
   this.canvas.removeEventListener('pointerdown', onEnd)
   this.canvas.removeEventListener('keydown', onKey)
 
-  // this.constraints.set(++this.c_id, //???
-  //   [
-  //     'pt_pt_distance', 10,
-  //     [_p1.name, _p2.name, -1, -1]
-  //   ]
-  // )
-  // _p1.userData.constraints.push(this.c_id)
-  // _p2.userData.constraints.push(this.c_id)
+  if (add) {
+    this.constraints.set(++this.c_id, //???
+      [
+        'pt_pt_distance', 10,
+        [pts[0].name, pts[1].name, -1, -1]
+      ]
+    )
+    pts[0].userData.constraints.push(this.c_id)
+    pts[1].userData.constraints.push(this.c_id)
+    
+    this.updateOtherBuffers()
 
+    line.name = this.c_id
+    point.name = this.c_id
 
+  } else {
 
+    group.children.splice(group.children.length - 2).forEach(
+      e => {
+        e.geometry.dispose()
+        e.material.dispose()
+      }
+    )
+    sc.render()
+  }
 
 
 

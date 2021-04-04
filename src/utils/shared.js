@@ -65,14 +65,8 @@ async function awaitPts(n) {
     let onEnd, onKey;
     try {
       pt = await new Promise((res, rej) => {
-        onKey = (e) => {
-          if (e.key != 'Escape') return
-          console.log(e.key, 'key')
-          rej()
-        }
-        onEnd = (e) => {
-          res(this.hovered[0])
-        }
+        onKey = (e) => e.key == 'Escape' && rej()
+        onEnd = (e) => res(this.hovered[0])
 
         this.canvas.addEventListener('pointerdown', onEnd)
         window.addEventListener('keydown', onKey)
@@ -86,12 +80,11 @@ async function awaitPts(n) {
       }
 
     } catch (e) {
-      console.log('cancelled')
       end = true;
     }
 
-    window.removeEventListener('keydown', onKey)
     this.canvas.removeEventListener('pointerdown', onEnd)
+    window.removeEventListener('keydown', onKey)
   }
 
   return references
