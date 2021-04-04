@@ -56,24 +56,61 @@ const lineObj = (n = 1) => {
 }
 
 
-async function awaitPts(n) {
+async function awaitPts(...criteria) {
+
+  function fullfilled() {
+    for (let i = criteria.length - 1; i >= 0; i--) {
+      const crit = criteria[i]
+      let nfilled = 0;
+      for (let k in counter) {
+        if (!crit[k] || counter[k] > crit[k]) {
+          criteria.splice(i, 1)
+          break;
+        } else if (counter[k] == crit[k]) {
+          nfilled += 1
+        }
+      }
+      if (nfilled == Object.keys(crit).length) return true
+    }
+    return false
+  }
+
+  const counter = {}
+
   let references = this.selected.slice()
+
+  for (let ob of references) {
+    const type = ob.name[0]
+    if (counter[type]) {
+      counter[type] += 1;
+    } else {
+      counter[type] = 1;
+    }
+  }
+  if (fullfilled()) return references
+
   let end = false;
-  while (references.length < n && !end) {
+  while (criteria.length && !end) {
     let pt;
     let onEnd, onKey;
     try {
+
       pt = await new Promise((res, rej) => {
         onKey = (e) => e.key == 'Escape' && rej()
-        onEnd = (e) => res(this.hovered[0])
-
-        this.canvas.addEventListener('pointerdown', onEnd,{ once: true })
-        window.addEventListener('keydown', onKey,{ once: true })
+        onEnd = (e) => this.hovered.length && res(this.hovered[0])
+        this.canvas.addEventListener('pointerdown', onEnd)
+        window.addEventListener('keydown', onKey)
       })
 
-      if (pt.name[0] == 'p') {
-        references.push(pt)
-      } 
+      references.push(pt)
+      const type = pt.name[0]
+      if (counter[type]) {
+        counter[type] += 1;
+      } else {
+        counter[type] = 1;
+      }
+
+      if (fullfilled()) return references
 
     } catch (e) {
       end = true;
@@ -82,8 +119,9 @@ async function awaitPts(n) {
     this.canvas.removeEventListener('pointerdown', onEnd)
     window.removeEventListener('keydown', onKey)
   }
-
-  return references
+  
+  console.log('fail')
+  return null
 }
 
 

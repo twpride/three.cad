@@ -192,15 +192,19 @@ async function addSketch() {
 
   let sketch;
 
-  if (this.selected[0].name[0] == 'd') {
+  const references = await this.awaitPts({ p: 3 }, { d: 1 });
+
+  if (!references) return;
+
+  if (references[0].name[0] == 'd') {
     sketch = new Sketch(this.camera, this.canvas, this.store)
-    sketch.obj3d.matrix = this.selected[0].matrix
+    sketch.obj3d.matrix = references[0].matrix
     sketch.plane.applyMatrix4(sketch.obj3d.matrix)
     sketch.obj3d.inverse = sketch.obj3d.matrix.clone().invert()
+    this.obj3d.add(sketch.obj3d)
   } else {
-    const references = await this.awaitPts(3);
-    if (references.length != 3) return;
     sketch = new Sketch(this.camera, this.canvas, this.store)
+    this.obj3d.add(sketch.obj3d)
     sketch.align(
       ...references.map(
         el => new Vector3(...el.geometry.attributes.position.array).applyMatrix4(el.matrixWorld)
@@ -208,7 +212,6 @@ async function addSketch() {
     )
   }
 
-  this.obj3d.add(sketch.obj3d)
 
 
 
