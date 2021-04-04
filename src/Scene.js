@@ -13,7 +13,7 @@ import { extrude } from './extrude'
 import { onHover, onPick } from './utils/mouseEvents';
 import { _vec2, _vec3, color, awaitPts } from './utils/shared'
 import { Vector3 } from 'three/src/Three';
-import {AxesHelper} from './utils/axes'
+import { AxesHelper } from './utils/axes'
 
 import CSG from "./utils/three-csg.js"
 
@@ -152,7 +152,7 @@ export class Scene {
     const entries = state.treeEntries.byNid
     for (let k in entries) {
 
-      if (k[0] == 's') { 
+      if (k[0] == 's') {
 
         entries[k].obj3d = loader.parse(entries[k].obj3d)
         this.obj3d.add(entries[k].obj3d)
@@ -190,32 +190,33 @@ function render() {
 
 async function addSketch() {
 
-  let references = await this.awaitPts(3)
+  let sketch;
 
-  const sketch = new Sketch(this.camera, this.canvas, this.store)
-
-  if (references.length == 1 && references[0].name[0] == 'd') {
-    this.obj3d.add(sketch.obj3d)
-    sketch.obj3d.matrix = references[0].matrix
+  if (this.selected[0].name[0] == 'd') {
+    sketch = new Sketch(this.camera, this.canvas, this.store)
+    sketch.obj3d.matrix = this.selected[0].matrix
     sketch.plane.applyMatrix4(sketch.obj3d.matrix)
     sketch.obj3d.inverse = sketch.obj3d.matrix.clone().invert()
-
-  } else if (references.length == 3) {
-    this.obj3d.add(sketch.obj3d)
+  } else {
+    const references = await this.awaitPts(3);
+    if (references.length != 3) return;
+    sketch = new Sketch(this.camera, this.canvas, this.store)
     sketch.align(
       ...references.map(
         el => new Vector3(...el.geometry.attributes.position.array).applyMatrix4(el.matrixWorld)
       )
     )
-
-  } else {
-    console.log('cancelled')
-    return;
   }
 
+  this.obj3d.add(sketch.obj3d)
+
+
+
   sketch.activate()
+
   sketch.obj3d.addEventListener('change', this.render);
   this.render()
+  console.log('render')
   this.store.dispatch({ type: 'rx-sketch', obj: sketch })
 
 }

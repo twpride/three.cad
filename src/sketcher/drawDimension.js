@@ -17,9 +17,6 @@ export async function drawDimension() {
 
   if (pts.length != 2) return;
 
-
-
-
   const line = new THREE.LineSegments(
     new THREE.BufferGeometry().setAttribute('position',
       new THREE.Float32BufferAttribute(3 * 8, 3)
@@ -34,21 +31,72 @@ export async function drawDimension() {
     pointMaterial.clone()
   )
 
-  const group = this.obj3d.children[0]
-  group.add(line)
-  group.add(point)
+  line.userData.construction = true
+  point.userData.construction = true
+
+  const groupLines = this.obj3d.children[1]
+  const groupPts = this.obj3d.children[2]
+  groupLines.add(line)
+  groupPts.add(point)
+
+  const onMove = this._onMoveDimension(...pts, point, line)
+
+  let onEnd, onKey;
+
+  let add = await new Promise((res) => {
+    onEnd = (e) => res(true)
+    onKey = (e) => e.key == 'Escape' && res(false)
+
+    this.canvas.addEventListener('pointermove', onMove)
+    this.canvas.addEventListener('pointerdown', onEnd)
+    window.addEventListener('keydown', onKey)
+  })
+
+  this.canvas.removeEventListener('pointermove', onMove)
+  this.canvas.removeEventListener('pointerdown', onEnd)
+  window.removeEventListener('keydown', onKey)
+
+  if (add) {
+    this.constraints.set(++this.c_id, //???
+      [
+        'pt_pt_distance', 10,
+        [pts[0].name, pts[1].name, -1, -1]
+      ]
+    )
+    pts[0].userData.constraints.push(this.c_id)
+    pts[1].userData.constraints.push(this.c_id)
+
+    this.updateOtherBuffers()
+
+    line.name = this.c_id
+    point.name = this.c_id
+
+  } else {
+
+    [groupLines.splice(groupLines.length - 1),
+    groupPts.splice(groupLines.length - 1)].forEach(
+      e => {
+        e.geometry.dispose()
+        e.material.dispose()
+      }
+    )
+    sc.render()
+  }
 
 
+
+  return
+}
+
+
+export function _onMoveDimension(_p1, _p2, point, line) {
+
+  const p1 = new THREE.Vector2(..._p1.geometry.attributes.position.array.slice(0, 2))
+  const p2 = new THREE.Vector2(..._p2.geometry.attributes.position.array.slice(0, 2))
+  const p3 = new THREE.Vector2()
   let dir, hyp, proj, perp, p1e, p2e, loc;
 
-  const p1 = new THREE.Vector2(...pts[0].geometry.attributes.position.array.slice(0, 2))
-  const p2 = new THREE.Vector2(...pts[1].geometry.attributes.position.array.slice(0, 2))
-  const p3 = new THREE.Vector2()
-  
-  const onMove = (e) => {
-
-
-
+  return (e) => {
     loc = this.getLocation(e)
     p3.set(loc.x, loc.y)
 
@@ -60,7 +108,7 @@ export async function drawDimension() {
     p1e = p1.clone().add(perp).toArray()
     p2e = p2.clone().add(perp).toArray()
 
-    const linegeom = line.geometry.attributes.position.array 
+    const linegeom = line.geometry.attributes.position.array
     linegeom.set(p1.toArray(), 0)
     linegeom.set(p1e, 3)
 
@@ -79,54 +127,4 @@ export async function drawDimension() {
     point.geometry.attributes.position.needsUpdate = true;
     sc.render()
   }
-
-  let onEnd, onKey;
-
-  let add = await new Promise((res) => {
-    onEnd = (e) => {
-      res(true)
-      this.updateOtherBuffers()
-    }
-    onKey = (e) => {
-      if (e.key == 'Escape') res(false)
-    }
-    this.canvas.addEventListener('pointermove', onMove)
-    this.canvas.addEventListener('pointerdown', onEnd)
-    window.addEventListener('keydown', onKey)
-  })
-
-  this.canvas.removeEventListener('pointermove', onMove)
-  this.canvas.removeEventListener('pointerdown', onEnd)
-  this.canvas.removeEventListener('keydown', onKey)
-
-  if (add) {
-    this.constraints.set(++this.c_id, //???
-      [
-        'pt_pt_distance', 10,
-        [pts[0].name, pts[1].name, -1, -1]
-      ]
-    )
-    pts[0].userData.constraints.push(this.c_id)
-    pts[1].userData.constraints.push(this.c_id)
-    
-    this.updateOtherBuffers()
-
-    line.name = this.c_id
-    point.name = this.c_id
-
-  } else {
-
-    group.children.splice(group.children.length - 2).forEach(
-      e => {
-        e.geometry.dispose()
-        e.material.dispose()
-      }
-    )
-    sc.render()
-  }
-
-
-
-  return
 }
-

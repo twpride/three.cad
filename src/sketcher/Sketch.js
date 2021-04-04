@@ -9,7 +9,7 @@ import { get3PtArc } from './drawArc'
 import { _vec2, _vec3, raycaster, awaitPts } from '../utils/shared'
 import { replacer, reviver } from '../utils/mapJSONReplacer'
 import { AxesHelper } from '../utils/axes'
-import { drawDimension } from './drawDimension';
+import { drawDimension, _onMoveDimension } from './drawDimension';
 
 
 
@@ -45,11 +45,9 @@ class Sketch {
       this.constraints = new Map()
       this.c_id = 0;
 
-      this.sub = new THREE.Group();
-      this.obj3d.add(this.sub);
-      const axesHelper = new AxesHelper(2);
-      this.sub.add(axesHelper);
-
+      this.obj3d.add(new THREE.Group().add(new AxesHelper(2)));
+      this.obj3d.add(new THREE.Group());
+      this.obj3d.add(new THREE.Group());
     } else {
 
 
@@ -108,6 +106,7 @@ class Sketch {
     this.drawPreClick2 = drawPreClick2.bind(this);
     this.drawOnClick2 = drawOnClick2.bind(this);
     this.drawDimension = drawDimension.bind(this)
+    this._onMoveDimension = _onMoveDimension.bind(this)
 
     this.awaitPts = awaitPts.bind(this);
 
@@ -116,6 +115,7 @@ class Sketch {
     this.onDrag = onDrag.bind(this);
     this.onRelease = onRelease.bind(this);
     this.onKeyPress = this.onKeyPress.bind(this);
+
 
   }
 
@@ -335,11 +335,11 @@ class Sketch {
 
     /*
     - loop to update all the children that are points
-    - we skip first triplet because it refers to a non-geometry child
+    - why +6?  we skip first two triplets because it refers to a non-geometry children
     - we also sneak in updating lines children as well, by checking when ptsBuf[ptr] is NaN
     */
 
-    for (let i = 1, ptr = (pts_buffer >> 2) + 3; i < this.obj3d.children.length; i += 1, ptr += 3) {
+    for (let i = 3, ptr = (pts_buffer >> 2) + 9; i < this.obj3d.children.length; i += 1, ptr += 3) {
       // for (let i = 0, ptr = (pts_buffer >> 2) + 3; i < this.obj3d.children.length; i += 1, ptr += 3) {
 
       const pos = this.obj3d.children[i].geometry.attributes.position;

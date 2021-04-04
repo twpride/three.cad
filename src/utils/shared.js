@@ -58,7 +58,6 @@ const lineObj = (n = 1) => {
 
 async function awaitPts(n) {
   let references = this.selected.slice()
-
   let end = false;
   while (references.length < n && !end) {
     let pt;
@@ -68,16 +67,13 @@ async function awaitPts(n) {
         onKey = (e) => e.key == 'Escape' && rej()
         onEnd = (e) => res(this.hovered[0])
 
-        this.canvas.addEventListener('pointerdown', onEnd)
-        window.addEventListener('keydown', onKey)
+        this.canvas.addEventListener('pointerdown', onEnd,{ once: true })
+        window.addEventListener('keydown', onKey,{ once: true })
       })
 
       if (pt.name[0] == 'p') {
         references.push(pt)
-      } else if (pt.name[0] == 'd') {
-        references = [pt]
-        end = true;
-      }
+      } 
 
     } catch (e) {
       end = true;
