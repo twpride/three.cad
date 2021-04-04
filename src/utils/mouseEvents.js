@@ -24,10 +24,10 @@ export function onHover(e) {
     let minDist = Infinity;
     for (let i = 0; i < hoverPts.length; i++) {
       if (!hoverPts[i].distanceToRay) continue;
-      if (hoverPts[i].distanceToRay < minDist) {
+      if (hoverPts[i].distanceToRay < minDist-0.0001) {
         minDist = hoverPts[i].distanceToRay
         idx = [i]
-      } else if (hoverPts[i].distanceToRay == minDist) {
+      } else if (Math.abs(hoverPts[i].distanceToRay - minDist) < 0.0001) {
         idx.push(i)
       }
     }
@@ -38,17 +38,25 @@ export function onHover(e) {
   if (idx.length) {
     if (hoverPts[idx[0]].object != this.hovered[0]) {
 
-      const obj = this.hovered[this.hovered.length - 1]
-      if (obj && !this.selected.includes(obj)) {
-        obj.material.color.set(color[obj.name[0]])
+      // const obj = this.hovered[this.hovered.length - 1]
+      // if (obj && !this.selected.includes(obj)) {
+      //   obj.material.color.set(color[obj.name[0]])
+      // }
+
+      for (let x = 0; x < this.hovered.length; x++) {
+        const obj = this.hovered[x]
+        if (obj && !this.selected.includes(obj)) {
+          obj.material.color.set(color[obj.name[0]])
+        }
       }
+
       this.hovered = []
 
       for (let x = 0; x < idx.length; x++) {
-        const i = idx[x]
-        this.hovered.push(hoverPts[i].object)
+        const obj = hoverPts[idx[x]].object  
+        obj.material.color.set(color.hover)
+        this.hovered.push(obj)
       }
-      this.hovered[this.hovered.length - 1].material.color.set(color.hover)
 
       // console.log('render1')
       this.obj3d.dispatchEvent({ type: 'change' })
@@ -56,9 +64,17 @@ export function onHover(e) {
   } else {
     if (this.hovered.length) {
 
-      const obj = this.hovered[this.hovered.length - 1]
-      if (obj && !this.selected.includes(obj)) {
-        obj.material.color.set(color[obj.name[0]])
+      // const obj = this.hovered[this.hovered.length - 1]
+      // if (obj && !this.selected.includes(obj)) {
+      //   obj.material.color.set(color[obj.name[0]])
+      // }
+
+      for (let x = 0; x < this.hovered.length; x++) {
+        const obj = this.hovered[x]
+        // console.log(obj, 'here')
+        if (!this.selected.includes(obj)) {
+          obj.material.color.set(color[obj.name[0]])
+        }
       }
       this.hovered = []
 
@@ -81,8 +97,8 @@ export function onPick(e) {
       this.canvas.addEventListener('pointerup', this.onRelease)
     }
   } else {
-    for (let obj of this.selected) {
-      // obj.material.color.set(0x555555)
+    for (let x = 0; x < this.selected.length; x++) {
+      const obj = this.selected[x]
       obj.material.color.set(color[obj.name[0]])
     }
     this.obj3d.dispatchEvent({ type: 'change' })
@@ -91,21 +107,20 @@ export function onPick(e) {
 }
 
 export function onDrag(e) {
-  const mouseLoc = this.getLocation(e);
 
-  // for (let x = 0; x < this.hovered.length; x++) {
-  //   const obj = this.hovered[x]
-  //   this.ptsBuf.set(
-  //     mouseLoc,
-  //     this.objIdx.get(obj.name) * 3
-  //   )
-  // }
+  // const obj = this.hovered[this.hovered.length-1]
+  // this.ptsBuf.set(
+  //   this.getLocation(e).toArray(),
+  //   this.objIdx.get(obj.name) * 3
+  // )
 
-  const obj = this.hovered[this.hovered.length-1]
-  this.ptsBuf.set(
-    mouseLoc,
-    this.objIdx.get(obj.name) * 3
-  )
+  for (let x = 0; x < this.hovered.length; x++) {
+    const obj = this.hovered[x]
+    this.ptsBuf.set(
+      this.getLocation(e).toArray(),
+      this.objIdx.get(obj.name) * 3
+    )
+  }
 
   this.solve()
   this.obj3d.dispatchEvent({ type: 'change' })

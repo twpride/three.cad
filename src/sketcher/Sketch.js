@@ -9,7 +9,7 @@ import { get3PtArc } from './drawArc'
 import { _vec2, _vec3, raycaster, awaitPts } from '../utils/shared'
 import { replacer, reviver } from '../utils/mapJSONReplacer'
 import { AxesHelper } from '../utils/axes'
-import { drawDimensionPre } from './drawDimension'
+import { drawDimension } from './drawDimension';
 
 
 
@@ -107,9 +107,9 @@ class Sketch {
     this.drawOnClick1 = drawOnClick1.bind(this);
     this.drawPreClick2 = drawPreClick2.bind(this);
     this.drawOnClick2 = drawOnClick2.bind(this);
+    this.drawDimension = drawDimension.bind(this)
 
     this.awaitPts = awaitPts.bind(this);
-    this.drawDimensionPre = drawDimensionPre.bind(this);
 
     this.onHover = onHover.bind(this);
     this.onPick = onPick.bind(this);
@@ -180,7 +180,8 @@ class Sketch {
         this.mode = "arc"
         break;
       case 'd':
-        this.drawDimensionPre()
+        this.drawDimension()
+        this.mode = ""
         break;
       case 'x':
         this.deleteSelected()
@@ -310,7 +311,7 @@ class Sketch {
 
     raycaster.ray.intersectPlane(this.plane, _vec3).applyMatrix4(this.obj3d.inverse)
 
-    return _vec3.toArray()
+    return _vec3
   }
 
   solve() {

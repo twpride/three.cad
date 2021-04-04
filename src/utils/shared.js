@@ -59,30 +59,41 @@ const lineObj = (n = 1) => {
 async function awaitPts(n) {
   let references = this.selected.slice()
 
-  if (references.length == 0) {
-    while (references.length < n) {
-      let pt;
-      try {
-        pt = await new Promise((res, rej) => {
-          this.canvas.addEventListener('pointerdown', () => res(this.hovered[0]), { once: true })
-          window.addEventListener('keydown', (e) => rej(e), { once: true })
-        })
-
-        if (pt.name[0] == 'p') {
-          references.push(pt)
-        } else if (pt.name[0] == 'd') {
-          references = [pt]
-          break;
+  let end = false;
+  while (references.length < n && !end) {
+    let pt;
+    let onEnd, onKey;
+    try {
+      pt = await new Promise((res, rej) => {
+        onKey = (e) => {
+          if (e.key != 'Escape') return
+          console.log(e.key, 'key')
+          rej()
+        }
+        onEnd = (e) => {
+          res(this.hovered[0])
         }
 
-      } catch (e) {
-        if (e.key == 'Escape') {
-          console.log('cancelled')
-          return;
-        }
+        this.canvas.addEventListener('pointerdown', onEnd)
+        window.addEventListener('keydown', onKey)
+      })
+
+      if (pt.name[0] == 'p') {
+        references.push(pt)
+      } else if (pt.name[0] == 'd') {
+        references = [pt]
+        end = true;
       }
+
+    } catch (e) {
+      console.log('cancelled')
+      end = true;
     }
+
+    window.removeEventListener('keydown', onKey)
+    this.canvas.removeEventListener('pointerdown', onEnd)
   }
+
   return references
 }
 
