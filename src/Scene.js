@@ -194,6 +194,7 @@ function render() {
 
     for (idx = 1; idx < dims.length; idx += 2) {
       ele = dims[idx]
+      // if (!ele.label) continue;
 
       pos = _vec3.set(
         ...ele.geometry.attributes.position.array

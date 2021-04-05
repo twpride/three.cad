@@ -1,0 +1,11 @@
+fix css on design tree (a  lot of work)  \
+clear dim on exit exit sketch / rehydrate when back or after loading
+boolean flesh out refresh / replace mesh
+dimension to origin
+fix extrusion loop find
+reattaching sketch
+file save
+stl export
+
+angle
+other constraints / sprite

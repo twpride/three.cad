@@ -9,7 +9,7 @@ import { get3PtArc } from './drawArc'
 import { _vec2, _vec3, raycaster, awaitPts } from '../utils/shared'
 import { replacer, reviver } from '../utils/mapJSONReplacer'
 import { AxesHelper } from '../utils/axes'
-import { drawDimension, _onMoveDimension, updateDimLines } from './drawDimension';
+import { drawDimension, _onMoveDimension, setDimLines } from './drawDimension';
 
 
 
@@ -110,9 +110,10 @@ class Sketch {
     this.drawOnClick1 = drawOnClick1.bind(this);
     this.drawPreClick2 = drawPreClick2.bind(this);
     this.drawOnClick2 = drawOnClick2.bind(this);
+
     this.drawDimension = drawDimension.bind(this)
     this._onMoveDimension = _onMoveDimension.bind(this)
-    this.updateDimLines = updateDimLines.bind(this)
+    this.setDimLines = setDimLines.bind(this)
 
     this.awaitPts = awaitPts.bind(this);
 
@@ -131,8 +132,9 @@ class Sketch {
     this.canvas.addEventListener('pointerdown', this.onPick)
     this.canvas.addEventListener('pointermove', this.onHover)
     this.store.dispatch({ type: 'set-active-sketch', sketch: this.obj3d.name })
-
     
+    this.setDimLines()
+
     window.sketcher = this
   }
 
@@ -141,6 +143,7 @@ class Sketch {
     this.canvas.removeEventListener('pointerdown', this.onPick)
     this.canvas.removeEventListener('pointermove', this.onHover)
     this.store.dispatch({ type: 'exit-sketch' })
+    this.labelContainer.innerHTML = ""
   }
 
 
@@ -174,6 +177,7 @@ class Sketch {
       case 'Escape':
         drawClear.bind(this)()
         this.mode = ""
+        document.activeElement.blur()
         break;
       case 'l':
         if (this.mode == 'line') {
@@ -328,6 +332,18 @@ class Sketch {
     }
   }
 
+
+  updateBoundingSpheres() {
+    for (let x = 3; x < this.obj3d.children.length; x++) {
+      const obj = this.obj3d.children[x]
+      obj.geometry.computeBoundingSphere()
+    }
+  
+    for (let x = 0; x < this.obj3d.children[1].children.length; x++) {
+      const obj = this.obj3d.children[1].children[x]
+      obj.geometry.computeBoundingSphere()
+    }
+  }
   getLocation(e) {
     raycaster.setFromCamera(
       _vec2.set(
@@ -411,7 +427,7 @@ class Sketch {
     }
 
 
-    this.updateDimLines()
+    this.setDimLines()
 
     this.obj3d.dispatchEvent({ type: 'change' })
   }

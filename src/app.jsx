@@ -60,10 +60,10 @@ const App = () => {
     [Icon.Arc, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Arc'],
   ]
 
-  return <div className='absolute left-0 w-1/6 flex flex-col'>
+  return <div className='absolute left-0 w-40 flex flex-col'>
     {
       btnz.map(([Icon, fcn, txt], idx) => (
-        <div className="btn flex items-center justify-end p-1 text-lg w-36" key={idx}
+        <div className="btn flex items-center justify-end p-1 text-lg" key={idx}
           onClick={fcn}
         >
           <div>{txt}</div>
@@ -102,7 +102,7 @@ const TreeEntry = ({ entId }) => {
 
   const vis = obj3d.visible
 
-  return <div className='bg-gray-50 flex justify-between'>
+  return <div className='bg-gray-50 flex justify-between w-full'>
     <div className='btn'
       onClick={() => {
         activeSketchNid && treeEntries[activeSketchNid].deactivate()
@@ -146,7 +146,7 @@ const TreeEntry = ({ entId }) => {
       onPointerLeave={() => {
         const obj = entry
         if (entId[0] == 'm' && !sc.selected.includes(obj)) {
-          obj.material.color.set(color.m)
+          obj.material.color.set(color.mesh)
           sc.render()
         }
       }}

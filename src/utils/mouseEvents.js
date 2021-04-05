@@ -101,9 +101,8 @@ export function onPick(e) {
           this.canvas.addEventListener('pointermove', this.onDragDim);
           this.canvas.addEventListener('pointerup', this.onRelease)
         }
-        
+
         draggedLabel = this.obj3d.children[1].children[idx].label
-        console.log(draggedLabel)
         draggedLabel.style.zIndex = -1;
         break;
       case 'point':
@@ -153,16 +152,19 @@ export function onRelease() {
   this.canvas.removeEventListener('pointermove', this.onDragDim)
   this.canvas.removeEventListener('pointerup', this.onRelease)
 
-  for (let x = 3; x < this.obj3d.children.length; x++) {
-    const obj = this.obj3d.children[x]
-    obj.geometry.computeBoundingSphere()
-  }
+  // for (let x = 3; x < this.obj3d.children.length; x++) {
+  //   const obj = this.obj3d.children[x]
+  //   obj.geometry.computeBoundingSphere()
+  // }
 
-  for (let x = 0; x < this.obj3d.children[1].children.length; x++) {
-    const obj = this.obj3d.children[1].children[x]
-    obj.geometry.computeBoundingSphere()
-  }
+  // for (let x = 0; x < this.obj3d.children[1].children.length; x++) {
+  //   const obj = this.obj3d.children[1].children[x]
+  //   obj.geometry.computeBoundingSphere()
+  // }
 
-  draggedLabel.style.zIndex = 0;
+  this.updateBoundingSpheres()
+  if (draggedLabel) {
+    draggedLabel.style.zIndex = 0;
+  }
 }
 
