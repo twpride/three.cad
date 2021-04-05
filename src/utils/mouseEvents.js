@@ -13,18 +13,25 @@ export function onHover(e) {
   );
 
   let hoverPts;
-  if (this.obj3d.name[0] == 's') {
-    hoverPts = raycaster.intersectObjects(this.obj3d.children)
+  if (this.obj3d.userData.type == 'sketch') {
+    hoverPts = raycaster.intersectObjects([...this.obj3d.children[1].children, ...this.obj3d.children])
+
+    // if (!hoverPts.length) {
+    //   hoverPts = raycaster.intersectObjects(this.obj3d.children)
+    // }
   } else {
     hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
   }
+
+  // if (hoverDim.length) {
+  // }
 
   let idx = []
   if (hoverPts.length) {
     let minDist = Infinity;
     for (let i = 0; i < hoverPts.length; i++) {
       if (!hoverPts[i].distanceToRay) continue;
-      if (hoverPts[i].distanceToRay < minDist-0.0001) {
+      if (hoverPts[i].distanceToRay < minDist - 0.0001) {
         minDist = hoverPts[i].distanceToRay
         idx = [i]
       } else if (Math.abs(hoverPts[i].distanceToRay - minDist) < 0.0001) {
@@ -35,25 +42,20 @@ export function onHover(e) {
     if (!idx.length) idx.push(0)
   }
 
-  if (idx.length) {
-    if (hoverPts[idx[0]].object != this.hovered[0]) {
-
-      // const obj = this.hovered[this.hovered.length - 1]
-      // if (obj && !this.selected.includes(obj)) {
-      //   obj.material.color.set(color[obj.name[0]])
-      // }
+  if (idx.length) { // after filtering, hovered objs still exists
+    if (hoverPts[idx[0]].object != this.hovered[0]) { // if the previous hovered obj is not the same as current
 
       for (let x = 0; x < this.hovered.length; x++) {
         const obj = this.hovered[x]
         if (obj && !this.selected.includes(obj)) {
-          obj.material.color.set(color[obj.name[0]])
+          obj.material.color.set(color[obj.userData.type])
         }
       }
 
       this.hovered = []
 
       for (let x = 0; x < idx.length; x++) {
-        const obj = hoverPts[idx[x]].object  
+        const obj = hoverPts[idx[x]].object
         obj.material.color.set(color.hover)
         this.hovered.push(obj)
       }
@@ -61,19 +63,14 @@ export function onHover(e) {
       // console.log('render1')
       this.obj3d.dispatchEvent({ type: 'change' })
     }
-  } else {
-    if (this.hovered.length) {
-
-      // const obj = this.hovered[this.hovered.length - 1]
-      // if (obj && !this.selected.includes(obj)) {
-      //   obj.material.color.set(color[obj.name[0]])
-      // }
+  } else { // no hovered object after filtering
+    if (this.hovered.length) { // if previously something was hovered, then we need to clear it
 
       for (let x = 0; x < this.hovered.length; x++) {
         const obj = this.hovered[x]
         // console.log(obj, 'here')
         if (!this.selected.includes(obj)) {
-          obj.material.color.set(color[obj.name[0]])
+          obj.material.color.set(color[obj.userData.type])
         }
       }
       this.hovered = []
@@ -84,7 +81,7 @@ export function onHover(e) {
   }
 }
 
-
+let draggedLabel;
 export function onPick(e) {
   if (this.mode || e.buttons != 1) return
 
@@ -92,14 +89,37 @@ export function onPick(e) {
 
     this.selected.push(this.hovered[this.hovered.length - 1])
 
-    if (this.hovered[0].type == "Points") {
-      this.canvas.addEventListener('pointermove', this.onDrag);
-      this.canvas.addEventListener('pointerup', this.onRelease)
+    switch (this.hovered[0].userData.type) {
+      case 'dimension':
+        const idx = this.obj3d.children[1].children.indexOf(this.hovered[0])
+        if (idx % 2) {
+
+          this.onDragDim = this._onMoveDimension(
+            this.obj3d.children[1].children[idx],
+            this.obj3d.children[1].children[idx - 1],
+          )
+          this.canvas.addEventListener('pointermove', this.onDragDim);
+          this.canvas.addEventListener('pointerup', this.onRelease)
+        }
+        
+        draggedLabel = this.obj3d.children[1].children[idx].label
+        console.log(draggedLabel)
+        draggedLabel.style.zIndex = -1;
+        break;
+      case 'point':
+
+        this.canvas.addEventListener('pointermove', this.onDrag);
+        this.canvas.addEventListener('pointerup', this.onRelease)
+        break;
+
+      default:
+        break;
     }
+
   } else {
     for (let x = 0; x < this.selected.length; x++) {
       const obj = this.selected[x]
-      obj.material.color.set(color[obj.name[0]])
+      obj.material.color.set(color[obj.userData.type])
     }
     this.obj3d.dispatchEvent({ type: 'change' })
     this.selected = []
@@ -113,6 +133,7 @@ export function onDrag(e) {
   //   this.getLocation(e).toArray(),
   //   this.objIdx.get(obj.name) * 3
   // )
+
 
   for (let x = 0; x < this.hovered.length; x++) {
     const obj = this.hovered[x]
@@ -129,12 +150,19 @@ export function onDrag(e) {
 
 export function onRelease() {
   this.canvas.removeEventListener('pointermove', this.onDrag)
+  this.canvas.removeEventListener('pointermove', this.onDragDim)
   this.canvas.removeEventListener('pointerup', this.onRelease)
 
-  for (let x = 0; x < this.hovered.length; x++) {
-    const obj = this.hovered[x]
+  for (let x = 3; x < this.obj3d.children.length; x++) {
+    const obj = this.obj3d.children[x]
     obj.geometry.computeBoundingSphere()
   }
 
+  for (let x = 0; x < this.obj3d.children[1].children.length; x++) {
+    const obj = this.obj3d.children[1].children[x]
+    obj.geometry.computeBoundingSphere()
+  }
+
+  draggedLabel.style.zIndex = 0;
 }
 

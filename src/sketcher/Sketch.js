@@ -3,7 +3,7 @@
 import * as THREE from '../../node_modules/three/src/Three';
 
 import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear } from './drawEvents'
-import { onHover, onDrag, onPick, onRelease } from '../utils/mouseEvents'
+import { onHover, onDrag, onDragDim, onPick, onRelease } from '../utils/mouseEvents'
 import { addDimension, setCoincident } from './constraintEvents'
 import { get3PtArc } from './drawArc'
 import { _vec2, _vec3, raycaster, awaitPts } from '../utils/shared'
@@ -31,10 +31,13 @@ class Sketch {
 
     this.plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
+    this.labelContainer = document.getElementById('labels')
+
     if (preload === undefined) {
 
       this.obj3d = new THREE.Group()
       this.obj3d.name = "s" + nid++
+      this.obj3d.userData.type = "sketch"
       this.obj3d.matrixAutoUpdate = false;
 
       this.objIdx = new Map()
@@ -48,6 +51,8 @@ class Sketch {
       this.obj3d.add(new THREE.Group().add(new AxesHelper(2)));
       this.obj3d.add(new THREE.Group());
       this.obj3d.add(new THREE.Group());
+
+      this.labels = []
     } else {
 
 
@@ -127,6 +132,7 @@ class Sketch {
     this.canvas.addEventListener('pointermove', this.onHover)
     this.store.dispatch({ type: 'set-active-sketch', sketch: this.obj3d.name })
 
+    
     window.sketcher = this
   }
 
@@ -209,17 +215,21 @@ class Sketch {
 
   deleteSelected() {
 
+    this.selected
+      .filter(e => e.userData.type == 'dimension')
+      .forEach(e => this.constraints.has(e.name) && this.deleteConstraints(e.name))
 
-
-    const toDelete = [...this.selected]
-      .filter(e => e.type == 'Line')
+    const toDelete = this.selected
+      .filter(e => e.userData.type == 'line')
       .sort((a, b) => b.id - a.id)
       .map(obj => {
         return this.delete(obj)
       })
 
+    if (toDelete.length) {
+      this.updatePointsBuffer(toDelete[toDelete.length - 1])
+    }
 
-    this.updatePointsBuffer(toDelete[toDelete.length - 1])
     this.updateOtherBuffers()
 
     this.selected = []
@@ -227,6 +237,12 @@ class Sketch {
   }
 
   delete(obj) {
+
+    if (obj.userData.type == 'dimension') {
+      this.deleteConstraints(obj.name)
+      return
+    }
+
     let link = this.linkedObjs.get(obj.userData.l_id)
     if (!link) return;
     link = link[1]
@@ -252,15 +268,26 @@ class Sketch {
 
 
   deleteConstraints(c_id) {
-    for (let idx of this.constraints.get(c_id)[2]) { //////////
+    for (let idx of this.constraints.get(c_id)[2]) { // clean on contraint references
       if (idx == -1) continue
       const ob = this.obj3d.children[this.objIdx.get(idx)]
       if (ob) {
-        // ob.constraints.delete(c_id)
         ob.userData.constraints.splice(ob.userData.constraints.indexOf(c_id), 1)
       }
     }
     this.constraints.delete(c_id)
+
+    for (let i = 0; i < this.obj3d.children[1].children.length; i++) {
+      if (this.obj3d.children[1].children[i].name == c_id) {
+        this.obj3d.children[1].children.splice(i, i + 2).forEach(
+          e => {
+            e.geometry.dispose()
+            e.material.dispose()
+          }
+        )
+        break
+      }
+    }
   }
 
   updateOtherBuffers() {
@@ -313,6 +340,10 @@ class Sketch {
     raycaster.ray.intersectPlane(this.plane, _vec3).applyMatrix4(this.obj3d.inverse)
 
     return _vec3
+  }
+
+  getScreenXY(arr) {
+    return _vec3.set(...arr).applyMatrix4(this.obj3d.matrix).project(this.camera)
   }
 
   solve() {
@@ -381,7 +412,7 @@ class Sketch {
 
 
     this.updateDimLines()
-    
+
     this.obj3d.dispatchEvent({ type: 'change' })
   }
 

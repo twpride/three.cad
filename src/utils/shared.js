@@ -15,20 +15,21 @@ const color = {
   hover: 0x00ff00,
   lighting: 0xFFFFFF,
   emissive: 0x072534,
-  d: 0xf5bc42, //datums: planes
-  p: 0x555555, //points
-  l: 0x555555, //lines
-  m: 0x156289, //mesh: extrude
+  point: 0x555555, //points
+  line: 0x555555, //lines
+  mesh: 0x156289, //mesh:
+  dimension: 0x891d15, //
+  plane: 0x891d15, //
 }
 
 const lineMaterial = new THREE.LineBasicMaterial({
   linewidth: 2,
-  color: color.l,
+  color: color.line,
 })
 
 
 const pointMaterial = new THREE.PointsMaterial({
-  color: color.p,
+  color: color.point,
   size: 4,
 })
 
@@ -40,7 +41,8 @@ const ptObj = (n) => {
     ),
     pointMaterial.clone()
   );
-  ret.name = 'p' + nid++
+  ret.name = "p" + nid++
+  ret.userData.type = 'point'
   return ret
 }
 
@@ -52,6 +54,7 @@ const lineObj = (n = 1) => {
     lineMaterial.clone()
   );
   ret.name = 'l' + nid++
+  ret.userData.type = 'line'
   return ret
 }
 
@@ -80,7 +83,7 @@ async function awaitPts(...criteria) {
   let references = this.selected.slice()
 
   for (let ob of references) {
-    const type = ob.name[0]
+    const type = ob.userData.type
     if (counter[type]) {
       counter[type] += 1;
     } else {
@@ -103,7 +106,7 @@ async function awaitPts(...criteria) {
       })
 
       references.push(pt)
-      const type = pt.name[0]
+      const type = pt.userData.type
       if (counter[type]) {
         counter[type] += 1;
       } else {
@@ -119,7 +122,7 @@ async function awaitPts(...criteria) {
     this.canvas.removeEventListener('pointerdown', onEnd)
     window.removeEventListener('keydown', onKey)
   }
-  
+
   console.log('fail')
   return null
 }

@@ -35,7 +35,8 @@ export class Scene {
 
     this.store = store;
     this.canvas = document.querySelector('#c');
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas});
+
 
     const size = 1;
     const near = 0;
@@ -62,7 +63,7 @@ export class Scene {
     const pxy = new THREE.Mesh(
       new THREE.PlaneGeometry(5, 5),
       new THREE.MeshBasicMaterial({
-        color: color.d,
+        color: color.plane,
         opacity: 0.2,
         side: THREE.DoubleSide,
         transparent: true,
@@ -72,6 +73,7 @@ export class Scene {
     );
 
     pxy.name = 'd' + nid++
+    pxy.userData.type = 'plane'
     helpersGroup.add(pxy);
 
     const pyz = pxy.clone().rotateY(Math.PI / 2);
@@ -119,6 +121,7 @@ export class Scene {
 
     this.hovered = [];
     this.selected = [];
+    this.activeSketch = null;
 
     this.render();
   }
@@ -172,6 +175,8 @@ export class Scene {
 
 }
 
+
+let idx, x, y, ele, pos, dims, matrix;
 function render() {
   this.stats.begin();
   if (this.resizeCanvas(this.renderer)) {
@@ -181,6 +186,36 @@ function render() {
     this.camera.updateProjectionMatrix();
   }
   this.renderer.render(this.obj3d, this.camera);
+
+  // const sketch = this.store.
+  if (this.activeSketch) {
+    dims = this.activeSketch.obj3d.children[1].children
+    matrix = this.activeSketch.obj3d.matrix
+
+    for (idx = 1; idx < dims.length; idx += 2) {
+      ele = dims[idx]
+
+      pos = _vec3.set(
+        ...ele.geometry.attributes.position.array
+      ).applyMatrix4(matrix).project(this.camera)
+
+      x = (pos.x * .5 + .5) * this.canvas.clientWidth + 10;
+      y = (pos.y * -.5 + .5) * this.canvas.clientHeight;
+      
+      // console.log(i, ele)
+      // ele.label.style.transform = `translate(-50%, -50%) translate(${x+20}px,${y}px)`;
+      ele.label.style.transform = `translate(0%, -50%) translate(${x}px,${y}px)`;
+
+    }
+  }
+
+
+
+
+
+
+
+
   this.stats.end();
 }
 
@@ -192,11 +227,11 @@ async function addSketch() {
 
   let sketch;
 
-  const references = await this.awaitPts({ p: 3 }, { d: 1 });
+  const references = await this.awaitPts({ point: 3 }, { plane: 1 });
 
   if (!references) return;
 
-  if (references[0].name[0] == 'd') {
+  if (references[0].userData.type == 'plane') {
     sketch = new Sketch(this.camera, this.canvas, this.store)
     sketch.obj3d.matrix = references[0].matrix
     sketch.plane.applyMatrix4(sketch.obj3d.matrix)
@@ -216,6 +251,7 @@ async function addSketch() {
 
 
   sketch.activate()
+  this.activeSketch = sketch
 
   sketch.obj3d.addEventListener('change', this.render);
   this.render()

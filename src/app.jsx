@@ -44,7 +44,11 @@ const App = () => {
 
   const btnz = [
     activeSketchNid ?
-      [MdDone, () => treeEntries.byNid[activeSketchNid].deactivate(), 'Finish'] :
+      [MdDone, () => {
+        treeEntries.byNid[activeSketchNid].deactivate()
+        sc.activeSketch = null
+        // sc.activeDim = this.activeSketch.obj3d.children[1].children
+      }, 'Finish'] :
       [FaEdit, sc.addSketch, 'Sketch']
     ,
     [FaCube, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Extrude'],
@@ -85,7 +89,7 @@ const TreeEntry = ({ entId }) => {
   const activeSketchNid = useSelector(state => state.activeSketchNid)
 
   let obj3d, entry;
-  
+
   entry = treeEntries[entId]
 
   if (entId[0] == "s") {
@@ -103,6 +107,7 @@ const TreeEntry = ({ entId }) => {
       onClick={() => {
         activeSketchNid && treeEntries[activeSketchNid].deactivate()
         entry.activate()
+        sc.activeSketch = entry;
       }}
     >
       <MdEdit />
@@ -162,13 +167,13 @@ const TreeEntry = ({ entId }) => {
 
 const subtract = () => {
   //  //Create a bsp tree from each of the meshes
-  console.log(sc.selected.length !=2 || !sc.selected.every(e=>e.name && e.name[0]=='m'),"wtf")
-  if (sc.selected.length !=2 || !sc.selected.every(e=>e.name && e.name[0]=='m')) return
-  console.log('here')
+  // console.log(sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh'), "wtf")
+  if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
+  // console.log('here')
   const [m1, m2] = sc.selected
 
-  let bspA = BoolOp.fromMesh( m1 )                        
-  let bspB = BoolOp.fromMesh( m2 )
+  let bspA = BoolOp.fromMesh(m1)
+  let bspB = BoolOp.fromMesh(m2)
   m1.visible = false
   m2.visible = false
 
@@ -178,7 +183,7 @@ const subtract = () => {
 
   // //Get the resulting mesh from the result bsp, and assign meshA.material to the resulting mesh
 
-  let meshResult = BoolOp.toMesh( bspResult, m1.matrix,  m1.material )
+  let meshResult = BoolOp.toMesh(bspResult, m1.matrix, m1.material)
 
   sc.obj3d.add(meshResult)
   sc.render()

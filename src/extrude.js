@@ -70,13 +70,14 @@ export function extrude(sketch) {
   const extrudeSettings = { depth: 8, bevelEnabled: false };
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
   const phong = new THREE.MeshPhongMaterial({
-    color: color.m,
+    color: color.mesh,
     emissive: color.emissive,
     flatShading: true
   });
   const mesh = new THREE.Mesh(geometry, phong)
   // mesh.name = "Extrude"
   mesh.name = 'm' + nid++
+  mesh.userData.type = 'mesh'
 
   for (let i = 0; i < offSetPts.length; i += 2) {
     if (

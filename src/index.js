@@ -20,7 +20,6 @@ function reducer(state = {}, action) {
         }
       }
     case 'set-active-sketch':
-      console.log('action',action)
       return {
         ...state, activeSketchNid: action.sketch
       }
