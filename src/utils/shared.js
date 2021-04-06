@@ -12,15 +12,29 @@ raycaster.params.Points.threshold = 0.6;
 
 
 const color = {
-  hover: 0x00ff00,
+  background:0xbbbbbb,
   lighting: 0xFFFFFF,
   emissive: 0x072534,
+
+  hover: 0x00ff00,
   point: 0x555555, //points
   line: 0x555555, //lines
   mesh: 0x156289, //mesh:
   dimension: 0x891d15, //
-  plane: 0x891d15, //
+
+  plane: 0xdaacac, //
+  planeBorder: 0xc59797, //
 }
+
+const hoverColor = {
+  hover: 0x00ff00,
+  point: 0x00ff00, //points
+  line: 0x00ff00, //lines
+  mesh: 0x00ff00, //mesh:
+  dimension: 0x00ff00, //
+  plane: 0xff0000, //
+}
+
 
 const lineMaterial = new THREE.LineBasicMaterial({
   linewidth: 2,
@@ -129,4 +143,4 @@ async function awaitPts(...criteria) {
 
 
 
-export { lineMaterial, pointMaterial, _vec2, _vec3, raycaster, color, ptObj, lineObj, awaitPts }
+export { lineMaterial, pointMaterial, _vec2, _vec3, raycaster, color, hoverColor, ptObj, lineObj, awaitPts }

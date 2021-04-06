@@ -1,5 +1,5 @@
 import * as THREE from 'three/src/Three';
-import { raycaster, color } from './shared';
+import { raycaster, color, hoverColor } from './shared';
 
 export function onHover(e) {
   if (this.mode || e.buttons) return
@@ -36,21 +36,27 @@ export function onHover(e) {
 
   } else {
     // hoverPts = raycaster.intersectObjects(this.obj3d.children)
-    hoverPts = raycaster.intersectObjects(this.obj3d.children,true)
+    hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
 
-
-    // for (let i = 0; i < hoverPts.length; i++) {
-    //   const obj = hoverPts[i].object
-    //   if (obj.userData.type == "mesh" && obj.visible || obj.userData.type == "plane") {
-    //     idx.push(i)
-    //   }
-    // }
     if (hoverPts.length) {
-      // console.log(hoverPts)
-      if (!idx.length) idx.push(0)
+      for (let i = 0; i < hoverPts.length; i++) {
+        const obj = hoverPts[i].object
+        if (['point', 'plane'].includes(obj.userData.type)) {
+          idx.push(i)
+          break;
+        }
+      }
+
+      if (!idx.length) {
+        const obj = hoverPts[0].object
+        if (obj.userData.type == "mesh" && obj.visible) {
+          idx.push(0)
+        } else {
+          idx.push(0)
+        }
+      }
+
     }
-
-
 
 
 
@@ -72,7 +78,7 @@ export function onHover(e) {
 
       for (let x = 0; x < idx.length; x++) {
         const obj = hoverPts[idx[x]].object
-        obj.material.color.set(color.hover)
+        obj.material.color.set(hoverColor[obj.userData.type])
         this.hovered.push(obj)
       }
 
@@ -81,7 +87,6 @@ export function onHover(e) {
     }
   } else { // no hovered object after filtering
     if (this.hovered.length) { // if previously something was hovered, then we need to clear it
-
       for (let x = 0; x < this.hovered.length; x++) {
         const obj = this.hovered[x]
         // console.log(obj, 'here')

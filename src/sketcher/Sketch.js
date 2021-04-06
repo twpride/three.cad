@@ -8,7 +8,7 @@ import { addDimension, setCoincident } from './constraintEvents'
 import { get3PtArc } from './drawArc'
 import { _vec2, _vec3, raycaster, awaitPts } from '../utils/shared'
 import { replacer, reviver } from '../utils/mapJSONReplacer'
-import { AxesHelper } from '../utils/axes'
+import { AxesHelper } from '../utils/sketchAxes'
 import { drawDimension, _onMoveDimension, setDimLines, updateDim } from './drawDimension';
 
 
@@ -48,7 +48,7 @@ class Sketch {
       this.constraints = new Map()
       this.c_id = 0;
 
-      this.obj3d.add(new THREE.Group().add(new AxesHelper(2)));
+      this.obj3d.add(new THREE.Group().add(new AxesHelper(0.5)));
       this.obj3d.add(new THREE.Group());
       this.obj3d.add(new THREE.Group());
 
@@ -133,6 +133,7 @@ class Sketch {
     this.canvas.addEventListener('pointerdown', this.onPick)
     this.canvas.addEventListener('pointermove', this.onHover)
     this.store.dispatch({ type: 'set-active-sketch', sketch: this.obj3d.name })
+
     
     this.setDimLines()
 

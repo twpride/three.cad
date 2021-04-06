@@ -66,8 +66,9 @@ const App = () => {
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
-  return <div className=''>
-    <div className='absolute flex'>
+  return <>
+    <div className='absolute flex ml-auto mr-auto left-0 right-0 justify-center'>
+    {/* <div className='absolute flex justify-center'> */}
       {
         btnz.map(([Icon, fcn, txt], idx) => (
           <div className="btn flex items-center justify-start p-1 text-lg" key={idx}
@@ -80,13 +81,13 @@ const App = () => {
       }
     </div>
 
-    <div className='absolute left-0 top-10 w-40 flex flex-col'>
+    <div className='absolute left-0 top-36 w-40 flex flex-col'>
       {treeEntries.allIds.map((entId, idx) => (
         <TreeEntry key={idx} entId={entId} />
       ))}
     </div>
 
-  </div>
+  </>
 
 }
 
@@ -142,6 +143,7 @@ const TreeEntry = ({ entId }) => {
         onClick={() => {
           activeSketchId && treeEntries[activeSketchId].deactivate()
           entry.activate()
+          sc.clearSelection()
           sc.activeSketch = entry;
         }}
       >

@@ -14,6 +14,7 @@ import { onHover, onPick } from './utils/mouseEvents';
 import { _vec2, _vec3, color, awaitPts } from './utils/shared'
 import { Vector3 } from 'three/src/Three';
 import { AxesHelper } from './utils/axes'
+import { Patch } from './utils/patch'
 
 import CSG from "./utils/three-csg.js"
 
@@ -35,15 +36,20 @@ export class Scene {
 
     this.store = store;
     this.canvas = document.querySelector('#c');
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas});
-
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
 
     const size = 1;
     const near = 0;
     const far = 100;
     this.camera = new THREE.OrthographicCamera(-size, size, size, -size, near, far);
     this.camera.zoom = 0.1;
-    this.camera.position.set(50, 50, 50);
+    const cameraDist = 50
+    const xzAngle = 30 * Math.PI / 180
+    this.camera.position.set(
+      cameraDist * Math.sin(xzAngle),
+      cameraDist * Math.tan(30 * Math.PI / 180),
+      cameraDist * Math.cos(xzAngle)
+    );
 
     // const controls = new OrbitControls(camera, view1Elem);
     const controls = new TrackballControls(this.camera, this.canvas);
@@ -52,19 +58,27 @@ export class Scene {
 
     this.obj3d = new THREE.Scene()
 
-    this.obj3d.background = new THREE.Color(0x888888);
+    this.obj3d.background = new THREE.Color(color.background);
     const helpersGroup = new THREE.Group();
     helpersGroup.name = "helpersGroup";
     this.obj3d.add(helpersGroup);
-    const axesHelper = new AxesHelper(0.4);
-    helpersGroup.add(axesHelper);
 
-    // console.log(color)
+    // const axesHelper = new AxesHelper(0.4);
+    // helpersGroup.add(axesHelper);
+
+
+    const patch = new Patch(0.5);
+    helpersGroup.add(patch);
+
+
+
+    const planeGeom = new THREE.PlaneGeometry(5, 5)
+
     const pxy = new THREE.Mesh(
-      new THREE.PlaneGeometry(5, 5),
+      planeGeom,
       new THREE.MeshBasicMaterial({
         color: color.plane,
-        opacity: 0.2,
+        opacity: 0.05,
         side: THREE.DoubleSide,
         transparent: true,
         depthWrite: false,
@@ -72,16 +86,22 @@ export class Scene {
       })
     );
 
-    pxy.name = 'd' + nid++
     pxy.userData.type = 'plane'
-    helpersGroup.add(pxy);
+
+    pxy.add(
+      new THREE.LineSegments(
+        new THREE.EdgesGeometry(planeGeom),
+        new THREE.LineBasicMaterial({ color: color.planeBorder })
+      )
+    )
 
     const pyz = pxy.clone().rotateY(Math.PI / 2);
     pyz.material = pyz.material.clone();
-
     const pxz = pxy.clone().rotateX(-Math.PI / 2);
     pxz.material = pxz.material.clone();
 
+
+    helpersGroup.add(pxy);
     helpersGroup.add(pyz);
     helpersGroup.add(pxz);
 
@@ -173,6 +193,20 @@ export class Scene {
     this.store.dispatch({ type: 'restore-state', state })
   }
 
+  clearSelection() {
+    for (let x = 0; x < this.selected.length; x++) {
+      const obj = this.selected[x]
+      obj.material.color.set(color[obj.userData.type])
+    }
+    for (let x = 0; x < this.hovered.length; x++) {
+      const obj = this.selected[x]
+      obj.material.color.set(color[obj.userData.type])
+    }
+    this.obj3d.dispatchEvent({ type: 'change' })
+    this.selected = []
+    console.log('fireed')
+  }
+
 }
 
 
@@ -202,7 +236,7 @@ function render() {
 
       x = (pos.x * .5 + .5) * this.canvas.clientWidth + 10;
       y = (pos.y * -.5 + .5) * this.canvas.clientHeight;
-      
+
       // console.log(i, ele)
       // ele.label.style.transform = `translate(-50%, -50%) translate(${x+20}px,${y}px)`;
       ele.label.style.transform = `translate(0%, -50%) translate(${x}px,${y}px)`;
@@ -249,7 +283,7 @@ async function addSketch() {
   }
 
 
-
+  this.clearSelection()
 
   sketch.activate()
   this.activeSketch = sketch
