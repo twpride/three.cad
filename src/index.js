@@ -42,11 +42,26 @@ function reducer(state = {}, action) {
           allIds: { $push: [action.mesh.name] },
           tree: {
             [action.sketchId]: { [action.mesh.name]: { $set: true } },
+            [action.mesh.name]: { $set: {} } 
           },
           order: { [action.mesh.name]: { $set: state.treeEntries.allIds.length } }
         }
       })
+    case 'rx-boolean':
 
+      return update(state, {
+        treeEntries: {
+          byId: {
+            [action.mesh.name]: { $set: action.mesh }
+          },
+          allIds: { $push: [action.mesh.name] },
+          tree: {
+            [action.deps[0]]: { [action.mesh.name]: { $set: true } },
+            [action.deps[1]]: { [action.mesh.name]: { $set: true } },
+          },
+          order: { [action.mesh.name]: { $set: state.treeEntries.allIds.length } }
+        }
+      })
     case 'delete-node':
 
       const depTree = new DepTree(state.treeEntries)
@@ -55,7 +70,7 @@ function reducer(state = {}, action) {
 
 
       return update(state, {
-        treeEntries: {$set: obj}
+        treeEntries: { $set: obj }
       })
 
 

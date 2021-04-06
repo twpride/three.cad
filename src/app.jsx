@@ -47,13 +47,14 @@ const App = () => {
     ,
     [FaCube, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Extrude'],
     [Icon.Union, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Union'],
-    [Icon.Subtract, ()=> {
+    [Icon.Subtract, () => {
       if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
       // console.log('here')
       const [m1, m2] = sc.selected
-      const mesh = subtract(m1,m2)
-      
-      dispatch({ type: 'rx-extrusion', mesh, deps:[m1.name,m2.name] })
+      const mesh = subtract(m1, m2)
+
+      console.log(mesh, 'meshres')
+      dispatch({ type: 'rx-boolean', mesh, deps: [m1.name, m2.name] })
       sc.render()
       forceUpdate()
     }, 'Subtract'],
@@ -65,19 +66,21 @@ const App = () => {
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
-  return <div className='absolute left-0 w-40 flex flex-col'>
-    {
-      btnz.map(([Icon, fcn, txt], idx) => (
-        <div className="btn flex items-center justify-end p-1 text-lg" key={idx}
-          onClick={fcn}
-        >
-          <div>{txt}</div>
-          <Icon className="w-6 h-6 ml-1" />
-        </div>
-      ))
-    }
+  return <div className=''>
+    <div className='absolute flex'>
+      {
+        btnz.map(([Icon, fcn, txt], idx) => (
+          <div className="btn flex items-center justify-start p-1 text-lg" key={idx}
+            onClick={fcn}
+          >
+            <Icon className="w-6 h-6" />
+            <div className="ml-2">{txt}</div>
+          </div>
+        ))
+      }
+    </div>
 
-    <div className=''>
+    <div className='absolute left-0 top-10 w-40 flex flex-col'>
       {treeEntries.allIds.map((entId, idx) => (
         <TreeEntry key={idx} entId={entId} />
       ))}
@@ -109,46 +112,6 @@ const TreeEntry = ({ entId }) => {
   const vis = obj3d.visible
 
   return <div className='bg-gray-50 flex justify-between w-full'>
-    <div className='btn'
-      onClick={() => {
-        activeSketchId && treeEntries[activeSketchId].deactivate()
-        entry.activate()
-        sc.activeSketch = entry;
-      }}
-    >
-      <MdEdit />
-    </div>
-
-    <div className='btn'
-      onClick={() => {
-        dispatch({type:'delete-node',id:entId})
-      }}
-    >
-      <MdDelete/>
-    </div>
-    {
-      vis ?
-        <div className='btn'
-          onClick={() => {
-            obj3d.visible = false;
-            sc.render()
-            forceUpdate()
-          }}
-        >
-          <MdVisibility />
-        </div>
-        :
-        <div className='btn'
-          onClick={() => {
-            obj3d.visible = true;
-            sc.render()
-            forceUpdate()
-          }}
-        >
-          <MdVisibilityOff />
-        </div>
-    }
-
     <div className="btn"
       onPointerEnter={() => {
         if (entId[0] == 'm') {
@@ -174,11 +137,53 @@ const TreeEntry = ({ entId }) => {
     >
       {entId}
     </div>
+    <div className='flex'>
+      <div className='btn'
+        onClick={() => {
+          activeSketchId && treeEntries[activeSketchId].deactivate()
+          entry.activate()
+          sc.activeSketch = entry;
+        }}
+      >
+        <MdEdit />
+      </div>
+
+      <div className='btn'
+        onClick={() => {
+          dispatch({ type: 'delete-node', id: entId })
+        }}
+      >
+        <MdDelete />
+      </div>
+      {
+        vis ?
+          <div className='btn'
+            onClick={() => {
+              obj3d.visible = false;
+              sc.render()
+              forceUpdate()
+            }}
+          >
+            <MdVisibility />
+          </div>
+          :
+          <div className='btn'
+            onClick={() => {
+              obj3d.visible = true;
+              sc.render()
+              forceUpdate()
+            }}
+          >
+            <MdVisibilityOff />
+          </div>
+      }
+    </div>
+
   </div>
 
 }
 
-const subtract = (m1,m2) => {
+const subtract = (m1, m2) => {
   //  //Create a bsp tree from each of the meshes
   // console.log(sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh'), "wtf")
 
@@ -196,7 +201,7 @@ const subtract = (m1,m2) => {
 
   let meshResult = BoolOp.toMesh(bspResult, m1.matrix, m1.material)
   meshResult.userData.type = 'mesh'
-  meshResult.userData.name = `${m1.name}-${m2.name}`
+  meshResult.name = `${m1.name}-${m2.name}`
 
   sc.obj3d.add(meshResult)
 

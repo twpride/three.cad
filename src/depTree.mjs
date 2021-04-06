@@ -1,7 +1,6 @@
 export class DepTree {
   constructor(obj) {
     if (obj) {
-      console.log('load', obj)
       this.order = { ...obj.order }
       this.byId = { ...obj.byId }
       this.allIds = [...obj.allIds]

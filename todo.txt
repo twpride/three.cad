@@ -2,10 +2,14 @@ fix css on design tree (a  lot of work)  \
 clear dim on exit exit sketch / rehydrate when back or after loading  \\\ done
 
 boolean flesh out refresh / replace mesh / delete mesh
-  - need to auto hide ( consume) when new boolean created
-  - create derived part using relationship as name
+  - need to auto hide ( consume) when new boolean created \\
+  - create derived part using relationship as name  \\ done
   - sensible default names, like extrude 1, sketch 1, leverage react for this
-  - hidden bodies messes up hover highlight
+  - hidden bodies messes up hover highlight  \\ fixed
+  - add for union and intersect
+  - auto update
+
+  - consume skeches after extrude
 
 extrude edit dialog. directio and magnitude
 
