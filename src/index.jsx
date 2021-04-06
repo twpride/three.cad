@@ -42,7 +42,7 @@ function reducer(state = {}, action) {
           allIds: { $push: [action.mesh.name] },
           tree: {
             [action.sketchId]: { [action.mesh.name]: { $set: true } },
-            [action.mesh.name]: { $set: {} } 
+            [action.mesh.name]: { $set: {} }
           },
           order: { [action.mesh.name]: { $set: state.treeEntries.allIds.length } }
         }
@@ -95,16 +95,10 @@ const preloadedState = {
 
 
 
-
-
 window.store = createStore(reducer, preloadedState, applyMiddleware(logger))
 
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(
-    React.createElement(Root, { store: store }, null)
-    , document.getElementById('react')
-  );
+  ReactDOM.render(<Root store={store} />, document.getElementById('react'));
 });
+

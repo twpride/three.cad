@@ -32,7 +32,7 @@ export async function drawDimension() {
     pointMaterial.clone()
   )
 
-  line.userData.nids = pts.map(e => e.name)
+  line.userData.ids = pts.map(e => e.name)
 
 
 
@@ -111,7 +111,7 @@ export async function drawDimension() {
 const p1 = new THREE.Vector2()
 const p2 = new THREE.Vector2()
 const p3 = new THREE.Vector2()
-let dir, hyp, proj, perp, p1e, p2e, nids, _p1, _p2;
+let dir, hyp, proj, perp, p1e, p2e, ids, _p1, _p2;
 
 
 
@@ -142,10 +142,10 @@ export function updateDim(c_id) {
 
 export function _onMoveDimension(point, line) {
 
-  nids = line.userData.nids
+  ids = line.userData.ids
 
-  _p1 = this.obj3d.children[this.objIdx.get(nids[0])].geometry.attributes.position.array
-  _p2 = this.obj3d.children[this.objIdx.get(nids[1])].geometry.attributes.position.array
+  _p1 = this.obj3d.children[this.objIdx.get(ids[0])].geometry.attributes.position.array
+  _p2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
 
   p1.set(_p1[0], _p1[1])
   p2.set(_p2[0], _p2[1])
@@ -191,10 +191,10 @@ export function setDimLines() {
     }
 
 
-    nids = dims[i].userData.nids
+    ids = dims[i].userData.ids
 
-    _p1 = this.obj3d.children[this.objIdx.get(nids[0])].geometry.attributes.position.array
-    _p2 = this.obj3d.children[this.objIdx.get(nids[1])].geometry.attributes.position.array
+    _p1 = this.obj3d.children[this.objIdx.get(ids[0])].geometry.attributes.position.array
+    _p2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
 
     const offset = dims[i + 1].userData.offset
 

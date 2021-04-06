@@ -55,7 +55,7 @@ const ptObj = (n) => {
     ),
     pointMaterial.clone()
   );
-  ret.name = "p" + nid++
+  ret.name = "p" + id++
   ret.userData.type = 'point'
   return ret
 }
@@ -67,7 +67,7 @@ const lineObj = (n = 1) => {
     ),
     lineMaterial.clone()
   );
-  ret.name = 'l' + nid++
+  ret.name = 'l' + id++
   ret.userData.type = 'line'
   return ret
 }

@@ -27,7 +27,7 @@ const eq = (a1, a2) => {
 }
 
 window.loader = new THREE.ObjectLoader();
-window.nid = 0
+window.id = 0
 
 export class Scene {
   constructor(store) {
@@ -158,31 +158,34 @@ export class Scene {
   saveState() {
 
     localStorage.setItem(
-      'sv', JSON.stringify([nid, this.store.getState()])
+      'sv', JSON.stringify([id, this.store.getState()])
     )
 
   }
 
   loadState() {  //uglyyy
-    const [curNid, state] = JSON.parse(
+    const [curid, state] = JSON.parse(
       localStorage.getItem('sv')
     )
 
-    window.nid = curNid
+    window.id = curid
 
-    const entries = state.treeEntries.byNid
+    const entries = state.treeEntries.byId
+    console.log(entries)
     for (let k in entries) {
 
+      console.log(k)
       if (k[0] == 's') {
 
         entries[k].obj3d = loader.parse(entries[k].obj3d)
         this.obj3d.add(entries[k].obj3d)
-        entries[k] = new Sketch(this.camera, this.canvas, this.store, state.treeEntries.byNid[k])
+        entries[k] = new Sketch(this.camera, this.canvas, this.store, state.treeEntries.byId[k])
         entries[k].obj3d.addEventListener('change', this.render) // !! took 3 hours to realize
 
       } else if (k[0] == 'm') {
 
-        entries[k] = loader.parse(state.treeEntries.byNid[k])
+        entries[k] = loader.parse(state.treeEntries.byId[k])
+        console.log(entries[k])
         this.obj3d.add(entries[k])
 
       }
@@ -294,7 +297,7 @@ async function addSketch() {
 }
 
 window.sc = new Scene(store)
-// sc.loadState()
+sc.loadState()
 
 
 

@@ -68,15 +68,21 @@ export function extrude(sketch) {
 
   const shape = new THREE.Shape(v2s);
   const extrudeSettings = { depth: 8, bevelEnabled: false };
+
+
+
+
+
+
+
+
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  const phong = new THREE.MeshPhongMaterial({
+  const material = new THREE.MeshPhongMaterial({
     color: color.mesh,
     emissive: color.emissive,
-    flatShading: true
   });
-  const mesh = new THREE.Mesh(geometry, phong)
-  // mesh.name = "Extrude"
-  mesh.name = 'm' + nid++
+  const mesh = new THREE.Mesh(geometry, material)
+  mesh.name = 'm' + id++
   mesh.userData.type = 'mesh'
 
   for (let i = 0; i < offSetPts.length; i += 2) {
@@ -93,6 +99,9 @@ export function extrude(sketch) {
   mesh.matrixAutoUpdate = false;
   mesh.matrix.multiply(sketch.obj3d.matrix)
   this.obj3d.add(mesh)
+
+
+
 
 
   this.render()

@@ -19,6 +19,7 @@ export function onHover(e) {
     hoverPts = raycaster.intersectObjects([...this.obj3d.children[1].children, ...this.obj3d.children])
 
     if (hoverPts.length) {
+
       let minDist = Infinity;
       for (let i = 0; i < hoverPts.length; i++) {
         if (!hoverPts[i].distanceToRay) continue;
@@ -29,6 +30,8 @@ export function onHover(e) {
           idx.push(i)
         }
       }
+
+
       // console.log(hoverPts, idx)
       if (!idx.length) idx.push(0)
     }
@@ -39,19 +42,37 @@ export function onHover(e) {
     hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
 
     if (hoverPts.length) {
+
+      // for (let i = 0; i < hoverPts.length; i++) {
+      //   const obj = hoverPts[i].object
+      //   if (['point', 'plane'].includes(obj.userData.type)) {
+      //     idx.push(i)
+      //     break;
+      //   }
+      // }
+      // console.log(hoverPts)
+
+
+      let minDist = Infinity;
       for (let i = 0; i < hoverPts.length; i++) {
-        const obj = hoverPts[i].object
-        if (['point', 'plane'].includes(obj.userData.type)) {
+        if (!hoverPts[i].distanceToRay) continue;
+
+        if (hoverPts[i].distanceToRay < minDist - 0.0001) {
+          minDist = hoverPts[i].distanceToRay
+          idx = [i]
+        } else if (Math.abs(hoverPts[i].distanceToRay - minDist) < 0.0001) {
           idx.push(i)
-          break;
         }
       }
+
+
+
 
       if (!idx.length) {
         const obj = hoverPts[0].object
         if (obj.userData.type == "mesh" && obj.visible) {
           idx.push(0)
-        } else {
+        } else if (['point', 'plane'].includes(obj.userData.type)) {
           idx.push(0)
         }
       }

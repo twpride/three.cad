@@ -7,7 +7,7 @@ import { onHover, onDrag, onDragDim, onPick, onRelease } from './mouseEvents'
 import { addDimension, setCoincident } from './constraintEvents'
 import { get3PtArc } from './drawArc'
 import { _vec2, _vec3, raycaster, awaitPts } from './shared'
-import { replacer, reviver } from './mapJSONReplacer'
+import { replacer, reviver } from './utils'
 import { AxesHelper } from './sketchAxes'
 import { drawDimension, _onMoveDimension, setDimLines, updateDim } from './drawDimension';
 
@@ -36,7 +36,7 @@ class Sketch {
     if (preload === undefined) {
 
       this.obj3d = new THREE.Group()
-      this.obj3d.name = "s" + nid++
+      this.obj3d.name = "s" + id++
       this.obj3d.userData.type = "sketch"
       this.obj3d.matrixAutoUpdate = false;
 
