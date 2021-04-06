@@ -98,7 +98,7 @@ export function extrude(sketch) {
   this.render()
 
   // sketch.visible = false
-  this.store.dispatch({ type: 'rx-extrusion', mesh, sketch })
+  this.store.dispatch({ type: 'rx-extrusion', mesh, sketchId: sketch.obj3d.name })
 }
 
 

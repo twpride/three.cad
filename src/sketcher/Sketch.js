@@ -9,7 +9,7 @@ import { get3PtArc } from './drawArc'
 import { _vec2, _vec3, raycaster, awaitPts } from '../utils/shared'
 import { replacer, reviver } from '../utils/mapJSONReplacer'
 import { AxesHelper } from '../utils/axes'
-import { drawDimension, _onMoveDimension, setDimLines } from './drawDimension';
+import { drawDimension, _onMoveDimension, setDimLines, updateDim } from './drawDimension';
 
 
 
@@ -114,6 +114,7 @@ class Sketch {
     this.drawDimension = drawDimension.bind(this)
     this._onMoveDimension = _onMoveDimension.bind(this)
     this.setDimLines = setDimLines.bind(this)
+    this.updateDim = updateDim.bind(this)
 
     this.awaitPts = awaitPts.bind(this);
 

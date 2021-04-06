@@ -5,8 +5,7 @@ import './app.css'
 
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { FaCube, FaEdit } from 'react-icons/fa'
-import { MdEdit, MdDone, MdVisibilityOff, MdVisibility } from 'react-icons/md'
-import { RiShape2Fill } from 'react-icons/ri'
+import { MdEdit, MdDone, MdVisibilityOff, MdVisibility, MdDelete } from 'react-icons/md'
 import * as Icon from "./icons";
 import { color } from './utils/shared'
 
@@ -22,16 +21,11 @@ export const Root = ({ store }) => (
 const App = () => {
   const dispatch = useDispatch()
   const treeEntries = useSelector(state => state.treeEntries)
-  const activeSketchNid = useSelector(state => state.activeSketchNid)
-
-  // const [state, setState] = useState('x')
-  // useEffect(()=>{
-  //   console.log('hereeee')
-  // },[state])
+  const activeSketchId = useSelector(state => state.activeSketchId)
 
 
   useEffect(() => {
-    if (!activeSketchNid) {
+    if (!activeSketchId) {
       sc.canvas.addEventListener('pointermove', sc.onHover)
       sc.canvas.addEventListener('pointerdown', sc.onPick)
       return () => {
@@ -39,26 +33,37 @@ const App = () => {
         sc.canvas.removeEventListener('pointerdown', sc.onPick)
       }
     }
-  }, [activeSketchNid])
+  }, [activeSketchId])
 
 
   const btnz = [
-    activeSketchNid ?
+    activeSketchId ?
       [MdDone, () => {
-        treeEntries.byNid[activeSketchNid].deactivate()
+        treeEntries.byId[activeSketchId].deactivate()
         sc.activeSketch = null
         // sc.activeDim = this.activeSketch.obj3d.children[1].children
       }, 'Finish'] :
       [FaEdit, sc.addSketch, 'Sketch']
     ,
-    [FaCube, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Extrude'],
-    [Icon.Union, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Union'],
-    [Icon.Subtract, subtract, 'Subtract'],
-    [Icon.Intersect, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Intersect'],
-    [Icon.Dimension, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Dimension'],
-    [Icon.Line, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Line'],
-    [Icon.Arc, () => sc.extrude(treeEntries.byNid[activeSketchNid]), 'Arc'],
+    [FaCube, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Extrude'],
+    [Icon.Union, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Union'],
+    [Icon.Subtract, ()=> {
+      if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
+      // console.log('here')
+      const [m1, m2] = sc.selected
+      const mesh = subtract(m1,m2)
+      
+      dispatch({ type: 'rx-extrusion', mesh, deps:[m1.name,m2.name] })
+      sc.render()
+      forceUpdate()
+    }, 'Subtract'],
+    [Icon.Intersect, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Intersect'],
+    [Icon.Dimension, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Dimension'],
+    [Icon.Line, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Line'],
+    [Icon.Arc, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc'],
   ]
+
+  const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
   return <div className='absolute left-0 w-40 flex flex-col'>
     {
@@ -73,7 +78,7 @@ const App = () => {
     }
 
     <div className=''>
-      {treeEntries.allNids.map((entId, idx) => (
+      {treeEntries.allIds.map((entId, idx) => (
         <TreeEntry key={idx} entId={entId} />
       ))}
     </div>
@@ -84,9 +89,10 @@ const App = () => {
 
 const TreeEntry = ({ entId }) => {
 
-  const treeEntries = useSelector(state => state.treeEntries.byNid)
+  const treeEntries = useSelector(state => state.treeEntries.byId)
+  const dispatch = useDispatch()
 
-  const activeSketchNid = useSelector(state => state.activeSketchNid)
+  const activeSketchId = useSelector(state => state.activeSketchId)
 
   let obj3d, entry;
 
@@ -105,7 +111,7 @@ const TreeEntry = ({ entId }) => {
   return <div className='bg-gray-50 flex justify-between w-full'>
     <div className='btn'
       onClick={() => {
-        activeSketchNid && treeEntries[activeSketchNid].deactivate()
+        activeSketchId && treeEntries[activeSketchId].deactivate()
         entry.activate()
         sc.activeSketch = entry;
       }}
@@ -113,6 +119,13 @@ const TreeEntry = ({ entId }) => {
       <MdEdit />
     </div>
 
+    <div className='btn'
+      onClick={() => {
+        dispatch({type:'delete-node',id:entId})
+      }}
+    >
+      <MdDelete/>
+    </div>
     {
       vis ?
         <div className='btn'
@@ -165,12 +178,10 @@ const TreeEntry = ({ entId }) => {
 
 }
 
-const subtract = () => {
+const subtract = (m1,m2) => {
   //  //Create a bsp tree from each of the meshes
   // console.log(sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh'), "wtf")
-  if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
-  // console.log('here')
-  const [m1, m2] = sc.selected
+
 
   let bspA = BoolOp.fromMesh(m1)
   let bspB = BoolOp.fromMesh(m2)
@@ -184,9 +195,12 @@ const subtract = () => {
   // //Get the resulting mesh from the result bsp, and assign meshA.material to the resulting mesh
 
   let meshResult = BoolOp.toMesh(bspResult, m1.matrix, m1.material)
+  meshResult.userData.type = 'mesh'
+  meshResult.userData.name = `${m1.name}-${m2.name}`
 
   sc.obj3d.add(meshResult)
-  sc.render()
+
+  return meshResult
 
 }
 

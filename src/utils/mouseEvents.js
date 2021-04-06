@@ -13,34 +13,50 @@ export function onHover(e) {
   );
 
   let hoverPts;
+  let idx = []
+
   if (this.obj3d.userData.type == 'sketch') {
     hoverPts = raycaster.intersectObjects([...this.obj3d.children[1].children, ...this.obj3d.children])
 
-    // if (!hoverPts.length) {
-    //   hoverPts = raycaster.intersectObjects(this.obj3d.children)
-    // }
-  } else {
-    hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
-  }
-
-  // if (hoverDim.length) {
-  // }
-
-  let idx = []
-  if (hoverPts.length) {
-    let minDist = Infinity;
-    for (let i = 0; i < hoverPts.length; i++) {
-      if (!hoverPts[i].distanceToRay) continue;
-      if (hoverPts[i].distanceToRay < minDist - 0.0001) {
-        minDist = hoverPts[i].distanceToRay
-        idx = [i]
-      } else if (Math.abs(hoverPts[i].distanceToRay - minDist) < 0.0001) {
-        idx.push(i)
+    if (hoverPts.length) {
+      let minDist = Infinity;
+      for (let i = 0; i < hoverPts.length; i++) {
+        if (!hoverPts[i].distanceToRay) continue;
+        if (hoverPts[i].distanceToRay < minDist - 0.0001) {
+          minDist = hoverPts[i].distanceToRay
+          idx = [i]
+        } else if (Math.abs(hoverPts[i].distanceToRay - minDist) < 0.0001) {
+          idx.push(i)
+        }
       }
+      // console.log(hoverPts, idx)
+      if (!idx.length) idx.push(0)
     }
-    // console.log(hoverPts, idx)
-    if (!idx.length) idx.push(0)
+
+
+  } else {
+    // hoverPts = raycaster.intersectObjects(this.obj3d.children)
+    hoverPts = raycaster.intersectObjects(this.obj3d.children,true)
+
+
+    // for (let i = 0; i < hoverPts.length; i++) {
+    //   const obj = hoverPts[i].object
+    //   if (obj.userData.type == "mesh" && obj.visible || obj.userData.type == "plane") {
+    //     idx.push(i)
+    //   }
+    // }
+    if (hoverPts.length) {
+      // console.log(hoverPts)
+      if (!idx.length) idx.push(0)
+    }
+
+
+
+
+
   }
+
+
 
   if (idx.length) { // after filtering, hovered objs still exists
     if (hoverPts[idx[0]].object != this.hovered[0]) { // if the previous hovered obj is not the same as current

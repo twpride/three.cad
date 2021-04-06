@@ -1,11 +1,31 @@
 fix css on design tree (a  lot of work)  \
-clear dim on exit exit sketch / rehydrate when back or after loading
-boolean flesh out refresh / replace mesh
-dimension to origin
+clear dim on exit exit sketch / rehydrate when back or after loading  \\\ done
+
+boolean flesh out refresh / replace mesh / delete mesh
+  - need to auto hide ( consume) when new boolean created
+  - create derived part using relationship as name
+  - sensible default names, like extrude 1, sketch 1, leverage react for this
+  - hidden bodies messes up hover highlight
+
+extrude edit dialog. directio and magnitude
+
 fix extrusion loop find
+
+dimension to origin
+
 reattaching sketch
 file save
 stl export
 
 angle
 other constraints / sprite
+
+
+
+
+
+
+
+
+
+finish mode messed up after restore

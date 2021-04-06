@@ -87,29 +87,9 @@ export async function drawDimension() {
     point.name = this.c_id
     point.userData.type = 'dimension'
 
-    const updateDim = (c_id) => (ev_focus) => {
-      const value = ev_focus.target.textContent
-      console.log(value)
-      document.addEventListener('keydown', (e) => {
-        if (e.key == 'Enter') {
-          e.preventDefault()
-          const ent = this.constraints.get(c_id)
-          ent[1] = parseFloat(ev_focus.target.textContent)
-          this.constraints.set(c_id, ent)
-          this.updateOtherBuffers()
-          this.solve()
-          sc.render()
-          ev_focus.target.blur()
-          this.updateBoundingSpheres()
-        } else if (e.key == 'Escape') {
-          ev_focus.target.textContent = value
-          getSelection().empty()
-          ev_focus.target.blur()
-        }
-      })
-    }
 
-    point.label.addEventListener('focus', updateDim(this.c_id))
+
+    point.label.addEventListener('focus', this.updateDim(this.c_id))
 
 
 
@@ -133,12 +113,39 @@ const p2 = new THREE.Vector2()
 const p3 = new THREE.Vector2()
 let dir, hyp, proj, perp, p1e, p2e, nids, _p1, _p2;
 
+
+
+export function updateDim(c_id) {
+  return (ev_focus) => {
+    const value = ev_focus.target.textContent
+    document.addEventListener('keydown', (e) => {
+      if (e.key == 'Enter') {
+        e.preventDefault()
+        const ent = this.constraints.get(c_id)
+        ent[1] = parseFloat(ev_focus.target.textContent)
+        this.constraints.set(c_id, ent)
+        this.updateOtherBuffers()
+        this.solve()
+        sc.render()
+        ev_focus.target.blur()
+        this.updateBoundingSpheres()
+      } else if (e.key == 'Escape') {
+        ev_focus.target.textContent = value
+        getSelection().empty()
+        ev_focus.target.blur()
+      }
+    })
+  }
+} 
+
+
+
 export function _onMoveDimension(point, line) {
 
   nids = line.userData.nids
 
-  _p1 = this.obj3d.children[sketcher.objIdx.get(nids[0])].geometry.attributes.position.array
-  _p2 = this.obj3d.children[sketcher.objIdx.get(nids[1])].geometry.attributes.position.array
+  _p1 = this.obj3d.children[this.objIdx.get(nids[0])].geometry.attributes.position.array
+  _p2 = this.obj3d.children[this.objIdx.get(nids[1])].geometry.attributes.position.array
 
   p1.set(_p1[0], _p1[1])
   p2.set(_p2[0], _p2[1])
@@ -163,27 +170,6 @@ export function _onMoveDimension(point, line) {
 
 
 export function setDimLines() {
-  const updateDim = (c_id) => (ev_focus) => {
-    const value = ev_focus.target.textContent
-    console.log(value)
-    document.addEventListener('keydown', (e) => {
-      if (e.key == 'Enter') {
-        e.preventDefault()
-        const ent = this.constraints.get(c_id)
-        ent[1] = parseFloat(ev_focus.target.textContent)
-        this.constraints.set(c_id, ent)
-        this.updateOtherBuffers()
-        this.solve()
-        sc.render()
-        ev_focus.target.blur()
-        this.updateBoundingSpheres()
-      } else if (e.key == 'Escape') {
-        ev_focus.target.textContent = value
-        getSelection().empty()
-        ev_focus.target.blur()
-      }
-    })
-  }
 
   const restoreLabels = this.labelContainer.childElementCount == 0;
 
@@ -200,18 +186,15 @@ export function setDimLines() {
       point.label.textContent = dist.toFixed(3);
       point.label.contentEditable = true;
       this.labelContainer.append(point.label)
-
-
   
-      point.label.addEventListener('focus', updateDim(this.c_id))
-
+      point.label.addEventListener('focus', this.updateDim(this.c_id))
     }
 
 
     nids = dims[i].userData.nids
 
-    _p1 = this.obj3d.children[sketcher.objIdx.get(nids[0])].geometry.attributes.position.array
-    _p2 = this.obj3d.children[sketcher.objIdx.get(nids[1])].geometry.attributes.position.array
+    _p1 = this.obj3d.children[this.objIdx.get(nids[0])].geometry.attributes.position.array
+    _p2 = this.obj3d.children[this.objIdx.get(nids[1])].geometry.attributes.position.array
 
     const offset = dims[i + 1].userData.offset
 
