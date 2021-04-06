@@ -1,5 +1,5 @@
-import * as THREE from 'three/src/Three';
-import { color, ptObj } from './utils/shared'
+import * as THREE from '../node_modules/three/src/Three';
+import { color, ptObj } from './shared'
 export function extrude(sketch) {
 
   let constraints = sketch.constraints;

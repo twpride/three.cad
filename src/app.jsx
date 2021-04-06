@@ -4,10 +4,11 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import './app.css'
 
 import { Provider, useDispatch, useSelector } from 'react-redux'
+
 import { FaCube, FaEdit } from 'react-icons/fa'
 import { MdEdit, MdDone, MdVisibilityOff, MdVisibility, MdDelete } from 'react-icons/md'
 import * as Icon from "./icons";
-import { color } from './utils/shared'
+// import { color } from './shared'
 
 export const Root = ({ store }) => (
   <Provider store={store}>
@@ -116,14 +117,14 @@ const TreeEntry = ({ entId }) => {
     <div className="btn"
       onPointerEnter={() => {
         if (entId[0] == 'm') {
-          entry.material.color.set(color.hover)
+          // entry.material.color.set(color.hover)
           sc.render()
         }
       }}
       onPointerLeave={() => {
         const obj = entry
         if (entId[0] == 'm' && !sc.selected.includes(obj)) {
-          obj.material.color.set(color.mesh)
+          // obj.material.color.set(color.mesh)
           sc.render()
         }
       }}

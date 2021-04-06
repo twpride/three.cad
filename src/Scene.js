@@ -1,22 +1,20 @@
 
 
 
-// import * as THREE from 'three/src/Three';
 import * as THREE from '../node_modules/three/src/Three';
-// import { OrbitControls } from './utils/OrbitControls'
-import { TrackballControls } from './utils/trackball'
-import { Sketch } from './sketcher/Sketch'
-import Stats from './utils/stats.module.js';
+import { TrackballControls } from './trackball'
+import { Sketch } from './Sketch'
+import Stats from './stats.module.js';
 
 import { add3DPoint } from './datums'
 import { extrude } from './extrude'
-import { onHover, onPick } from './utils/mouseEvents';
-import { _vec2, _vec3, color, awaitPts } from './utils/shared'
-import { Vector3 } from 'three/src/Three';
-import { AxesHelper } from './utils/axes'
-import { Patch } from './utils/patch'
+import { onHover, onPick } from './mouseEvents';
+import { _vec2, _vec3, color, awaitPts } from './shared'
 
-import CSG from "./utils/three-csg.js"
+import { AxesHelper } from './axes'
+import { Patch } from './patch'
+
+import CSG from "./three-csg.js"
 
 window.BoolOp = CSG
 
@@ -277,7 +275,7 @@ async function addSketch() {
     this.obj3d.add(sketch.obj3d)
     sketch.align(
       ...references.map(
-        el => new Vector3(...el.geometry.attributes.position.array).applyMatrix4(el.matrixWorld)
+        el => new THREE.Vector3(...el.geometry.attributes.position.array).applyMatrix4(el.matrixWorld)
       )
     )
   }

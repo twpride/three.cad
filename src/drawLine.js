@@ -1,5 +1,5 @@
-import * as THREE from '../../node_modules/three/src/Three';
-import {ptObj, lineObj} from '../utils/shared'
+import * as THREE from '../node_modules/three/src/Three';
+import {ptObj, lineObj} from './shared'
 
 export function drawLine(mouseLoc) {
 

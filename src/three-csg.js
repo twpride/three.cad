@@ -1,6 +1,6 @@
 "use strict"
 
-import * as THREE from '../../node_modules/three/src/Three';
+import * as THREE from '../node_modules/three/src/Three';
 import { CSG, Vertex, Polygon } from "./csg-lib.js"
 
 

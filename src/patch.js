@@ -3,7 +3,7 @@
 // import { Float32BufferAttribute } from '../core/BufferAttribute.js';
 // import { BufferGeometry } from '../core/BufferGeometry.js';
 
-import { LineSegments, MeshBasicMaterial, Float32BufferAttribute, BufferGeometry, Mesh, DoubleSide } from 'three/src/Three'
+import { LineSegments, MeshBasicMaterial, Float32BufferAttribute, BufferGeometry, Mesh, DoubleSide } from '../node_modules/three/src/Three'
 
 class Patch extends Mesh {
 

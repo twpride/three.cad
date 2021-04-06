@@ -1,5 +1,5 @@
-import * as THREE from '../../node_modules/three/src/Three';
-import { color } from '../utils/shared'
+import * as THREE from '../node_modules/three/src/Three';
+import { color } from './shared'
 
 const lineMaterial = new THREE.LineBasicMaterial({
   linewidth: 2,

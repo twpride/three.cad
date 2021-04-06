@@ -3,7 +3,7 @@
 // import { Float32BufferAttribute } from '../core/BufferAttribute.js';
 // import { BufferGeometry } from '../core/BufferGeometry.js';
 
-import { LineSegments, LineBasicMaterial, Float32BufferAttribute, BufferGeometry } from 'three/src/Three'
+import { LineSegments, LineBasicMaterial, Float32BufferAttribute, BufferGeometry } from '../node_modules/three/src/Three'
 
 class AxesHelper extends LineSegments {
 
