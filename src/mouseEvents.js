@@ -6,11 +6,12 @@ export function onHover(e) {
 
   raycaster.setFromCamera(
     new THREE.Vector2(
-      (e.clientX / window.innerWidth) * 2 - 1,
-      - (e.clientY / window.innerHeight) * 2 + 1
+      (e.clientX - this.rect.left)/ this.rect.width * 2 - 1,
+      - (e.clientY - this.rect.top)/ this.rect.height * 2 + 1
     ),
     this.camera
   );
+
 
   let hoverPts;
   let idx = []
@@ -43,7 +44,7 @@ export function onHover(e) {
 
     if (hoverPts.length) {
 
-      console.log(hoverPts)
+      // console.log(hoverPts)
       // for (let i = 0; i < hoverPts.length; i++) {
       //   const obj = hoverPts[i].object
       //   if (['point', 'plane'].includes(obj.userData.type)) {

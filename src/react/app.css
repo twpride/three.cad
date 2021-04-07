@@ -1,13 +1,19 @@
 /* @tailwind base; */
 @tailwind utilities;
 
-/* html, */
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   height: 100%;
   font-family: sans-serif;
   overflow: hidden;
-  --topNavH: 36px;
+  --topNavH: 48px;
   --sideNavW: 200px;
 }
 
@@ -44,4 +50,27 @@ body {
   @apply fill-current
         bg-gray-100       text-green-600
   hover:bg-gray-200 hover:text-green-700;
+}
+
+
+.tooltip {
+  position: fixed;
+  display: block;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 4px;
+  visibility: hidden;
+
+}
+
+.arrow {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border: solid 6px transparent;
+  border-bottom-color: black;
+  border-top: none;
 }

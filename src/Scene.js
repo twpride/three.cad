@@ -34,6 +34,9 @@ export class Scene {
 
     this.store = store;
     this.canvas = document.querySelector('#c');
+
+    this.rect = this.canvas.getBoundingClientRect().toJSON()
+
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
 
     const size = 1;
@@ -171,15 +174,12 @@ export class Scene {
     window.id = curid
 
     const entries = state.treeEntries.byId
-    console.log(entries)
     for (let k in entries) {
 
-      console.log(k)
       if (k[0] == 's') {
-
         entries[k].obj3d = loader.parse(entries[k].obj3d)
         this.obj3d.add(entries[k].obj3d)
-        entries[k] = new Sketch(this.camera, this.canvas, this.store, state.treeEntries.byId[k])
+        entries[k] = new Sketch(this, state.treeEntries.byId[k])
         entries[k].obj3d.addEventListener('change', this.render) // !! took 3 hours to realize
 
       } else if (k[0] == 'm') {
@@ -219,6 +219,9 @@ function render() {
     this.camera.left = -canvas.clientWidth / canvas.clientHeight;
     this.camera.right = canvas.clientWidth / canvas.clientHeight;
     this.camera.updateProjectionMatrix();
+
+    Object.assign(this.rect, this.canvas.getBoundingClientRect().toJSON())
+
   }
   this.renderer.render(this.obj3d, this.camera);
 
@@ -268,13 +271,13 @@ async function addSketch() {
   if (!references) return;
 
   if (references[0].userData.type == 'plane') {
-    sketch = new Sketch(this.camera, this.canvas, this.store)
+    sketch = new Sketch(this)
     sketch.obj3d.matrix = references[0].matrix
     sketch.plane.applyMatrix4(sketch.obj3d.matrix)
     sketch.obj3d.inverse = sketch.obj3d.matrix.clone().invert()
     this.obj3d.add(sketch.obj3d)
   } else {
-    sketch = new Sketch(this.camera, this.canvas, this.store)
+    sketch = new Sketch(this)
     this.obj3d.add(sketch.obj3d)
     sketch.align(
       ...references.map(

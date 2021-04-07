@@ -11,6 +11,9 @@ export const preloadedState = {
     tree: {},
     order: {},
   },
+  ui: {
+    toolTipImmediate: false 
+  }
 }
 
 export function reducer(state = {}, action) {

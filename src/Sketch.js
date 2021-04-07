@@ -17,7 +17,7 @@ import { drawDimension, _onMoveDimension, setDimLines, updateDim } from './drawD
 class Sketch {
 
 
-  constructor(camera, canvas, store, preload) {
+  constructor(scene, preload) {
 
 
     // [0]:x, [1]:y, [2]:z
@@ -75,9 +75,12 @@ class Sketch {
       this.plane.applyMatrix4(this.obj3d.matrix)
     }
 
-    this.camera = camera;
-    this.canvas = canvas;
-    this.store = store;
+
+    this.scene = scene;
+    this.camera = scene.camera
+    this.canvas = scene.canvas
+    this.rect = scene.rect
+    this.store = scene.store;
 
 
 
@@ -348,13 +351,15 @@ class Sketch {
     }
   }
   getLocation(e) {
+
     raycaster.setFromCamera(
       _vec2.set(
-        (e.clientX / window.innerWidth) * 2 - 1,
-        - (e.clientY / window.innerHeight) * 2 + 1
+        (e.clientX - this.rect.left)/ this.rect.width * 2 - 1,
+        - (e.clientY - this.rect.top)/ this.rect.height * 2 + 1
       ),
       this.camera
     );
+
 
     raycaster.ray.intersectPlane(this.plane, _vec3).applyMatrix4(this.obj3d.inverse)
 

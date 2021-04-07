@@ -1,6 +1,6 @@
 
 
-import React, { useEffect, useReducer} from 'react';
+import React, { useEffect, useReducer } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -58,15 +58,12 @@ export const NavBar = () => {
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
-  return <div className='topNav flex justify-center'>
+  return <div className='topNav flex justify-center items-center'>
     {
       btnz.map(([Icon, fcn, txt], idx) => (
-        <div className="btn flex items-center justify-start p-1 text-lg" key={idx}
-          onClick={fcn}
-        >
-          <Icon className="w-6 h-6" />
-          <div className="ml-2" tooltip="wtf">{txt}</div>
-        </div>
+        <Icon className="btn w-auto h-full p-2" tooltip={txt} 
+          onClick={fcn} key={idx}
+        />
       ))
     }
   </div>
