@@ -1,0 +1,185 @@
+/* @tailwind base; */
+
+.bg-gray-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(249, 250, 251, var(--tw-bg-opacity));
+}
+
+.flex {
+  display: flex;
+}
+
+.table {
+  display: table;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.h-6 {
+  height: 1.5rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.p-1 {
+  padding: 0.25rem;
+}
+
+* {
+  --tw-shadow: 0 0 #0000;
+}
+
+* {
+  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgba(59, 130, 246, 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+.visible {
+  visibility: visible;
+}
+
+.w-6 {
+  width: 1.5rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+/* html, */
+
+body {
+  margin: 0;
+  height: 100%;
+  font-family: sans-serif;
+  overflow: hidden;
+  --topNavH: 36px;
+  --sideNavW: 200px;
+}
+
+#c {
+  position: absolute;
+  width: calc(100% - var(--sideNavW));
+  height: calc(100% - var(--topNavH));
+  bottom: 0;
+  right: 0;
+}
+
+.topNav {
+  position: absolute;
+  height: var(--topNavH);
+  left:0;
+  right:0;
+  top:0;
+}
+
+.sideNav {
+  position: absolute;
+  top: var(--topNavH);
+  left: 0;
+  bottom: 0;
+  width: var(--sideNavW);
+}
+
+#labels > div {
+  position: absolute;
+  border: solid 1px black;
+}
+
+.btn {
+  cursor: pointer;
+  --tw-bg-opacity: 1;
+  background-color: rgba(243, 244, 246, var(--tw-bg-opacity));
+}
+
+.btn:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgba(229, 231, 235, var(--tw-bg-opacity));
+}
+
+.btn {
+  fill: currentColor;
+  --tw-text-opacity: 1;
+  color: rgba(5, 150, 105, var(--tw-text-opacity));
+}
+
+.btn:hover {
+  --tw-text-opacity: 1;
+  color: rgba(4, 120, 87, var(--tw-text-opacity));
+}
+
+@media (min-width: 640px) {
+}
+
+@media (min-width: 768px) {
+}
+
+@media (min-width: 1024px) {
+}
+
+@media (min-width: 1280px) {
+}
+
+@media (min-width: 1536px) {
+}
+

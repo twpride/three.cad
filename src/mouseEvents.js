@@ -43,6 +43,7 @@ export function onHover(e) {
 
     if (hoverPts.length) {
 
+      console.log(hoverPts)
       // for (let i = 0; i < hoverPts.length; i++) {
       //   const obj = hoverPts[i].object
       //   if (['point', 'plane'].includes(obj.userData.type)) {
@@ -50,7 +51,6 @@ export function onHover(e) {
       //     break;
       //   }
       // }
-      // console.log(hoverPts)
 
 
       let minDist = Infinity;

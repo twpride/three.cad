@@ -1,18 +1,19 @@
 
-import ReactDOM from 'react-dom'
-import React from 'react'
-import { Root } from './app.jsx'
-import update from 'immutability-helper';
-
-import { createStore, applyMiddleware } from 'redux'
-import logger from 'redux-logger'
 
 import { DepTree } from './depTree.mjs'
+import update from 'immutability-helper'
 
 
+export const preloadedState = {
+  treeEntries: {
+    byId: {},
+    allIds: [],
+    tree: {},
+    order: {},
+  },
+}
 
-
-function reducer(state = {}, action) {
+export function reducer(state = {}, action) {
   switch (action.type) {
     case 'rx-sketch':
       return update(state, {
@@ -83,22 +84,4 @@ function reducer(state = {}, action) {
 }
 
 
-
-const preloadedState = {
-  treeEntries: {
-    byId: {},
-    allIds: [],
-    tree: {},
-    order: {},
-  },
-}
-
-
-
-window.store = createStore(reducer, preloadedState, applyMiddleware(logger))
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(<Root store={store} />, document.getElementById('react'));
-});
 

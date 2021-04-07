@@ -4,7 +4,7 @@ const tailwindcss = require('tailwindcss')
 
 module.exports = {
   entry: {
-    index: './src/index.jsx',
+    app: './src/app.jsx',
     scene: './src/Scene.js',
   },
   output: {

@@ -2,11 +2,12 @@
 
 import * as THREE from '../node_modules/three/src/Three';
 
-import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear } from './drawEvents'
-import { onHover, onDrag, onDragDim, onPick, onRelease } from './mouseEvents'
-import { addDimension, setCoincident } from './constraintEvents'
-import { get3PtArc } from './drawArc'
 import { _vec2, _vec3, raycaster, awaitPts } from './shared'
+
+import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear } from './drawEvents'
+import { onHover, onDrag, onPick, onRelease } from './mouseEvents'
+import { setCoincident } from './constraintEvents'
+import { get3PtArc } from './drawArc'
 import { replacer, reviver } from './utils'
 import { AxesHelper } from './sketchAxes'
 import { drawDimension, _onMoveDimension, setDimLines, updateDim } from './drawDimension';

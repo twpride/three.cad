@@ -1,38 +1,36 @@
 /* @tailwind base; */
 @tailwind utilities;
 
-html,
+/* html, */
 body {
   margin: 0;
   height: 100%;
   font-family: sans-serif;
   overflow: hidden;
+  --topNavH: 36px;
+  --sideNavW: 200px;
 }
 
 #c {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  display: block;
+  width: calc(100% - var(--sideNavW));
+  height: calc(100% - var(--topNavH));
+  bottom: 0;
+  right: 0;
 }
-
-#react > div {
-
+.topNav {
+  position: absolute;
+  height: var(--topNavH);
+  left:0;
+  right:0;
+  top:0;
 }
-
-.btn-red {
-  cursor: pointer;
-  @apply bg-red-500 hover:bg-red-600 text-gray-50;
-}
-
-.btn-grn {
-  cursor: pointer;
-  @apply bg-green-500 hover:bg-green-600 text-gray-50;
-}
-
-.btn-blu {
-  cursor: pointer;
-  @apply bg-blue-500 hover:bg-blue-600 text-gray-50;
+.sideNav {
+  position: absolute;
+  top: var(--topNavH);
+  left: 0;
+  bottom: 0;
+  width: var(--sideNavW);
 }
 
 
