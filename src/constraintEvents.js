@@ -1,26 +1,32 @@
 
 
-export function setCoincident() {
-  const s = new Set()
-  const toComb = []
-  for (let node of this.selected) {
-    const xc = node.geometry.attributes.position.array[0]
-    if (!s.has(xc)) {
-      toComb.push(node)
-      s.add(xc)
-    }
-  }
+export async function setCoincident() {
+  let selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 })
 
-  for (let i = 1; i < toComb.length; i++) {
+  if (selection == null) return;
+
+  if (selection.every(e => e.userData.type == 'point')) {
     this.constraints.set(++this.c_id,
       [
         'points_coincident', -1,
-        [toComb[i - 1].name, toComb[i].name, -1, -1]  ///////
+        [selection[0].name, selection[1].name, -1, -1]  ///////
       ]
     )
-    toComb[i].userData.constraints.push(this.c_id)
-    toComb[i - 1].userData.constraints.push(this.c_id)
+  } else {
+
+    const idx = selection[0].userData.type == 'point' ? [0, 1] : [1, 0]
+
+    this.constraints.set(++this.c_id,
+      [
+        'pt_on_line', -1,
+        [selection[idx[0]].name, -1, selection[idx[1]].name, -1]  ///////
+      ]
+    )
   }
+
+  selection[1].userData.constraints.push(this.c_id)
+  selection[0].userData.constraints.push(this.c_id)
+
 
   this.updateOtherBuffers()
   this.solve()
@@ -47,7 +53,7 @@ export function setOrdinate(dir = 0) {
     ]
   )
   line.userData.constraints.push(this.c_id)
-  
+
 
   this.updateOtherBuffers()
   this.solve()

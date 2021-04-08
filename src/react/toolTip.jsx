@@ -68,6 +68,7 @@ export const ToolTip = () => {
 
 
 function getTextWidth(text, font = "16px sans-serif") {
+  console.log(text)
   // https://stackoverflow.com/a/21015393
   // re-use canvas object for better performance
   let canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));

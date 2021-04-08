@@ -13,6 +13,7 @@ raycaster.params.Points.threshold = 0.1;
 
 const color = {
   background:0xdae1e7,
+  // background:0xbbbbbb,
   lighting: 0xFFFFFF,
   emissive: 0x072534,
 
@@ -20,10 +21,12 @@ const color = {
   point: 0x555555, //points
   line: 0x555555, //lines
   mesh: 0x156289, //mesh:
-  dimension: 0x891d15, //
+  dimension: 0x0000ff, //
 
-  plane: 0xdaacac, //
-  planeBorder: 0xc59797, //
+  // plane: 0xdaacac, //
+  // planeBorder: 0xc59797, //
+  plane: 0x88adcd, //
+  planeBorder: 0xa7cae8, //
 }
 
 const hoverColor = {
@@ -32,7 +35,7 @@ const hoverColor = {
   line: 0x00ff00, //lines
   mesh: 0x00ff00, //mesh:
   dimension: 0x00ff00, //
-  plane: 0xff0000, //
+  plane: 0x005dff, //
 }
 
 
@@ -73,7 +76,7 @@ const lineObj = (n = 1) => {
 }
 
 
-async function awaitPts(...criteria) {
+async function awaitSelection(...criteria) {
 
   function fullfilled() {
     for (let i = criteria.length - 1; i >= 0; i--) {
@@ -143,4 +146,4 @@ async function awaitPts(...criteria) {
 
 
 
-export { lineMaterial, pointMaterial, _vec2, _vec3, raycaster, color, hoverColor, ptObj, lineObj, awaitPts }
+export { lineMaterial, pointMaterial, _vec2, _vec3, raycaster, color, hoverColor, ptObj, lineObj, awaitSelection }

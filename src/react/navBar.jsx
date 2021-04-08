@@ -35,9 +35,9 @@ export const NavBar = () => {
         sc.activeSketch = null
         // sc.activeDim = this.activeSketch.obj3d.children[1].children
       }, 'Finish'] :
-      [FaEdit, sc.addSketch, 'Sketch']
+      [FaEdit, sc.addSketch, 'Sketch [s]']
     ,
-    [FaCube, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Extrude'],
+    [FaCube, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Extrude [e]'],
     [Icon.Union, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Union'],
     [Icon.Subtract, () => {
       if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
@@ -51,17 +51,17 @@ export const NavBar = () => {
       forceUpdate()
     }, 'Subtract'],
     [Icon.Intersect, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Intersect'],
-    [Icon.Dimension, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Dimension'],
-    [Icon.Line, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Line'],
-    [Icon.Arc, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc'],
+    [Icon.Dimension, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Dimension [d]'],
+    [Icon.Line, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Line [l]'],
+    [Icon.Arc, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],
   ]
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
   return <div className='topNav flex justify-center items-center bg-gray-800'>
     {
-      btnz.map(([Icon, fcn, txt], idx) => (
-        <Icon className="btn w-auto h-full p-3" tooltip={txt} 
+      btnz.map(([Icon, fcn, txt, shortcut], idx) => (
+        <Icon className="btn w-auto h-full p-3" tooltip={txt}
           onClick={fcn} key={idx}
         />
       ))

@@ -2,7 +2,7 @@
 
 import * as THREE from '../node_modules/three/src/Three';
 
-import { _vec2, _vec3, raycaster, awaitPts, ptObj } from './shared'
+import { _vec2, _vec3, raycaster, awaitSelection, ptObj } from './shared'
 
 import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear, drawPoint } from './drawEvents'
 import { onHover, onDrag, onPick, onRelease } from './mouseEvents'
@@ -132,7 +132,7 @@ class Sketch {
     this.setDimLines = setDimLines.bind(this)
     this.updateDim = updateDim.bind(this)
 
-    this.awaitPts = awaitPts.bind(this);
+    this.awaitSelection = awaitSelection.bind(this);
 
     this.onHover = onHover.bind(this);
     this.onPick = onPick.bind(this);
@@ -216,12 +216,8 @@ class Sketch {
         this.mode = ""
         break;
       case 'p':
-        this.canvas.addEventListener('pointerdown',
-          (e) => {
-            drawPoint.call(this, e)
-          }
-        )
-
+        this.canvas.addEventListener('pointerdown', this.drawOnClick1)
+        this.mode = "point"
         break;
       case 'x':
         this.deleteSelected()

@@ -30,7 +30,10 @@ other constraints / sprite
 
 
 
-
+tangent
+vertical
+horizontal
+angle
 
 
 

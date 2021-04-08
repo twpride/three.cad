@@ -9,7 +9,7 @@ import Stats from './stats.module.js';
 import { add3DPoint } from './datums'
 import { extrude } from './extrude'
 import { onHover, onPick } from './mouseEvents';
-import { _vec2, _vec3, color, awaitPts } from './shared'
+import { _vec2, _vec3, color, awaitSelection } from './shared'
 
 import {AxesHelper} from './axes'
 
@@ -17,6 +17,7 @@ import {AxesHelper} from './axes'
 import CSG from "./three-csg.js"
 
 window.BoolOp = CSG
+window.th = THREE
 
 const eq = (a1, a2) => {
   if (a1.length != a2.length) return false
@@ -126,7 +127,7 @@ export class Scene {
     this.extrude = extrude.bind(this);
     this.onHover = onHover.bind(this);
     this.onPick = onPick.bind(this);
-    this.awaitPts = awaitPts.bind(this);
+    this.awaitSelection = awaitSelection.bind(this);
 
     this.obj3d.addEventListener('change', this.render);
     controls.addEventListener('change', this.render);
@@ -239,8 +240,8 @@ function render() {
         ...ele.geometry.attributes.position.array
       ).applyMatrix4(matrix).project(this.camera)
 
-      x = (pos.x * .5 + .5) * this.canvas.clientWidth + 10;
-      y = (pos.y * -.5 + .5) * this.canvas.clientHeight;
+      x = (pos.x * .5 + .5) * this.canvas.clientWidth + 10 + this.rect.left;
+      y = (pos.y * -.5 + .5) * this.canvas.clientHeight + this.rect.top;
 
       ele.label.style.transform = `translate(0%, -50%) translate(${x}px,${y}px)`;
     }
@@ -264,7 +265,7 @@ async function addSketch() {
 
   let sketch;
 
-  const references = await this.awaitPts({ point: 3 }, { plane: 1 });
+  const references = await this.awaitSelection({ point: 3 }, { plane: 1 });
 
   if (!references) return;
 

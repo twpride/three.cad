@@ -1,7 +1,6 @@
 
 import { drawArc, drawArc2 } from './drawArc'
 import { drawLine, drawLine2 } from './drawLine'
-// import { drawDimension } from "./drawDimension";
 import { ptObj } from './shared'
 
 export function drawOnClick1(e) {
@@ -18,6 +17,8 @@ export function drawOnClick1(e) {
     this.toPush = drawArc(mouseLoc)
   } else if (this.mode == 'dim') {
     this.curDimension = drawDimension.call(this)
+  } else if (this.mode == 'point') {
+    this.toPush = drawPoint.call(this, mouseLoc)
   }
 
   this.updatePoint = this.obj3d.children.length
@@ -53,14 +54,15 @@ export function drawOnClick2(e) {
   this.updateOtherBuffers()
 
   if (this.mode == "line") {
-
     this.subsequent = true
     this.drawOnClick1(e)
 
   } else if (this.mode == "arc") {
-    this.toPush = []
+    // this.toPush = []
     // this.canvas.addEventListener('pointermove', this.drawPreClick3)
     // this.canvas.addEventListener('pointerdown', this.drawOnClick3)
+  } else if (this.mode == "point") {
+    this.drawOnClick1(e)
   }
 
 }
@@ -98,14 +100,10 @@ export function drawClear() {
 }
 
 
-export function drawPoint(e) {
-
-  const mouseLoc = this.getLocation(e).toArray();
+export function drawPoint(mouseLoc) {
   const p1 = ptObj()
   p1.matrixAutoUpdate = false;
   p1.userData.constraints = []
   p1.geometry.attributes.position.set(mouseLoc)
-  this.obj3d.add(p1)
-  this.updatePointsBuffer()
-  this.obj3d.dispatchEvent({ type: 'change' })
+  return [p1]
 }
