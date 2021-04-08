@@ -49,7 +49,7 @@ class Sketch {
       this.constraints = new Map()
       this.c_id = 1;
 
-      this.obj3d.add(new THREE.Group().add(new AxesHelper(0.5)));
+      this.obj3d.add(new THREE.Group().add(new AxesHelper(1)));
       this.obj3d.add(new THREE.Group());
       this.obj3d.add(new THREE.Group());
 

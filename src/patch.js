@@ -12,14 +12,26 @@ class Patch extends THREE.Mesh {
 
   constructor(s = 1) {
 
+
+
+
     const positions = [
-      0.5 * s, 0, 0, 
-      0.3 * s, 0.08*s, 0,
-      0.3 * s, -0.08*s, 0
+      0.5, 0,
+      0.3, 0.08,
+      0.3, -0.08,
     ];
 
-    const geometry = new BufferGeometry();
-    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+    const shape = new THREE.Shape()
+
+    shape.moveTo(positions[0], positions[1])
+
+    for (let i = 2; i < positions.length; i += 2) {
+      shape.lineTo(positions[i], positions[i+1])
+    }
+
+    console.log(shape)
+
+    const geometry = new THREE.ShapeGeometry( shape );;
 
 
     super(
@@ -34,6 +46,7 @@ class Patch extends THREE.Mesh {
       })
     )
 
+    this.scale.set( 1, 1, 1 );
     return this;
   }
 
