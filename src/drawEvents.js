@@ -2,6 +2,7 @@
 import { drawArc, drawArc2 } from './drawArc'
 import { drawLine, drawLine2 } from './drawLine'
 // import { drawDimension } from "./drawDimension";
+import { ptObj } from './shared'
 
 export function drawOnClick1(e) {
   if (e.buttons !== 1) return
@@ -94,4 +95,17 @@ export function drawClear() {
     this.subsequent = false
     this.toPush = []
   }
+}
+
+
+export function drawPoint(e) {
+
+  const mouseLoc = this.getLocation(e).toArray();
+  const p1 = ptObj()
+  p1.matrixAutoUpdate = false;
+  p1.userData.constraints = []
+  p1.geometry.attributes.position.set(mouseLoc)
+  this.obj3d.add(p1)
+  this.updatePointsBuffer()
+  this.obj3d.dispatchEvent({ type: 'change' })
 }

@@ -5,7 +5,10 @@
 
 import { LineSegments, MeshBasicMaterial, Float32BufferAttribute, BufferGeometry, Mesh, DoubleSide } from '../node_modules/three/src/Three'
 
-class Patch extends Mesh {
+
+import * as THREE from '../node_modules/three/src/Three';
+
+class Patch extends THREE.Mesh {
 
   constructor(s = 1) {
 

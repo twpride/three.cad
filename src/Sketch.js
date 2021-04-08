@@ -2,11 +2,11 @@
 
 import * as THREE from '../node_modules/three/src/Three';
 
-import { _vec2, _vec3, raycaster, awaitPts } from './shared'
+import { _vec2, _vec3, raycaster, awaitPts, ptObj } from './shared'
 
-import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear } from './drawEvents'
+import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear, drawPoint } from './drawEvents'
 import { onHover, onDrag, onPick, onRelease } from './mouseEvents'
-import { setCoincident } from './constraintEvents'
+import { setCoincident, setOrdinate } from './constraintEvents'
 import { get3PtArc } from './drawArc'
 import { replacer, reviver } from './utils'
 import { AxesHelper } from './sketchAxes'
@@ -47,13 +47,25 @@ class Sketch {
       this.l_id = 0;
 
       this.constraints = new Map()
-      this.c_id = 0;
+      this.c_id = 1;
 
       this.obj3d.add(new THREE.Group().add(new AxesHelper(0.5)));
       this.obj3d.add(new THREE.Group());
       this.obj3d.add(new THREE.Group());
 
       this.labels = []
+
+
+      const p1 = ptObj()
+      p1.matrixAutoUpdate = false;
+      p1.userData.constraints = []
+      this.obj3d.add(p1)
+      this.updatePointsBuffer()
+
+
+
+
+
     } else {
 
 
@@ -138,7 +150,7 @@ class Sketch {
     this.canvas.addEventListener('pointermove', this.onHover)
     this.store.dispatch({ type: 'set-active-sketch', sketch: this.obj3d.name })
 
-    
+
     this.setDimLines()
 
     window.sketcher = this
@@ -200,12 +212,32 @@ class Sketch {
         this.drawDimension()
         this.mode = ""
         break;
+      case 'p':
+        this.canvas.addEventListener('pointerdown',
+          (e) => {
+            drawPoint.call(this, e)
+          }
+        )
+
+        break;
       case 'x':
         this.deleteSelected()
         break;
       case 'c':
 
         setCoincident.call(this)
+
+        this.mode = ""
+        break;
+      case 'v':
+
+        setOrdinate.call(this, 0)
+
+        this.mode = ""
+        break;
+      case 'h':
+
+        setOrdinate.call(this, 1)
 
         this.mode = ""
         break;
@@ -340,12 +372,12 @@ class Sketch {
 
 
   updateBoundingSpheres() {
-    for (let x = 3; x < this.obj3d.children.length; x++) {
+    for (let x = 3; x < this.obj3d.children.length; x++) { // geometry boundign spheres
       const obj = this.obj3d.children[x]
       obj.geometry.computeBoundingSphere()
     }
-  
-    for (let x = 0; x < this.obj3d.children[1].children.length; x++) {
+
+    for (let x = 0; x < this.obj3d.children[1].children.length; x++) { // dimension bounding sphere
       const obj = this.obj3d.children[1].children[x]
       obj.geometry.computeBoundingSphere()
     }
@@ -354,8 +386,8 @@ class Sketch {
 
     raycaster.setFromCamera(
       _vec2.set(
-        (e.clientX - this.rect.left)/ this.rect.width * 2 - 1,
-        - (e.clientY - this.rect.top)/ this.rect.height * 2 + 1
+        (e.clientX - this.rect.left) / this.rect.width * 2 - 1,
+        - (e.clientY - this.rect.top) / this.rect.height * 2 + 1
       ),
       this.camera
     );

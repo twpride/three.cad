@@ -33,6 +33,8 @@ export function drawLine(mouseLoc) {
     p1.userData.constraints.push(this.c_id)
     this.obj3d.children[this.obj3d.children.length - 2].userData.constraints.push(this.c_id)
 
+
+
   }
 
 

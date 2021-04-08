@@ -64,7 +64,7 @@ export function extrude(sketch) {
   }
 
 
-  findPair(children[3]) //??? need fixing
+  findPair(children[4]) //??? need fixing
 
   const shape = new THREE.Shape(v2s);
   const extrudeSettings = { depth: 8, bevelEnabled: false };

@@ -69,18 +69,16 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
   Slvs_hParam vh = 301, vh_s = 301;
   Slvs_hParam lh = 400, lh_s = 400;
 
-  Slvs_hParam con_id = 1;
-
   float *buf_pt_start = p_ptr;
   int p_start = sys.params;
   for (int i = 0; i < nPts; i++)
   {
     if (isnan((float)*p_ptr))
     {
-      // printf("%i\n",i);
       p_ptr += 3;
       continue;
     }
+
     sys.param[sys.params++] = Slvs_MakeParam(ph++, g, (float)*p_ptr++);
     sys.param[sys.params++] = Slvs_MakeParam(ph++, g, (float)*p_ptr++);
     sys.entity[sys.entities++] = Slvs_MakePoint2d(i, g, 200, ph - 1, ph - 2);
@@ -93,13 +91,10 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
     switch ((int)*l_ptr++)
     {
     case 0:
-      // printf("matching %i\n",(int)*(l_ptr + 2));
       sys.entity[sys.entities++] = Slvs_MakeLineSegment((int)*(l_ptr + 2), g,
                                                         200, (int)*l_ptr, (int)*(l_ptr + 1));
       break;
     case 1:
-      /* And arc, centered at point 303, starting at point 304, ending at
-     * point 305. */
       sys.entity[sys.entities++] = Slvs_MakeArcOfCircle((int)*(l_ptr + 3), g, 200, 102,
                                                         (int)*(l_ptr + 2), (int)*(l_ptr), (int)*(l_ptr + 1));
       break;
@@ -110,11 +105,17 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
     l_ptr += 4;
   }
 
-  for (int i = 0; i < nConst; i++, c_ptr += 6)
+  int c_id = 1;
+  sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
+      c_id++, 2,
+      SLVS_C_POINTS_COINCIDENT,
+      200,
+      -1,
+      101, 3, -1, -1);
+  for (; c_id < 2 + nConst; c_id++, c_ptr += 6)
   {
-    // printf("%i here %i\n",(int)*c_ptr, nConst);
     sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
-        con_id++, g,
+        c_id, g,
         (int)*c_ptr + 100000,
         200,
         *(c_ptr + 1),

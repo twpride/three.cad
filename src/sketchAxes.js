@@ -11,7 +11,7 @@ class AxesHelper extends LineSegments {
 
     const vertices = [
       0, 0, 0, 0.5 * s, 0, 0,
-      0.5 * s, 0, 0, 0.35 * s, 0.08*s, 0,
+      0.5 * s, 0, 0, 0.3 * s, 0.08*s, 0,
 
       0, 0, 0, 0, s, 0,
     ];
@@ -20,7 +20,7 @@ class AxesHelper extends LineSegments {
     const geometry = new BufferGeometry();
     geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
 
-    const material = new LineBasicMaterial({ color: 0xff0000, toneMapped: false });
+    const material = new LineBasicMaterial({ color: 0xff0000, toneMapped: false, linewidth:2 });
 
     super(geometry, material);
 

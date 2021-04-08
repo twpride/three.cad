@@ -1,22 +1,5 @@
 
 
-export function addDimension(ent1, ent2, distance) {
-
-
-  // if (ent1.type ==)
-
-  this.constraints.set(++this.c_id,
-    [
-      'distance', distance,
-      [p1, p2, -1, -1]
-    ]
-  )
-
-  ent1.userData.constraints.push(this.c_id)
-  ent2.userData.constraints.push(this.c_id)
-}
-
-
 export function setCoincident() {
   const s = new Set()
   const toComb = []
@@ -41,12 +24,37 @@ export function setCoincident() {
 
   this.updateOtherBuffers()
   this.solve()
- 
+  this.updateBoundingSpheres()
+
   // update state of points
-  for (let obj of this.selected) {
-    obj.geometry.computeBoundingSphere()
-    obj.material.color.set(0x555555)
-  }
+  // for (let obj of this.selected) {
+  // obj.geometry.computeBoundingSphere()
+  // obj.material.color.set(0x555555)
+  // }
   this.selected = []
   this.obj3d.dispatchEvent({ type: 'change' })
 }
+
+
+export function setOrdinate(dir = 0) {
+
+
+  const line = this.selected[0]
+  this.constraints.set(++this.c_id,
+    [
+      dir ? 'vertical' : 'horizontal', -1,
+      [-1, -1, line.name, -1]  ///////
+    ]
+  )
+  line.userData.constraints.push(this.c_id)
+  
+
+  this.updateOtherBuffers()
+  this.solve()
+  this.updateBoundingSpheres()
+
+  this.selected = []
+  this.obj3d.dispatchEvent({ type: 'change' })
+}
+
+
