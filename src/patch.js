@@ -3,13 +3,23 @@
 // import { Float32BufferAttribute } from '../core/BufferAttribute.js';
 // import { BufferGeometry } from '../core/BufferGeometry.js';
 
-import { LineSegments, MeshBasicMaterial, Float32BufferAttribute, BufferGeometry, Mesh, DoubleSide } from '../node_modules/three/src/Three'
 
 
 import * as THREE from '../node_modules/three/src/Three';
+import {ArrowHelper} from './ArrowHelper'
+
+
+
+
+
+
+
+
+
 
 class Patch extends THREE.Mesh {
 
+  
   constructor(s = 1) {
 
 
@@ -17,8 +27,12 @@ class Patch extends THREE.Mesh {
 
     const positions = [
       0.5, 0,
-      0.3, 0.08,
-      0.3, -0.08,
+      0.3, 0.06,
+      0.3, 0.01,
+      0.0, 0.01,
+      0.0, -0.01,
+      0.3, -0.01,
+      0.3, -0.06,
     ];
 
     const shape = new THREE.Shape()

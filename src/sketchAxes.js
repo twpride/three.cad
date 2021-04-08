@@ -5,6 +5,9 @@
 
 import { LineSegments, LineBasicMaterial, Float32BufferAttribute, BufferGeometry } from '../node_modules/three/src/Three'
 
+import {} from '../node_modules/three/examples/jsm/lines/LineGeometry'
+import {} from '../node_modules/three/examples/jsm/lines/LineMaterial'
+
 class AxesHelper extends LineSegments {
 
   constructor(s = 1) {
@@ -20,7 +23,7 @@ class AxesHelper extends LineSegments {
     const geometry = new BufferGeometry();
     geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
 
-    const material = new LineBasicMaterial({ color: 0xff0000, toneMapped: false, linewidth:2 });
+    const material = new LineBasicMaterial({ color: 0xff0000, toneMapped: false, linewidth:5 });
 
     super(geometry, material);
 

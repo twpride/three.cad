@@ -37,7 +37,7 @@ const hoverColor = {
 
 
 const lineMaterial = new THREE.LineBasicMaterial({
-  linewidth: 2,
+  linewidth: 1,
   color: color.line,
 })
 

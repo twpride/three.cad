@@ -49,7 +49,7 @@ class Sketch {
       this.constraints = new Map()
       this.c_id = 1;
 
-      this.obj3d.add(new THREE.Group().add(new AxesHelper(1)));
+      this.obj3d.add(new THREE.Group());
       this.obj3d.add(new THREE.Group());
       this.obj3d.add(new THREE.Group());
 
@@ -150,8 +150,10 @@ class Sketch {
     this.canvas.addEventListener('pointermove', this.onHover)
     this.store.dispatch({ type: 'set-active-sketch', sketch: this.obj3d.name })
 
-
     this.setDimLines()
+
+    this.scene.axes.matrix = this.obj3d.matrix
+    this.scene.axes.visible = true
 
     window.sketcher = this
   }

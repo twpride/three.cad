@@ -11,8 +11,8 @@ import { extrude } from './extrude'
 import { onHover, onPick } from './mouseEvents';
 import { _vec2, _vec3, color, awaitPts } from './shared'
 
-import { AxesHelper } from './axes'
-import { Patch } from './patch'
+import {AxesHelper} from './axes'
+
 
 import CSG from "./three-csg.js"
 
@@ -64,12 +64,11 @@ export class Scene {
     helpersGroup.name = "helpersGroup";
     this.obj3d.add(helpersGroup);
 
-    // const axesHelper = new AxesHelper(0.4);
-    // helpersGroup.add(axesHelper);
 
+    this.axes = new AxesHelper(this.camera.zoom)
+    this.axes.visible = false
 
-    const patch = new Patch(0.5);
-    helpersGroup.add(patch);
+    helpersGroup.add(this.axes);
 
 
 
@@ -223,16 +222,18 @@ function render() {
     Object.assign(this.rect, this.canvas.getBoundingClientRect().toJSON())
 
   }
+
+
+  this.axes.resize(this.camera.zoom)
+
   this.renderer.render(this.obj3d, this.camera);
 
-  // const sketch = this.store.
   if (this.activeSketch) {
     dims = this.activeSketch.obj3d.children[1].children
     matrix = this.activeSketch.obj3d.matrix
 
     for (idx = 1; idx < dims.length; idx += 2) {
       ele = dims[idx]
-      // if (!ele.label) continue;
 
       pos = _vec3.set(
         ...ele.geometry.attributes.position.array
@@ -241,10 +242,7 @@ function render() {
       x = (pos.x * .5 + .5) * this.canvas.clientWidth + 10;
       y = (pos.y * -.5 + .5) * this.canvas.clientHeight;
 
-      // console.log(i, ele)
-      // ele.label.style.transform = `translate(-50%, -50%) translate(${x+20}px,${y}px)`;
       ele.label.style.transform = `translate(0%, -50%) translate(${x}px,${y}px)`;
-
     }
   }
 

@@ -1,37 +1,48 @@
-// import { LineSegments } from '../objects/LineSegments.js';
-// import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-// import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-// import { BufferGeometry } from '../core/BufferGeometry.js';
 
-import {LineSegments, LineBasicMaterial, Float32BufferAttribute, BufferGeometry} from 'three/src/Three'
 
-class AxesHelper extends LineSegments {
+import * as THREE from "../node_modules/three/src/Three"
 
-	constructor( size = 1 ) {
 
-		const vertices = [
-			0, 0, 0,	size, 0, 0,
-			0, 0, 0,	0, size, 0,
-			0, 0, 0,	0, 0, size
-		];
+class AxesHelper extends THREE.Object3D {
 
-		const colors = [
-			1, 0, 0,	1, 0.6, 0,
-			0, 1, 0,	0.6, 1, 0,
-			0, 0, 1,	0, 0.6, 1
-		];
+  constructor(initialZoom = 1) {
+    super()
+    this.matrixAutoUpdate = false
+    this.initialZoom = initialZoom
+    this.length = [0.55, 1]
+    this.headLength = 0.25
+    this.headWidth = 0.12
 
-		const geometry = new BufferGeometry();
-		geometry.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-		geometry.setAttribute( 'color', new Float32BufferAttribute( colors, 3 ) );
+    this.dirs = [
+      [1, 0, 0],
+      [0, 1, 0]
+    ]
 
-		const material = new LineBasicMaterial( { vertexColors: true, toneMapped: false } );
+    this.add(...this.dirs.map(
+      (dir, i) => new THREE.ArrowHelper(
+        new THREE.Vector3(...dir), // dir
+        new THREE.Vector3(0, 0, 0), // origin
+        this.length[i], //length
+        0x0000ff,
+        this.headLength,
+        this.headWidth
+      )
+    ))
 
-		super( geometry, material );
+    return this
+  }
 
-		// this.type = 'AxesHelper';
+  resize(zoom) {
+    const scale = this.initialZoom / zoom
 
-	}
+    for (let i = 0; i < this.children.length; i++) {
+      this.children[i].setLength(
+        this.length[i] * scale,
+        this.headLength * scale,
+        this.headWidth * scale
+      )
+    }
+  }
 
 }
 
