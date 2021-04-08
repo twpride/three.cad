@@ -12,15 +12,17 @@
   <meta property="og:image" content="" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="index.css">
+  <!-- app.css references the css imported into app.jsx -->
+  <link rel="stylesheet" href="app.css">
   <title>CAD Tool</title>
 </head>
 
 <body>
+  <canvas id="c"></canvas>
   <div id="react"></div>
-  <canvas id="c" class="block w-screen h-screen"></canvas>
+  <div id="labels"></div>
   <div id="stats"></div>
-  <script src="index.bundle.js"></script>
+  <script src="app.bundle.js"></script>
   <script src="scene.bundle.js"></script>
   <script src="solver.js"></script>
   <script src="lz-string.min.js"></script>
