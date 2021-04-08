@@ -39,7 +39,7 @@ const TreeEntry = ({ entId }) => {
   const vis = obj3d.visible
 
   return <div className='bg-gray-50 flex justify-between w-full'>
-    <div className="btn"
+    <div className="btn-light"
       onPointerEnter={() => {
         if (entId[0] == 'm') {
           // entry.material.color.set(color.hover)
@@ -65,7 +65,7 @@ const TreeEntry = ({ entId }) => {
       {entId}
     </div>
     <div className='flex'>
-      <div className='btn'
+      <div className='btn-light'
         onClick={() => {
           activeSketchId && treeEntries[activeSketchId].deactivate()
           entry.activate()
@@ -76,7 +76,7 @@ const TreeEntry = ({ entId }) => {
         <MdEdit />
       </div>
 
-      <div className='btn'
+      <div className='btn-light'
         onClick={() => {
           dispatch({ type: 'delete-node', id: entId })
         }}
@@ -85,7 +85,7 @@ const TreeEntry = ({ entId }) => {
       </div>
       {
         vis ?
-          <div className='btn'
+          <div className='btn-light'
             onClick={() => {
               obj3d.visible = false;
               sc.render()
@@ -95,7 +95,7 @@ const TreeEntry = ({ entId }) => {
             <MdVisibility />
           </div>
           :
-          <div className='btn'
+          <div className='btn-light'
             onClick={() => {
               obj3d.visible = true;
               sc.render()

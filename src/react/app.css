@@ -48,8 +48,15 @@ body {
 .btn {
   cursor: pointer;
   @apply fill-current
-        bg-gray-100       text-green-600
-  hover:bg-gray-200 hover:text-green-700;
+        bg-transparent       text-gray-200
+  hover:bg-gray-600 hover:text-gray-200;
+}
+
+.btn-light {
+  cursor: pointer;
+  @apply fill-current
+        bg-transparent       text-gray-700
+  hover:bg-gray-300 hover:text-gray-700;
 }
 
 

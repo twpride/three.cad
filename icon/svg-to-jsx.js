@@ -13,6 +13,7 @@ const names = []
 try {
   const files = await fs.promises.readdir(dir);
   for (const file of files) {
+    console.log(file)
     const res = await fs.promises.readFile(dir+file, 'utf-8')
     let name = file.split('.')[0]
     name = name[0].toUpperCase() + name.slice(1)
@@ -28,7 +29,7 @@ try {
   output.push(`export { ${names.join(', ')} };`)
 
 
-  const data = fs.writeFileSync('../src/icons.jsx', output.join(''))
+  const data = fs.writeFileSync('../src/react/icons.jsx', output.join(''))
 
 
 } catch (err) {

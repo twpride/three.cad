@@ -58,10 +58,10 @@ export const NavBar = () => {
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
-  return <div className='topNav flex justify-center items-center'>
+  return <div className='topNav flex justify-center items-center bg-gray-800'>
     {
       btnz.map(([Icon, fcn, txt], idx) => (
-        <Icon className="btn w-auto h-full p-2" tooltip={txt} 
+        <Icon className="btn w-auto h-full p-3" tooltip={txt} 
           onClick={fcn} key={idx}
         />
       ))

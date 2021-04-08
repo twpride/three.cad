@@ -1,6 +1,7 @@
 fix css on design tree (a  lot of work)  \
 clear dim on exit exit sketch / rehydrate when back or after loading  \\\ done
 
+dimension to origin // done
 
 
 - select sketch for extrusion
@@ -20,8 +21,6 @@ boolean flesh out refresh / replace mesh / delete mesh
 extrude edit dialog. directio and magnitude
 
 fix extrusion loop find
-
-dimension to origin
 
 file save
 stl export

@@ -12,7 +12,7 @@ raycaster.params.Points.threshold = 0.1;
 
 
 const color = {
-  background:0xbbbbbb,
+  background:0xdae1e7,
   lighting: 0xFFFFFF,
   emissive: 0x072534,
 

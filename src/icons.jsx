@@ -150,7 +150,7 @@ function Intersect_thin(props) {
         ry={1}
         fill="none"
         stroke="currentColor"
-        strokeWidth={0.6}
+        strokeWidth={0.4}
         strokeLinecap="round"
       />
       <circle
@@ -159,7 +159,7 @@ function Intersect_thin(props) {
         r={5}
         fill="none"
         stroke="currentColor"
-        strokeWidth={0.6}
+        strokeWidth={0.4}
         strokeLinecap="round"
       />
     </svg>
@@ -273,50 +273,4 @@ function Union(props) {
     </svg>
   );
 }
-
-function Union_thin(props) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      fill="currentColor"
-      className="prefix__bi prefix__bi-intersect"
-      viewBox="0 0 16 16"
-      {...props}
-    >
-      <path
-        d="M5.383 5.33c-.02.178-.054.352-.054.535a4.81 4.81 0 004.818 4.818c.183 0 .357-.034.535-.054V5.865a.523.523 0 00-.535-.535z"
-        fill="currentColor"
-        fillOpacity={0.7}
-      />
-      <path
-        d="M1.9 4.899a.529.529 0 00-.542.541v8.663c0 .309.232.541.541.541h8.663c.309 0 .541-.232.541-.541v-2.735a5.962 5.962 0 01-.541.028A5.964 5.964 0 014.606 5.44c0-.183.011-.362.028-.541zM9.815 1.317c-2.114 0-3.887 1.351-4.553 3.233h4.553c.887 0 1.617.73 1.617 1.617v4.552c1.882-.666 3.233-2.438 3.233-4.552a4.842 4.842 0 00-4.85-4.85z"
-        fill="currentColor"
-        fillOpacity={0.7}
-      />
-      <rect
-        width={10}
-        height={10}
-        x={1}
-        y={5}
-        rx={1}
-        ry={1}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={0.9}
-        strokeLinecap="round"
-      />
-      <circle
-        cx={10}
-        cy={6}
-        r={5}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={0.9}
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-export { Arc, Dimension, Intersect, Intersect_thin, Line, Subtract, Union, Union_thin };
+export { Arc, Dimension, Intersect, Intersect_thin, Line, Subtract, Union };

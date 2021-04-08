@@ -23,7 +23,7 @@ class AxesHelper extends THREE.Object3D {
         new THREE.Vector3(...dir), // dir
         new THREE.Vector3(0, 0, 0), // origin
         this.length[i], //length
-        0x0000ff,
+        0xcc1f1a,
         this.headLength,
         this.headWidth
       )

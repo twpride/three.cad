@@ -164,6 +164,7 @@ class Sketch {
     this.canvas.removeEventListener('pointermove', this.onHover)
     this.store.dispatch({ type: 'exit-sketch' })
     this.labelContainer.innerHTML = ""
+    this.scene.axes.visible = false
   }
 
 
