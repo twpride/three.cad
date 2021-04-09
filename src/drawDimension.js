@@ -65,9 +65,9 @@ export async function drawDimension() {
     p2.set(lineArr[3], lineArr[4])
     p3.set(ptArr[0], ptArr[1])
     dir = p2.clone().sub(p1).normalize()
-    const hypx = p3.clone().sub(p1)
-    proj = dir.multiplyScalar(hypx.dot(dir))
-    perp = hypx.clone().sub(proj)
+    disp = p3.clone().sub(p1)
+    proj = dir.multiplyScalar(disp.dot(dir))
+    perp = disp.clone().sub(proj)
 
     dist = Math.sqrt(perp.x ** 2 + perp.y ** 2)
 
@@ -154,8 +154,8 @@ const p1 = new THREE.Vector2()
 const p1x = new THREE.Vector2()
 const p2 = new THREE.Vector2()
 const p3 = new THREE.Vector2()
-let dir, hyp, proj, perp, p1e, p1eArr, p2e, p2eArr, ids, _p1, _p2, p3Arr
-let mdpt, proj1, proj2, hyp1, hyp2, hypx
+let dir, proj, perp, p1e, p1eArr, p2e, p2eArr, ids, _p1, _p2, p3Arr
+let mdpt, proj1, proj2, hyp1, disp, hyp2
 let dp1e, dp2e, dp12
 
 export function updateDim(c_id) {
@@ -203,8 +203,8 @@ export function _onMoveDimension(point, line) {
       _p1, _p2
     )
 
-    console.log(hyp)
-    point.userData.offset = hyp.toArray()
+    console.log(hyp2)
+    point.userData.offset = hyp2.toArray()
 
     sc.render()
   }
@@ -237,7 +237,11 @@ export function setDimLines() {
 
 
     const offset = dims[i + 1].userData.offset
-    p3.set(_p2[0] + offset[0], _p2[1] + offset[1])
+    if (_p1.length < _p2.length) { // corner case when p1 is pt and p2 is line
+      p3.set(_p1[0] + offset[0], _p1[1] + offset[1])
+    } else {
+      p3.set(_p2[0] + offset[0], _p2[1] + offset[1])
+    }
 
 
 
@@ -258,9 +262,9 @@ function update(linegeom, pointgeom, _p1, _p2) {
     p2.set(_p2[0], _p2[1])
 
     dir = p2.clone().sub(p1).normalize()
-    hyp = p3.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
-    proj = dir.multiplyScalar(hyp.dot(dir))
-    perp = hyp.clone().sub(proj)
+    hyp2 = p3.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
+    proj = dir.multiplyScalar(hyp2.dot(dir))
+    perp = hyp2.clone().sub(proj)
 
     p1e = p1.clone().add(perp)
     p1eArr = p1e.toArray()
@@ -276,34 +280,33 @@ function update(linegeom, pointgeom, _p1, _p2) {
 
 
   } else {
-    if (_p1.length < _p2.length) {
-      p1.set(_p2[0], _p2[1])
-      p1x.set(_p2[3], _p2[4])
-      p2.set(_p1[0], _p1[1])
-    } else {
+    if (_p1.length > _p2.length) { // when p1 is line, p2 is point
       p1.set(_p1[0], _p1[1])
       p1x.set(_p1[3], _p1[4])
       p2.set(_p2[0], _p2[1])
+    } else { // when p1 is point, p2 is line
+      p1.set(_p2[0], _p2[1])
+      p1x.set(_p2[3], _p2[4])
+      p2.set(_p1[0], _p1[1])
     }
 
     dir = p1x.clone().sub(p1)
     mdpt = p1.clone().addScaledVector(dir, 0.5)
     dir.normalize()
 
-    hypx = p2.clone().sub(mdpt)
-    proj = dir.multiplyScalar(hypx.dot(dir))
+    disp = p2.clone().sub(mdpt)
+    proj = dir.multiplyScalar(disp.dot(dir))
 
-    perp = hypx.clone().sub(proj)
+    perp = disp.clone().sub(proj)
     dp12 = perp.lengthSq()
-
     perp.normalize()
 
 
     hyp1 = p3.clone().sub(mdpt)
     proj1 = perp.clone().multiplyScalar(hyp1.dot(perp))
 
-    hyp = p3.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
-    proj2 = perp.clone().multiplyScalar(hyp.dot(perp))
+    hyp2 = p3.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
+    proj2 = perp.clone().multiplyScalar(hyp2.dot(perp))
 
 
     p1eArr = p3.clone().sub(proj1).toArray()
