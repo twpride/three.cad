@@ -67,9 +67,9 @@ export async function drawDimension() {
     dir = p2.clone().sub(p1).normalize()
     disp = p3.clone().sub(p1)
     proj = dir.multiplyScalar(disp.dot(dir))
-    perp = disp.clone().sub(proj)
+    perpOffset = disp.clone().sub(proj)
 
-    dist = Math.sqrt(perp.x ** 2 + perp.y ** 2)
+    dist = Math.sqrt(perpOffset.x ** 2 + perpOffset.y ** 2)
 
   }
 
@@ -150,22 +150,17 @@ export async function drawDimension() {
   return
 }
 
-const p1 = new THREE.Vector2()
-const p1x = new THREE.Vector2()
-const p2 = new THREE.Vector2()
-const p3 = new THREE.Vector2()
-let dir, proj, perp, p1e, p1eArr, p2e, p2eArr, ids, _p1, _p2, p3Arr
-let mdpt, proj1, proj2, hyp1, disp, hyp2
-let dp1e, dp2e, dp12
+
 
 export function updateDim(c_id) {
   return (ev_focus) => {
-    const value = ev_focus.target.textContent
+    let value = ev_focus.target.textContent
     document.addEventListener('keydown', (e) => {
       if (e.key == 'Enter') {
         e.preventDefault()
         const ent = this.constraints.get(c_id)
         ent[1] = parseFloat(ev_focus.target.textContent)
+        value = ent[1]
         this.constraints.set(c_id, ent)
         this.updateOtherBuffers()
         this.solve()
@@ -182,7 +177,7 @@ export function updateDim(c_id) {
 }
 
 
-
+let ids, _p1, _p2
 export function _onMoveDimension(point, line) {
 
   ids = line.userData.ids
@@ -203,8 +198,7 @@ export function _onMoveDimension(point, line) {
       _p1, _p2
     )
 
-    console.log(hyp2)
-    point.userData.offset = hyp2.toArray()
+    point.userData.offset = hyp2.toArray() // save offset vector from hyp2
 
     sc.render()
   }
@@ -255,6 +249,19 @@ export function setDimLines() {
 
 }
 
+
+const p1 = new THREE.Vector2()
+let mdpt
+const p1x = new THREE.Vector2()
+const p2 = new THREE.Vector2()
+const p3 = new THREE.Vector2()
+let disp, hyp1, hyp2
+let proj, proj1, proj2
+let p1e, p2e
+let p1eArr, p2eArr, p3Arr
+let dir, linedir, perpOffset
+let dp1e, dp2e, dp12
+
 function update(linegeom, pointgeom, _p1, _p2) {
 
   if (_p1.length == _p2.length) {
@@ -264,11 +271,11 @@ function update(linegeom, pointgeom, _p1, _p2) {
     dir = p2.clone().sub(p1).normalize()
     hyp2 = p3.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
     proj = dir.multiplyScalar(hyp2.dot(dir))
-    perp = hyp2.clone().sub(proj)
+    perpOffset = hyp2.clone().sub(proj)
 
-    p1e = p1.clone().add(perp)
+    p1e = p1.clone().add(perpOffset)
     p1eArr = p1e.toArray()
-    p2e = p2.clone().add(perp)
+    p2e = p2.clone().add(perpOffset)
     p2eArr = p2e.toArray()
     p3Arr = p3.toArray()
 
@@ -290,23 +297,23 @@ function update(linegeom, pointgeom, _p1, _p2) {
       p2.set(_p1[0], _p1[1])
     }
 
-    dir = p1x.clone().sub(p1)
-    mdpt = p1.clone().addScaledVector(dir, 0.5)
-    dir.normalize()
+    linedir = p1x.clone().sub(p1)
+    mdpt = p1.clone().addScaledVector(linedir, 0.5)
+    linedir.normalize()
 
     disp = p2.clone().sub(mdpt)
-    proj = dir.multiplyScalar(disp.dot(dir))
+    proj = linedir.multiplyScalar(disp.dot(linedir))
 
-    perp = disp.clone().sub(proj)
-    dp12 = perp.lengthSq()
-    perp.normalize()
+    dir = disp.clone().sub(proj)
+    dp12 = dir.lengthSq()
+    dir.normalize()
 
 
     hyp1 = p3.clone().sub(mdpt)
-    proj1 = perp.clone().multiplyScalar(hyp1.dot(perp))
+    proj1 = dir.clone().multiplyScalar(hyp1.dot(dir))
 
     hyp2 = p3.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
-    proj2 = perp.clone().multiplyScalar(hyp2.dot(perp))
+    proj2 = dir.clone().multiplyScalar(hyp2.dot(dir))
 
 
     p1eArr = p3.clone().sub(proj1).toArray()
