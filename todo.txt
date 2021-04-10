@@ -1,42 +1,38 @@
-fix css on design tree (a  lot of work)  \
+fix css on design tree (a  lot of work)  \\ done
 clear dim on exit exit sketch / rehydrate when back or after loading  \\\ done
-
 dimension to origin // done
 
-
-- select sketch for extrusion
-reattaching sketch
-- need to auto hide ( consume) when new boolean created \\
+- need to auto hide ( consume) when new boolean created \\ done
 - sensible default names, like extrude 1, sketch 1, leverage react for this
 
 
-boolean flesh out refresh / replace mesh / delete mesh
+boolean flesh out refresh / replace mesh 
+  - / delete mesh \\ done
   - create derived part using relationship as name  \\ done
   - hidden bodies messes up hover highlight  \\ fixed
   - add for union and intersect
-  - auto update
+  - consume skeches after extrude // done
 
-  - consume skeches after extrude
 
-extrude edit dialog. directio and magnitude
-
-fix extrusion loop find
-
-file save
-stl export
-
-angle
-other constraints / sprite
+vertical  //  done
+horizontal // done
 
 
 
-tangent
-vertical
-horizontal
-angle
+- select sketch for extrusion 
+- boolean unable to select click
+
+auto update extrude
+extrude dialogue 
+
+loopfind
+button panel cleanup
+file save, stl export
+
+constriant buttons ,tangent, angle
 
 
-
-
-
-finish mode messed up after restore
+constraint labels
+reattach sketch
+auto snap
+tree ent renaming and better default names

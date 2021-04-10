@@ -46,12 +46,13 @@ const TreeEntry = ({ entId }) => {
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
   // const vis = obj3d.visible
-  const vis = obj3d.layers.mask&1
+  const vis = obj3d.layers.mask & 1
 
   return <div className='btn-light select-none flex justify-start w-full h-7 items-center text-sm'
 
     onDoubleClick={() => {
       activeSketchId && treeEntries[activeSketchId].deactivate()
+      console.log(entry)
       entry.activate()
       sc.clearSelection()
       sc.activeSketch = entry;
@@ -95,7 +96,7 @@ const TreeEntry = ({ entId }) => {
         vis ?
           <MdVisibility className='btn-green h-full w-auto p-1.5'
             onClick={() => {
-              obj3d.traverse((e)=>e.layers.disable(0))
+              obj3d.traverse((e) => e.layers.disableAll())
               sc.render()
               forceUpdate()
             }}
@@ -103,7 +104,15 @@ const TreeEntry = ({ entId }) => {
           :
           <MdVisibilityOff className='btn-green h-full w-auto p-1.5'
             onClick={() => {
-              obj3d.traverse((e)=>e.layers.enable(0))
+              if (obj3d.userData.type == 'sketch') {
+                obj3d.traverse((e) => e.layers.enable(0))
+              } else {
+                obj3d.traverse((e) => {
+                  e.layers.enable(0)
+                  e.layers.enable(1)
+                })
+
+              }
               sc.render()
               forceUpdate()
             }}

@@ -72,6 +72,8 @@ export class Scene {
       freePt.material.size=8
       freePt.visible = false
       freePt.depthTest = false
+      freePt.userData.type = 'point'
+
       helpersGroup.add(freePt);
     }
 
@@ -211,14 +213,16 @@ export class Scene {
     for (let x = 0; x < this.selected.length; x++) {
       const obj = this.selected[x]
       obj.material.color.set(color[obj.userData.type])
+      if (obj.userData.type == 'point') obj.visible = false
     }
+    this.selected = []
+
     for (let x = 0; x < this.hovered.length; x++) {
       const obj = this.selected[x]
       obj.material.color.set(color[obj.userData.type])
     }
+
     this.obj3d.dispatchEvent({ type: 'change' })
-    this.selected = []
-    console.log('fireed')
   }
 
 
@@ -226,10 +230,8 @@ export class Scene {
   subtract (m1, m2) {
     let bspA = CSG.fromMesh(m1)
     let bspB = CSG.fromMesh(m2)
-    m1.traverse(e=>e.layers.disable(0))
-    m2.traverse(e=>e.layers.disable(0))
-    // m1.visible = false
-    // m2.visible = false
+    m1.traverse(e=>e.layers.disableAll())
+    m2.traverse(e=>e.layers.disableAll())
   
     // // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
   
@@ -240,6 +242,7 @@ export class Scene {
     let mesh = CSG.toMesh(bspResult, m1.matrix, m1.material)
     mesh.userData.type = 'mesh'
     mesh.name = `${m1.name}-${m2.name}`
+    mesh.layers.enable(1)
   
     const edges = new THREE.EdgesGeometry( mesh.geometry, 15 );
     edges.type  = 'BufferGeometry'

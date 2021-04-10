@@ -18,6 +18,7 @@ export function onHover(e) {
   let hoverPts;
 
   if (this.obj3d.userData.type != 'sketch') {
+    this.obj3d.children[0].children[0].visible = false
     raycaster.layers.set(1)
     hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
   } else {
@@ -49,8 +50,10 @@ export function onHover(e) {
 
   }
 
+
   if (idx.length) { // after filtering, if hovered objs still exists
 
+    console.log(hoverPts)
     if (hoverPts[idx[0]].object != this.hovered[0]) { // if the previous hovered obj is not the same as current
 
       for (let x = 0; x < this.hovered.length; x++) { // first clear old hovers that are not selected
@@ -58,16 +61,11 @@ export function onHover(e) {
         if (!this.selected.includes(obj)) {
           if (typeof obj == 'object') {
             obj.material.color.set(color[obj.userData.type])
-
             if (this.obj3d.userData.type != 'sketch') {
               if (obj.userData.type == 'mesh') {
                 obj.children[0].material.color.set(color['line'])
               }
             }
-
-          } else {
-            // this.obj3d.children[0].children[this.fptObj[obj]].visible = false
-            this.obj3d.children[0].children[0].visible = false
           }
         }
       }
@@ -127,9 +125,6 @@ export function onHover(e) {
                 obj.children[0].material.color.set(color['line'])
               }
             }
-          } else {
-            // this.obj3d.children[0].children[this.fptObj[obj]].visible = false
-            this.obj3d.children[0].children[0].visible = false
           }
         }
       }
@@ -148,11 +143,12 @@ export function onPick(e) {
   if (this.mode || e.buttons != 1) return
 
   if (this.hovered.length) {
-    const obj = this.hovered[this.hovered.length - 1]
+    let obj = this.hovered[this.hovered.length - 1]
 
-    this.selected.push(this.hovered[this.hovered.length - 1])
 
-    if (this.obj3d.userData.type != 'sketch') {
+    if (this.obj3d.userData.type == 'sketch') {
+      this.selected.push(obj)
+    } else {
       if (typeof obj == 'object') {
         if (obj.userData.type == "mesh") {
           obj.material.color.set(hoverColor[obj.userData.type])
@@ -166,52 +162,53 @@ export function onPick(e) {
         pp.geometry.attributes.position.needsUpdate = true
         pp.visible = true
 
+        obj = pp
         this.fptObj[obj] = this.fptIdx
         this.fptIdx++
       }
+      this.obj3d.dispatchEvent({ type: 'change' })
+      this.selected.push(obj)
+      return;
     }
 
-    if (typeof this.hovered[0] == 'object') {
-      switch (this.hovered[0].userData.type) {
-        case 'dimension':
-          const idx = this.obj3d.children[1].children.indexOf(this.hovered[0])
-          if (idx % 2) {
+    switch (obj.userData.type) {
+      case 'dimension':
+        const idx = this.obj3d.children[1].children.indexOf(this.hovered[0])
+        if (idx % 2) {
 
-            this.onDragDim = this._onMoveDimension(
-              this.obj3d.children[1].children[idx],
-              this.obj3d.children[1].children[idx - 1],
-            )
-            this.canvas.addEventListener('pointermove', this.onDragDim);
-            this.canvas.addEventListener('pointerup', this.onRelease)
-          }
-
-          draggedLabel = this.obj3d.children[1].children[idx].label
-          draggedLabel.style.zIndex = -1;
-          break;
-        case 'point':
-
-          this.canvas.addEventListener('pointermove', this.onDrag);
+          this.onDragDim = this._onMoveDimension(
+            this.obj3d.children[1].children[idx],
+            this.obj3d.children[1].children[idx - 1],
+          )
+          this.canvas.addEventListener('pointermove', this.onDragDim);
           this.canvas.addEventListener('pointerup', this.onRelease)
-          break;
+        }
 
-        default:
-          break;
-      }
+        draggedLabel = this.obj3d.children[1].children[idx].label
+        draggedLabel.style.zIndex = -1;
+        break;
+      case 'point':
+
+        this.canvas.addEventListener('pointermove', this.onDrag);
+        this.canvas.addEventListener('pointerup', this.onRelease)
+        break;
+
+      default:
+        break;
     }
 
   } else {
     for (let x = 0; x < this.selected.length; x++) {
       const obj = this.selected[x]
-      if (typeof obj == 'object') {
-        obj.material.color.set(color[obj.userData.type])
-        if (this.obj3d.userData.type != 'sketch' && obj.userData.type == 'mesh') {
+      obj.material.color.set(color[obj.userData.type])
+      if (this.obj3d.userData.type != 'sketch') {
+        if (obj.userData.type == 'mesh') {
           obj.children[0].material.color.set(color['line'])
+        } else if (obj.userData.type == 'point') {
+          obj.visible = false
         }
-      } else {
-        this.obj3d.children[0].children[this.fptObj[obj] + 1].visible = false
       }
     }
-    this.obj3d.children[0].children[0].visible = false
     this.obj3d.dispatchEvent({ type: 'change' })
     this.selected = []
   }

@@ -33,10 +33,11 @@ export class DepTree {
   }
 
 
-  deleteNode(id) {
+
+  getDescendents(id) {
     const dfs = (id) => {
       visited.add(id)
-      nodesToDel.push(id)
+      desc.push(id)
       for (let k in this.tree[id]) {
         if (!visited.has(k)) {
           dfs(k)
@@ -45,9 +46,19 @@ export class DepTree {
     }
 
     const visited = new Set()
+    const desc = []
 
-    const nodesToDel = []
     dfs(id)
+
+    return desc
+  }
+
+
+
+  deleteNode(id) {
+
+
+    const nodesToDel = this.getDescendents(id)
 
     nodesToDel.sort((a, b) => this.order[b] - this.order[a])
 
