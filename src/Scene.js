@@ -16,8 +16,6 @@ import { AxesHelper } from './axes'
 
 import CSG from "./three-csg.js"
 
-window.BoolOp = CSG
-window.th = THREE
 
 const eq = (a1, a2) => {
   if (a1.length != a2.length) return false
