@@ -1,4 +1,4 @@
-
+import {color} from './shared'
 
 export async function setCoincident() {
   let selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 })
@@ -32,11 +32,11 @@ export async function setCoincident() {
   this.solve()
   this.updateBoundingSpheres()
 
-  // update state of points
-  // for (let obj of this.selected) {
-  // obj.geometry.computeBoundingSphere()
-  // obj.material.color.set(0x555555)
-  // }
+  for (let x = 0; x < this.selected.length; x++) {
+    const obj = this.selected[x]
+    obj.material.color.set(color[obj.userData.type])
+  }
+
   this.selected = []
   this.obj3d.dispatchEvent({ type: 'change' })
 }

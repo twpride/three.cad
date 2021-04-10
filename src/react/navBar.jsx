@@ -32,10 +32,9 @@ export const NavBar = () => {
     activeSketchId ?
       [MdDone, () => {
         treeEntries.byId[activeSketchId].deactivate()
-        dispatch({ type: 'update-descendents', sketch})
-
-
+        // dispatch({ type: 'update-descendents', sketch})
         sc.activeSketch = null
+        sc.render()
         // sc.activeDim = this.activeSketch.obj3d.children[1].children
       }, 'Finish'] :
       [FaEdit, sc.addSketch, 'Sketch [s]']
@@ -60,7 +59,7 @@ export const NavBar = () => {
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
-  return <div className='topNav flex justify-center items-center bg-gray-800'>
+  return <div className='topNav flex justify-center items-center bg-gray-700'>
     {
       btnz.map(([Icon, fcn, txt, shortcut], idx) => (
         <Icon className="btn w-auto h-full p-3.5" tooltip={txt}

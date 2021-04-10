@@ -12,27 +12,28 @@ raycaster.params.Points.threshold = 0.1;
 
 
 const color = {
-  background:0xdae1e7,
+  background: 0x18181B,
   lighting: 0xFFFFFF,
   emissive: 0x072534,
+  meshTempHover: 0x9DCFED,
 
-  hover: 0x00ff00,
-  point: 0x555555, //points
-  line: 0x000000, //lines
-  mesh: 0x9DCFED, //mesh:
-  dimension: 0x0000ff, //
-
-  plane: 0x88adcd, //
-  planeBorder: 0xa7cae8, //
+  point: 0xffffff, 
+  selpoint: 0xff0000, 
+  line: 0xffffff, 
+  mesh: 0x9DCFED, 
+  dimension: 0x0000ff, 
+  plane: 0xffff00, 
+  planeBorder: 0x2e2e00, 
 }
 
 const hoverColor = {
-  hover: 0x00ff00,
-  point: 0x00ff00, //points
-  line: 0x00ff00, //lines
-  mesh: 0xFAB601, //mesh:
-  dimension: 0x00ff00, //
-  plane: 0x005dff, //
+  point: 0x00ff00,
+  selpoint: 0xff0000,
+  line: 0x00ff00, 
+  mesh: 0xFAB601, 
+  dimension: 0x00ff00, 
+  plane: 0xffff00, 
+  planeBorder: 0x919100,
 }
 
 

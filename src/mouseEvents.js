@@ -57,18 +57,15 @@ export function onHover(e) {
 
       for (let x = 0; x < this.hovered.length; x++) { // first clear old hovers that are not selected
         const obj = this.hovered[x]
-        if (!this.selected.includes(obj)) {
-          if (typeof obj == 'object') {
+        if (typeof obj == 'object' && !this.selected.includes(obj)) {
+          if (obj.userData.type == 'plane') {
+            obj.material.opacity = 0.02
+            obj.children[0].material.color.set(color['planeBorder'])
+          } else {
             obj.material.color.set(color[obj.userData.type])
-            if (this.obj3d.userData.type != 'sketch') {
-              if (obj.userData.type == 'mesh') {
-                obj.children[0].material.color.set(color['line'])
-              }
-            }
           }
         }
       }
-
       this.hovered = []
 
       for (let x = 0; x < idx.length; x++) {
@@ -79,9 +76,10 @@ export function onHover(e) {
         } else {
 
           if (obj.userData.type == 'mesh') {
-            obj.children[0].material.color.set(hoverColor['line'])
+            obj.material.color.set(color['meshTempHover'])
           } else if (obj.userData.type == 'plane') {
-            obj.material.color.set(hoverColor[obj.userData.type])
+            obj.material.opacity = 0.06
+            obj.children[0].material.color.set(hoverColor['planeBorder'])
           } else if (obj.userData.type == 'point') {
 
             ptLoc = obj.geometry.attributes.position.array
@@ -116,14 +114,12 @@ export function onHover(e) {
 
       for (let x = 0; x < this.hovered.length; x++) {
         const obj = this.hovered[x]
-        if (!this.selected.includes(obj)) {
-          if (typeof obj == 'object') {
+        if (typeof obj == 'object' && !this.selected.includes(obj)) {
+          if (obj.userData.type == 'plane') {
+            obj.material.opacity = 0.02
+            obj.children[0].material.color.set(color['planeBorder'])
+          } else {
             obj.material.color.set(color[obj.userData.type])
-            if (this.obj3d.userData.type != 'sketch') {
-              if (obj.userData.type == 'mesh') {
-                obj.children[0].material.color.set(color['line'])
-              }
-            }
           }
         }
       }
@@ -149,7 +145,10 @@ export function onPick(e) {
       this.selected.push(obj)
     } else {
       if (typeof obj == 'object') {
-        if (obj.userData.type == "mesh") {
+        if (obj.userData.type == 'plane') {
+          obj.material.opacity = 0.06
+          obj.children[0].material.color.set(hoverColor['planeBorder'])
+        } else {
           obj.material.color.set(hoverColor[obj.userData.type])
         }
       } else {
@@ -200,11 +199,14 @@ export function onPick(e) {
     for (let x = 0; x < this.selected.length; x++) {
       const obj = this.selected[x]
       obj.material.color.set(color[obj.userData.type])
-      if (this.obj3d.userData.type != 'sketch') {
-        if (obj.userData.type == 'mesh') {
-          obj.children[0].material.color.set(color['line'])
-        } else if (obj.userData.type == 'point') {
-          obj.visible = false
+      if (obj.userData.type == 'selpoint') {
+        obj.visible = false
+      } else {
+        if (obj.userData.type == 'plane') {
+          obj.material.opacity = 0.02
+          obj.children[0].material.color.set(color['planeBorder'])
+        } else {
+          obj.material.color.set(color[obj.userData.type])
         }
       }
     }

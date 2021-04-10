@@ -9,7 +9,7 @@ import { FaCube, FaEdit } from 'react-icons/fa'
 export const Tree = () => {
   const treeEntries = useSelector(state => state.treeEntries)
 
-  return <div className='sideNav flex flex-col'>
+  return <div className='sideNav flex flex-col bg-gray-800'>
     {treeEntries.allIds.map((entId, idx) => (
       <TreeEntry key={idx} entId={entId} />
     ))}
@@ -48,7 +48,7 @@ const TreeEntry = ({ entId }) => {
   // const vis = obj3d.visible
   const vis = obj3d.layers.mask & 1
 
-  return <div className='btn-light select-none flex justify-start w-full h-7 items-center text-sm'
+  return <div className='btn select-none flex justify-start w-full h-7 items-center text-sm'
 
     onDoubleClick={() => {
       activeSketchId && treeEntries[activeSketchId].deactivate()
@@ -59,7 +59,7 @@ const TreeEntry = ({ entId }) => {
     }}
   >
     <Icon className='h-full w-auto p-1.5' />
-    <div className="btn-light pl-1"
+    <div className="btn pl-1"
       onPointerEnter={() => {
         if (entId[0] == 'm') {
           // entry.material.color.set(color.hover)

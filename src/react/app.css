@@ -42,7 +42,7 @@ body {
 
 #labels > div {
   position: absolute;
-  border: solid 1px black;
+  color: white;
 }
 
 .btn {
@@ -63,9 +63,10 @@ body {
 .btn-green {
   cursor: pointer;
   @apply fill-current
-        bg-transparent       text-gray-700
-  hover:bg-gray-300 hover:text-green-200;
+        bg-transparent       text-gray-200
+  hover:bg-transparent hover:text-green-200;
 }
+
 
 
 .tooltip {
@@ -77,6 +78,7 @@ body {
   border-radius: 4px;
   padding: 4px;
   visibility: hidden;
+  border: solid 1px white;
 
 }
 
@@ -86,6 +88,6 @@ body {
   left: 50%;
   margin-left: -6px;
   border: solid 6px transparent;
-  border-bottom-color: black;
+  border-bottom-color: white;
   border-top: none;
 }

@@ -9,9 +9,9 @@ import Stats from './stats.module.js';
 import { add3DPoint } from './datums'
 import { extrude } from './extrude'
 import { onHover, onPick } from './mouseEvents';
-import { _vec2, _vec3, color, awaitSelection, ptObj} from './shared'
+import { _vec2, _vec3, color, awaitSelection, ptObj } from './shared'
 
-import {AxesHelper} from './axes'
+import { AxesHelper } from './axes'
 
 
 import CSG from "./three-csg.js"
@@ -38,7 +38,7 @@ export class Scene {
 
     this.rect = this.canvas.getBoundingClientRect().toJSON()
 
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias:true });
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
 
     const size = 1;
     const near = 0;
@@ -60,82 +60,69 @@ export class Scene {
 
     this.obj3d = new THREE.Scene()
 
-    this.obj3d.background = new THREE.Color(color.background);
+    // this.obj3d.background = new THREE.Color(color.background);
     const helpersGroup = new THREE.Group();
-    helpersGroup.name = "helpersGroup";
+    helpersGroup.name = "helpers";
     this.obj3d.add(helpersGroup);
 
 
-    for (let i=0; i<4;i ++) {
+    for (let i = 0; i < 4; i++) {
       const freePt = ptObj()
       freePt.matrixAutoUpdate = false
-      freePt.material.size=8
+      freePt.material.size = 4
+      freePt.material.color.set(color.selpoint)
       freePt.visible = false
       freePt.depthTest = false
-      freePt.userData.type = 'point'
+      freePt.userData.type = 'selpoint'
 
       helpersGroup.add(freePt);
     }
-
     this.fptIdx = 0;
     this.fptObj = {}
 
 
-    this.axes = new AxesHelper(this.camera.zoom)
-    this.axes.visible = false
-    helpersGroup.add(this.axes);
-
     const planeGeom = new THREE.PlaneGeometry(5, 5)
-
     const pxy = new THREE.Mesh(
       planeGeom,
       new THREE.MeshBasicMaterial({
         color: color.plane,
-        opacity: 0.05,
+        opacity: 0.02,
         side: THREE.DoubleSide,
         transparent: true,
         depthWrite: false,
         toneMapped: false
       })
     );
-
-    pxy.userData.type = 'plane'
-    pxy.layers.enable(1)
-
     pxy.add(
       new THREE.LineSegments(
         new THREE.EdgesGeometry(planeGeom),
         new THREE.LineBasicMaterial({ color: color.planeBorder })
       )
     )
-
+    pxy.userData.type = 'plane'
+    pxy.layers.enable(1)
+    pxy.children[0].layers.disable(1)
     const pyz = pxy.clone().rotateY(Math.PI / 2);
-    pyz.material = pyz.material.clone();
     const pxz = pxy.clone().rotateX(-Math.PI / 2);
-    pxz.material = pxz.material.clone();
-
-
     helpersGroup.add(pxy);
-    helpersGroup.add(pyz);
-    helpersGroup.add(pxz);
+    [pxz, pyz].forEach(e => {
+      e.traverse(f => f.material = f.material.clone())
+      helpersGroup.add(e);
+    });
+
+    this.axes = new AxesHelper(this.camera.zoom)
+    this.axes.visible = false
+    helpersGroup.add(this.axes);
 
 
-
-
-    const intensity = 0.5;
-    const light1 = new THREE.DirectionalLight(color.lighting, intensity);
-    light1.position.set(10, 10, 10);
+    const dist = 50
+    const light1 = new THREE.PointLight(color.lighting, 0.7);
+    light1.position.set(dist, dist, dist);
     this.obj3d.add(light1);
-
-    const light2 = new THREE.DirectionalLight(color.lighting, intensity);
-    light2.position.set(-10, -10, -5);
+    const light2 = new THREE.PointLight(color.lighting, 0.6);
+    light2.position.set(-dist, -dist, -dist);
     this.obj3d.add(light2);
-    const ambient = new THREE.AmbientLight(color.lighting, intensity);
-    this.obj3d.add(ambient);
 
-
-
-    
 
     this.render = render.bind(this);
     this.addSketch = addSketch.bind(this);
@@ -212,14 +199,25 @@ export class Scene {
   clearSelection() {
     for (let x = 0; x < this.selected.length; x++) {
       const obj = this.selected[x]
-      obj.material.color.set(color[obj.userData.type])
-      if (obj.userData.type == 'point') obj.visible = false
+      if (obj.userData.type == 'plane') {
+        obj.material.opacity = 0.05
+        obj.children[0].material.color.set(color['planeBorder'])
+      } else {
+        obj.material.color.set(color[obj.userData.type])
+      }
+      if (obj.userData.type == 'selpoint') obj.visible = false
     }
     this.selected = []
 
     for (let x = 0; x < this.hovered.length; x++) {
       const obj = this.selected[x]
       obj.material.color.set(color[obj.userData.type])
+      if (obj.userData.type == 'plane') {
+        obj.material.opacity = 0.05
+        obj.children[0].material.color.set(color['planeBorder'])
+      } else {
+        obj.material.color.set(color[obj.userData.type])
+      }
     }
 
     this.obj3d.dispatchEvent({ type: 'change' })
@@ -227,39 +225,34 @@ export class Scene {
 
 
 
-  subtract (m1, m2) {
+  subtract(m1, m2) {
     let bspA = CSG.fromMesh(m1)
     let bspB = CSG.fromMesh(m2)
-    m1.traverse(e=>e.layers.disableAll())
-    m2.traverse(e=>e.layers.disableAll())
-  
+    m1.traverse(e => e.layers.disableAll())
+    m2.traverse(e => e.layers.disableAll())
+
     // // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
-  
+
     let bspResult = bspA.subtract(bspB)
-  
+
     // //Get the resulting mesh from the result bsp, and assign meshA.material to the resulting mesh
-  
+
     let mesh = CSG.toMesh(bspResult, m1.matrix, m1.material)
     mesh.userData.type = 'mesh'
     mesh.name = `${m1.name}-${m2.name}`
     mesh.layers.enable(1)
-  
-    const edges = new THREE.EdgesGeometry( mesh.geometry, 15 );
-    edges.type  = 'BufferGeometry'
-    edges.parameters = undefined
-  
-    const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) );
-    line.userData.type = 'line'
-  
-    // const vertices = new THREE.Points( edges, new THREE.PointsMaterial({ color: 0x000000, size:4}) );
-    const vertices = new THREE.Points( edges, new THREE.PointsMaterial() );
+
+
+
+    const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial());
     vertices.userData.type = 'point'
+    vertices.layers.disable(0)
     vertices.layers.enable(1)
-  
-    mesh.add(line)
+
+    // mesh.add(line)
     mesh.add(vertices)
-  
-  
+
+
     sc.obj3d.add(mesh)
     return mesh
   }
@@ -280,7 +273,7 @@ function render() {
   }
 
 
-  this.axes.resize(this.camera.zoom)
+  if (this.axes) this.axes.resize(this.camera.zoom)
 
   this.renderer.render(this.obj3d, this.camera);
 
@@ -320,7 +313,7 @@ async function addSketch() {
 
   let sketch;
 
-  const references = await this.awaitSelection({ point: 3 }, { plane: 1 });
+  const references = await this.awaitSelection({ selpoint: 3 }, { plane: 1 });
 
   if (!references) return;
 
