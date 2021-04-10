@@ -18,7 +18,7 @@ export function onHover(e) {
   let hoverPts;
 
   if (this.obj3d.userData.type != 'sketch') {
-    this.obj3d.children[0].children[0].visible = false
+    this.obj3d.children[0].children[0].visible = false // hide selpoint[0] before each redraw
     raycaster.layers.set(1)
     hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
   } else {

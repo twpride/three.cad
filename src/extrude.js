@@ -9,7 +9,7 @@ export function extrude(sketch) {
   let visited = new Set()
   let v2s = []
   let offSetPts = []
-  
+
 
 
   function findPair(node) {
@@ -70,39 +70,33 @@ export function extrude(sketch) {
   const extrudeSettings = { depth: 8, bevelEnabled: false };
 
 
-
-
-
-
-
-
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
 
-  
+
   // const material = new THREE.MeshLambertMaterial({
   const material = new THREE.MeshPhongMaterial({
     color: color.mesh,
     emissive: color.emissive,
     // flatShading:true,
   });
+
   const mesh = new THREE.Mesh(geometry, material)
   mesh.name = 'm' + id++
   mesh.userData.type = 'mesh'
   mesh.layers.enable(1)
 
-  const vertices = new THREE.Points( mesh.geometry, new THREE.PointsMaterial() );
+  const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial({ size: 0 }));
   vertices.userData.type = 'point'
-  vertices.layers.disable(0)
   vertices.layers.enable(1)
 
   mesh.add(vertices)
   mesh.matrixAutoUpdate = false;
   mesh.matrix.multiply(sketch.obj3d.matrix)
+
   this.obj3d.add(mesh)
 
   this.render()
 
-  // sketch.visible = false
   this.store.dispatch({ type: 'rx-extrusion', mesh, sketchId: sketch.obj3d.name })
 }
 

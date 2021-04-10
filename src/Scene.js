@@ -2,11 +2,10 @@
 
 
 import * as THREE from '../node_modules/three/src/Three';
-import { TrackballControls } from './trackball'
+import { TrackballControls } from '../lib/trackball'
 import { Sketch } from './Sketch'
-import Stats from './stats.module.js';
+import Stats from '../lib/stats.module.js';
 
-import { add3DPoint } from './datums'
 import { extrude } from './extrude'
 import { onHover, onPick } from './mouseEvents';
 import { _vec2, _vec3, color, awaitSelection, ptObj } from './shared'
@@ -14,7 +13,7 @@ import { _vec2, _vec3, color, awaitSelection, ptObj } from './shared'
 import { AxesHelper } from './axes'
 
 
-import CSG from "./three-csg.js"
+import CSG from "../lib/three-csg"
 
 
 const eq = (a1, a2) => {
@@ -116,10 +115,10 @@ export class Scene {
     const dist = 50
     const light1 = new THREE.PointLight(color.lighting, 0.7);
     light1.position.set(dist, dist, dist);
-    this.obj3d.add(light1);
+    helpersGroup.add(light1);
     const light2 = new THREE.PointLight(color.lighting, 0.6);
     light2.position.set(-dist, -dist, -dist);
-    this.obj3d.add(light2);
+    helpersGroup.add(light2);
 
 
     this.render = render.bind(this);
