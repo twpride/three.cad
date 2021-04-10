@@ -1,8 +1,13 @@
 /* @tailwind base; */
 
-.bg-gray-50 {
+.bg-gray-700 {
   --tw-bg-opacity: 1;
-  background-color: rgba(249, 250, 251, var(--tw-bg-opacity));
+  background-color: rgba(64, 64, 64, var(--tw-bg-opacity));
+}
+
+.bg-gray-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(38, 38, 38, var(--tw-bg-opacity));
 }
 
 .flex {
@@ -21,20 +26,49 @@
   align-items: center;
 }
 
+.justify-start {
+  justify-content: flex-start;
+}
+
 .justify-center {
   justify-content: center;
 }
 
-.justify-between {
-  justify-content: space-between;
+.h-7 {
+  height: 1.75rem;
 }
 
 .h-full {
   height: 100%;
 }
 
-.p-2 {
-  padding: 0.5rem;
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
+.p-1 {
+  padding: 0.25rem;
+}
+
+.p-3 {
+  padding: 0.75rem;
+}
+
+.p-1\.5 {
+  padding: 0.375rem;
+}
+
+.p-3\.5 {
+  padding: 0.875rem;
+}
+
+.pl-1 {
+  padding-left: 0.25rem;
 }
 
 * {
@@ -48,6 +82,10 @@
   --tw-ring-color: rgba(59, 130, 246, 0.5);
   --tw-ring-offset-shadow: 0 0 #0000;
   --tw-ring-shadow: 0 0 #0000;
+}
+
+.select-none {
+  user-select: none;
 }
 
 .visible {
@@ -134,29 +172,69 @@ body {
 
 #labels > div {
   position: absolute;
-  border: solid 1px black;
+  color: white;
 }
 
 .btn {
   cursor: pointer;
-  --tw-bg-opacity: 1;
-  background-color: rgba(243, 244, 246, var(--tw-bg-opacity));
+  background-color: transparent;
 }
 
 .btn:hover {
   --tw-bg-opacity: 1;
-  background-color: rgba(229, 231, 235, var(--tw-bg-opacity));
+  background-color: rgba(82, 82, 82, var(--tw-bg-opacity));
 }
 
 .btn {
   fill: currentColor;
   --tw-text-opacity: 1;
-  color: rgba(5, 150, 105, var(--tw-text-opacity));
+  color: rgba(229, 229, 229, var(--tw-text-opacity));
 }
 
 .btn:hover {
   --tw-text-opacity: 1;
-  color: rgba(4, 120, 87, var(--tw-text-opacity));
+  color: rgba(229, 229, 229, var(--tw-text-opacity));
+}
+
+.btn-light {
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.btn-light:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgba(212, 212, 212, var(--tw-bg-opacity));
+}
+
+.btn-light {
+  fill: currentColor;
+  --tw-text-opacity: 1;
+  color: rgba(64, 64, 64, var(--tw-text-opacity));
+}
+
+.btn-light:hover {
+  --tw-text-opacity: 1;
+  color: rgba(64, 64, 64, var(--tw-text-opacity));
+}
+
+.btn-green {
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.btn-green:hover {
+  background-color: transparent;
+}
+
+.btn-green {
+  fill: currentColor;
+  --tw-text-opacity: 1;
+  color: rgba(229, 229, 229, var(--tw-text-opacity));
+}
+
+.btn-green:hover {
+  --tw-text-opacity: 1;
+  color: rgba(167, 243, 208, var(--tw-text-opacity));
 }
 
 .tooltip {
@@ -168,6 +246,7 @@ body {
   border-radius: 4px;
   padding: 4px;
   visibility: hidden;
+  border: solid 1px white;
 }
 
 .arrow {
@@ -176,7 +255,7 @@ body {
   left: 50%;
   margin-left: -6px;
   border: solid 6px transparent;
-  border-bottom-color: black;
+  border-bottom-color: white;
   border-top: none;
 }
 
