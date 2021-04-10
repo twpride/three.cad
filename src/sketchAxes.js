@@ -5,8 +5,6 @@
 
 import { LineSegments, LineBasicMaterial, Float32BufferAttribute, BufferGeometry } from '../node_modules/three/src/Three'
 
-import {} from '../node_modules/three/examples/jsm/lines/LineGeometry'
-import {} from '../node_modules/three/examples/jsm/lines/LineMaterial'
 
 class AxesHelper extends LineSegments {
 

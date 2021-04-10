@@ -32,6 +32,9 @@ export const NavBar = () => {
     activeSketchId ?
       [MdDone, () => {
         treeEntries.byId[activeSketchId].deactivate()
+        dispatch({ type: 'update-descendents', sketch})
+
+
         sc.activeSketch = null
         // sc.activeDim = this.activeSketch.obj3d.children[1].children
       }, 'Finish'] :
@@ -45,7 +48,6 @@ export const NavBar = () => {
       const [m1, m2] = sc.selected
       const mesh = sc.subtract(m1, m2)
 
-      console.log(mesh, 'meshres')
       dispatch({ type: 'rx-boolean', mesh, deps: [m1.name, m2.name] })
       sc.render()
       forceUpdate()
@@ -61,7 +63,7 @@ export const NavBar = () => {
   return <div className='topNav flex justify-center items-center bg-gray-800'>
     {
       btnz.map(([Icon, fcn, txt, shortcut], idx) => (
-        <Icon className="btn w-auto h-full p-3" tooltip={txt}
+        <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
           onClick={fcn} key={idx}
         />
       ))

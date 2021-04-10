@@ -53,7 +53,6 @@ export function onHover(e) {
 
   if (idx.length) { // after filtering, if hovered objs still exists
 
-    console.log(hoverPts)
     if (hoverPts[idx[0]].object != this.hovered[0]) { // if the previous hovered obj is not the same as current
 
       for (let x = 0; x < this.hovered.length; x++) { // first clear old hovers that are not selected
