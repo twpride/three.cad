@@ -43,7 +43,7 @@ export const NavBar = () => {
       if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
       // console.log('here')
       const [m1, m2] = sc.selected
-      const mesh = subtract(m1, m2)
+      const mesh = sc.subtract(m1, m2)
 
       console.log(mesh, 'meshres')
       dispatch({ type: 'rx-boolean', mesh, deps: [m1.name, m2.name] })
@@ -67,30 +67,4 @@ export const NavBar = () => {
       ))
     }
   </div>
-}
-
-const subtract = (m1, m2) => {
-  //  //Create a bsp tree from each of the meshes
-  // console.log(sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh'), "wtf")
-
-
-  let bspA = BoolOp.fromMesh(m1)
-  let bspB = BoolOp.fromMesh(m2)
-  m1.visible = false
-  m2.visible = false
-
-  // // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
-
-  let bspResult = bspA.subtract(bspB)
-
-  // //Get the resulting mesh from the result bsp, and assign meshA.material to the resulting mesh
-
-  let meshResult = BoolOp.toMesh(bspResult, m1.matrix, m1.material)
-  meshResult.userData.type = 'mesh'
-  meshResult.name = `${m1.name}-${m2.name}`
-
-  sc.obj3d.add(meshResult)
-
-  return meshResult
-
 }

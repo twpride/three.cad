@@ -12,20 +12,16 @@ raycaster.params.Points.threshold = 0.1;
 
 
 const color = {
-  // background:0xdae1e7,
-  background:0xffffff,
-  // background:0xbbbbbb,
+  background:0xdae1e7,
   lighting: 0xFFFFFF,
   emissive: 0x072534,
 
   hover: 0x00ff00,
   point: 0x555555, //points
-  line: 0x555555, //lines
-  mesh: 0x156289, //mesh:
+  line: 0x000000, //lines
+  mesh: 0x9DCFED, //mesh:
   dimension: 0x0000ff, //
 
-  // plane: 0xdaacac, //
-  // planeBorder: 0xc59797, //
   plane: 0x88adcd, //
   planeBorder: 0xa7cae8, //
 }
@@ -34,7 +30,7 @@ const hoverColor = {
   hover: 0x00ff00,
   point: 0x00ff00, //points
   line: 0x00ff00, //lines
-  mesh: 0x00ff00, //mesh:
+  mesh: 0xFAB601, //mesh:
   dimension: 0x00ff00, //
   plane: 0x005dff, //
 }
@@ -52,7 +48,7 @@ const pointMaterial = new THREE.PointsMaterial({
 })
 
 
-const ptObj = (n) => {
+const ptObj = (n, visibility = true) => {
   const ret = new THREE.Points(
     new THREE.BufferGeometry().setAttribute('position',
       new THREE.Float32BufferAttribute(n || 3, 3)
@@ -61,6 +57,7 @@ const ptObj = (n) => {
   );
   ret.name = "p" + id++
   ret.userData.type = 'point'
+  ret.visible = visibility
   return ret
 }
 
@@ -145,6 +142,7 @@ async function awaitSelection(...criteria) {
   return null
 }
 
+window.rc = raycaster
 
 
 export { lineMaterial, pointMaterial, _vec2, _vec3, raycaster, color, hoverColor, ptObj, lineObj, awaitSelection }

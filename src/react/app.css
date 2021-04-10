@@ -60,6 +60,14 @@ body {
 }
 
 
+.btn-green {
+  cursor: pointer;
+  @apply fill-current
+        bg-transparent       text-gray-700
+  hover:bg-gray-300 hover:text-green-200;
+}
+
+
 .tooltip {
   position: fixed;
   display: block;

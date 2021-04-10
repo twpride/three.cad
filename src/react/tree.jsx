@@ -4,6 +4,7 @@ import React, { useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { MdEdit, MdVisibilityOff, MdVisibility, MdDelete } from 'react-icons/md'
 
+import { FaCube, FaEdit } from 'react-icons/fa'
 
 export const Tree = () => {
   const treeEntries = useSelector(state => state.treeEntries)
@@ -14,6 +15,12 @@ export const Tree = () => {
     ))}
   </div>
 
+}
+
+
+const treeIcons = {
+  'mesh': FaCube,
+  'sketch': FaEdit
 }
 
 
@@ -28,18 +35,30 @@ const TreeEntry = ({ entId }) => {
 
   entry = treeEntries[entId]
 
-  if (entId[0] == "s") {
+  if (treeEntries[entId].obj3d) {
     obj3d = treeEntries[entId].obj3d
   } else {
     obj3d = treeEntries[entId]
   }
+  console.log(obj3d.userData.type)
+  let Icon = treeIcons[obj3d.userData.type]
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
-  const vis = obj3d.visible
+  // const vis = obj3d.visible
+  const vis = obj3d.layers.mask&1
 
-  return <div className='bg-gray-50 flex justify-between w-full'>
-    <div className="btn-light"
+  return <div className='btn-light select-none flex justify-start w-full h-7 items-center text-sm'
+
+    onDoubleClick={() => {
+      activeSketchId && treeEntries[activeSketchId].deactivate()
+      entry.activate()
+      sc.clearSelection()
+      sc.activeSketch = entry;
+    }}
+  >
+    <Icon className='h-full w-auto p-1.5' />
+    <div className="btn-light pl-1"
       onPointerEnter={() => {
         if (entId[0] == 'm') {
           // entry.material.color.set(color.hover)
@@ -64,46 +83,31 @@ const TreeEntry = ({ entId }) => {
     >
       {entId}
     </div>
-    <div className='flex'>
-      <div className='btn-light'
-        onClick={() => {
-          activeSketchId && treeEntries[activeSketchId].deactivate()
-          entry.activate()
-          sc.clearSelection()
-          sc.activeSketch = entry;
-        }}
-      >
-        <MdEdit />
-      </div>
+    <div className='flex h-full ml-auto'>
 
-      <div className='btn-light'
+      <MdDelete className='btn-green h-full w-auto p-1.5'
         onClick={() => {
           dispatch({ type: 'delete-node', id: entId })
         }}
-      >
-        <MdDelete />
-      </div>
+      />
+
       {
         vis ?
-          <div className='btn-light'
+          <MdVisibility className='btn-green h-full w-auto p-1.5'
             onClick={() => {
-              obj3d.visible = false;
+              obj3d.traverse((e)=>e.layers.disable(0))
               sc.render()
               forceUpdate()
             }}
-          >
-            <MdVisibility />
-          </div>
+          />
           :
-          <div className='btn-light'
+          <MdVisibilityOff className='btn-green h-full w-auto p-1.5'
             onClick={() => {
-              obj3d.visible = true;
+              obj3d.traverse((e)=>e.layers.enable(0))
               sc.render()
               forceUpdate()
             }}
-          >
-            <MdVisibilityOff />
-          </div>
+          />
       }
     </div>
 

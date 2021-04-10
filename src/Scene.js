@@ -9,7 +9,7 @@ import Stats from './stats.module.js';
 import { add3DPoint } from './datums'
 import { extrude } from './extrude'
 import { onHover, onPick } from './mouseEvents';
-import { _vec2, _vec3, color, awaitSelection } from './shared'
+import { _vec2, _vec3, color, awaitSelection, ptObj} from './shared'
 
 import {AxesHelper} from './axes'
 
@@ -38,7 +38,7 @@ export class Scene {
 
     this.rect = this.canvas.getBoundingClientRect().toJSON()
 
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias:true });
 
     const size = 1;
     const near = 0;
@@ -66,12 +66,22 @@ export class Scene {
     this.obj3d.add(helpersGroup);
 
 
+    for (let i=0; i<4;i ++) {
+      const freePt = ptObj()
+      freePt.matrixAutoUpdate = false
+      freePt.material.size=8
+      freePt.visible = false
+      freePt.depthTest = false
+      helpersGroup.add(freePt);
+    }
+
+    this.fptIdx = 0;
+    this.fptObj = {}
+
+
     this.axes = new AxesHelper(this.camera.zoom)
     this.axes.visible = false
-
     helpersGroup.add(this.axes);
-
-
 
     const planeGeom = new THREE.PlaneGeometry(5, 5)
 
@@ -88,6 +98,7 @@ export class Scene {
     );
 
     pxy.userData.type = 'plane'
+    pxy.layers.enable(1)
 
     pxy.add(
       new THREE.LineSegments(
@@ -109,7 +120,7 @@ export class Scene {
 
 
 
-    const intensity = 1;
+    const intensity = 0.5;
     const light1 = new THREE.DirectionalLight(color.lighting, intensity);
     light1.position.set(10, 10, 10);
     this.obj3d.add(light1);
@@ -121,6 +132,8 @@ export class Scene {
     this.obj3d.add(ambient);
 
 
+
+    
 
     this.render = render.bind(this);
     this.addSketch = addSketch.bind(this);
@@ -208,6 +221,45 @@ export class Scene {
     console.log('fireed')
   }
 
+
+
+  subtract (m1, m2) {
+    let bspA = CSG.fromMesh(m1)
+    let bspB = CSG.fromMesh(m2)
+    m1.traverse(e=>e.layers.disable(0))
+    m2.traverse(e=>e.layers.disable(0))
+    // m1.visible = false
+    // m2.visible = false
+  
+    // // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
+  
+    let bspResult = bspA.subtract(bspB)
+  
+    // //Get the resulting mesh from the result bsp, and assign meshA.material to the resulting mesh
+  
+    let mesh = CSG.toMesh(bspResult, m1.matrix, m1.material)
+    mesh.userData.type = 'mesh'
+    mesh.name = `${m1.name}-${m2.name}`
+  
+    const edges = new THREE.EdgesGeometry( mesh.geometry, 15 );
+    edges.type  = 'BufferGeometry'
+    edges.parameters = undefined
+  
+    const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) );
+    line.userData.type = 'line'
+  
+    // const vertices = new THREE.Points( edges, new THREE.PointsMaterial({ color: 0x000000, size:4}) );
+    const vertices = new THREE.Points( edges, new THREE.PointsMaterial() );
+    vertices.userData.type = 'point'
+    vertices.layers.enable(1)
+  
+    mesh.add(line)
+    mesh.add(vertices)
+  
+  
+    sc.obj3d.add(mesh)
+    return mesh
+  }
 }
 
 
@@ -299,12 +351,7 @@ async function addSketch() {
 }
 
 window.sc = new Scene(store)
-// sc.loadState()
+sc.loadState()
 
-
-
-
-
-
-
-
+// sc.camera.layers.enable(1)
+// rc.layers.set(1)

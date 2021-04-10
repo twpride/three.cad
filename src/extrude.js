@@ -77,29 +77,48 @@ export function extrude(sketch) {
 
 
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  const material = new THREE.MeshPhongMaterial({
+
+  
+  const material = new THREE.MeshLambertMaterial({
+  // const material = new THREE.MeshPhongMaterial({
     color: color.mesh,
     emissive: color.emissive,
+    // flatShading:true,
   });
   const mesh = new THREE.Mesh(geometry, material)
   mesh.name = 'm' + id++
   mesh.userData.type = 'mesh'
+  mesh.layers.enable(1)
 
-  for (let i = 0; i < offSetPts.length; i += 2) {
-    if (
-      offSetPts[i] == offSetPts[i - 2] &&
-      offSetPts[i + 1] == offSetPts[i - 1]
-    ) continue;
-    mesh.add(
-      ptObj([offSetPts[i], offSetPts[i + 1], 8])
-    )
-  }
+  const edges = new THREE.EdgesGeometry( geometry, 15 );
+  edges.type  = 'BufferGeometry'
+  edges.parameters = undefined
+
+  const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) );
+  line.userData.type = 'line'
+
+  const vertices = new THREE.Points( edges, new THREE.PointsMaterial() );
+  vertices.userData.type = 'point'
+  vertices.layers.enable(1)
+
+  mesh.add(line)
+  mesh.add(vertices)
+
+  // for (let i = 0; i < offSetPts.length; i += 2) {
+  //   if (
+  //     offSetPts[i] == offSetPts[i - 2] &&
+  //     offSetPts[i + 1] == offSetPts[i - 1]
+  //   ) continue;
+  //   mesh.add(
+  //     ptObj([offSetPts[i], offSetPts[i + 1], 0], false),
+  //     ptObj([offSetPts[i], offSetPts[i + 1], 8], false),
+  //   )
+  // }
 
 
   mesh.matrixAutoUpdate = false;
   mesh.matrix.multiply(sketch.obj3d.matrix)
   this.obj3d.add(mesh)
-
 
 
 

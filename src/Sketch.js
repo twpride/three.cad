@@ -152,6 +152,7 @@ class Sketch {
 
     this.setDimLines()
 
+    this.obj3d.traverse(e=>e.layers.enable(0))
     this.scene.axes.matrix = this.obj3d.matrix
     this.scene.axes.visible = true
 
@@ -164,6 +165,7 @@ class Sketch {
     this.canvas.removeEventListener('pointermove', this.onHover)
     this.store.dispatch({ type: 'exit-sketch' })
     this.labelContainer.innerHTML = ""
+    this.obj3d.traverse(e=>e.layers.disable(0))
     this.scene.axes.visible = false
   }
 

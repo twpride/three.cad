@@ -4,8 +4,6 @@ import { color } from './shared'
 const lineMaterial = new THREE.LineBasicMaterial({
   linewidth: 2,
   color: color.dimension,
-  opacity: 0.2,
-  transparent: true,
 })
 
 
@@ -26,7 +24,7 @@ export async function drawDimension() {
 
   const line = new THREE.LineSegments(
     new THREE.BufferGeometry().setAttribute('position',
-      new THREE.Float32BufferAttribute(3 * 8, 3)
+      new THREE.Float32BufferAttribute(Array(3 * 8).fill(-0.001), 3)
     ),
     lineMaterial.clone()
   );
