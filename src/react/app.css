@@ -1,10 +1,7 @@
-/* @tailwind base; */
 @tailwind utilities;
 
 
 * {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
 }
 
@@ -52,19 +49,12 @@ body {
   hover:bg-gray-500 hover:text-gray-200;
 }
 
-.btn-light {
-  cursor: pointer;
-  @apply fill-current
-        bg-transparent       text-gray-700
-  hover:bg-gray-300 hover:text-gray-700;
-}
-
 
 .btn-green {
   cursor: pointer;
   @apply fill-current
         bg-transparent       text-gray-200
-  hover:bg-transparent hover:text-green-200;
+  hover:bg-transparent hover:text-green-400;
 }
 
 

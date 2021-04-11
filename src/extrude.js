@@ -72,12 +72,10 @@ export function extrude(sketch) {
 
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
 
-
   // const material = new THREE.MeshLambertMaterial({
   const material = new THREE.MeshPhongMaterial({
     color: color.mesh,
     emissive: color.emissive,
-    // flatShading:true,
   });
 
   const mesh = new THREE.Mesh(geometry, material)
@@ -95,9 +93,14 @@ export function extrude(sketch) {
 
   this.obj3d.add(mesh)
 
-  this.render()
-
   this.store.dispatch({ type: 'rx-extrusion', mesh, sketchId: sketch.obj3d.name })
+
+  if (this.activeSketch == sketch) {
+    this.activeSketch = null
+    sketch.deactivate()
+  }
+
+  this.render()
 }
 
 

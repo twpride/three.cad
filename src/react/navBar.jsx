@@ -13,8 +13,7 @@ import * as Icon from "./icons";
 export const NavBar = () => {
   const dispatch = useDispatch()
   const treeEntries = useSelector(state => state.treeEntries)
-  const activeSketchId = useSelector(state => state.activeSketchId)
-
+  const activeSketchId = useSelector(state => state.treeEntries.activeSketchId)
 
   useEffect(() => {
     if (!activeSketchId) {
@@ -35,6 +34,7 @@ export const NavBar = () => {
         // dispatch({ type: 'update-descendents', sketch})
         sc.activeSketch = null
         sc.render()
+        forceUpdate()
         // sc.activeDim = this.activeSketch.obj3d.children[1].children
       }, 'Finish'] :
       [FaEdit, sc.addSketch, 'Sketch [s]']

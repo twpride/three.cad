@@ -22,18 +22,23 @@ const color = {
   line: 0xffffff, 
   mesh: 0x9DCFED, 
   dimension: 0x0000ff, 
+
   plane: 0xffff00, 
   planeBorder: 0x2e2e00, 
+  opacity: 0.02
 }
 
 const hoverColor = {
+  emissive: 0x343407,
   point: 0x00ff00,
   selpoint: 0xff0000,
   line: 0x00ff00, 
   mesh: 0xFAB601, 
   dimension: 0x00ff00, 
+
   plane: 0xffff00, 
   planeBorder: 0x919100,
+  opacity: 0.06
 }
 
 

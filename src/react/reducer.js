@@ -10,10 +10,9 @@ export const preloadedState = {
     allIds: [],
     tree: {},
     order: {},
+    visible: {},
+    activeSketchId: ""
   },
-  ui: {
-    toolTipImmediate: false 
-  }
 }
 
 export function reducer(state = {}, action) {
@@ -24,18 +23,33 @@ export function reducer(state = {}, action) {
           byId: { [action.obj.obj3d.name]: { $set: action.obj } },
           allIds: { $push: [action.obj.obj3d.name] },
           tree: { [action.obj.obj3d.name]: { $set: {} } },
-          order: { [action.obj.obj3d.name]: { $set: state.treeEntries.allIds.length } }
+          order: { [action.obj.obj3d.name]: { $set: state.treeEntries.allIds.length } },
+          visible: { [action.obj.obj3d.name]: { $set: true } },
         },
       })
 
+    case 'set-entry-visibility': {
+      return update(state, {
+        treeEntries: {
+          visible: { $merge: action.obj },
+        },
+      })
+    }
+
     case 'set-active-sketch':
       return update(state, {
-        activeSketchId: { $set: action.sketch },
+        treeEntries: {
+          visible: { [action.sketch]: { $set: true } },
+          activeSketchId: { $set: action.sketch },
+        },
       })
     case 'exit-sketch':
-      return {
-        ...state, activeSketchId: ''
-      }
+      return update(state, {
+        treeEntries: {
+          activeSketchId: { $set: "" },
+          visible: { [state.treeEntries.activeSketchId]: { $set: false } },
+        },
+      })
     case 'rx-extrusion':
 
       return update(state, {
@@ -48,7 +62,10 @@ export function reducer(state = {}, action) {
             [action.sketchId]: { [action.mesh.name]: { $set: true } },
             [action.mesh.name]: { $set: {} }
           },
-          order: { [action.mesh.name]: { $set: state.treeEntries.allIds.length } }
+          order: { [action.mesh.name]: { $set: state.treeEntries.allIds.length } },
+          visible: {
+            [action.mesh.name]: { $set: true }
+          }
         }
       })
     case 'rx-boolean':
@@ -62,6 +79,7 @@ export function reducer(state = {}, action) {
           tree: {
             [action.deps[0]]: { [action.mesh.name]: { $set: true } },
             [action.deps[1]]: { [action.mesh.name]: { $set: true } },
+            [action.mesh.name]: { $set: {} }
           },
           order: { [action.mesh.name]: { $set: state.treeEntries.allIds.length } }
         }

@@ -12,15 +12,16 @@ boolean flesh out refresh / replace mesh
   - hidden bodies messes up hover highlight  \\ fixed
   - add for union and intersect
   - consume skeches after extrude // done
+- selection hover disspates when rehovered //fixed
+- boolean unable to select click //fixed
 
 
 vertical  //  done
 horizontal // done
 
 
-
+- hover sync between tree and work area
 - select sketch for extrusion 
-- boolean unable to select click
 
 auto update extrude
 extrude dialogue 

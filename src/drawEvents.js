@@ -21,6 +21,10 @@ export function drawOnClick1(e) {
     this.toPush = drawPoint.call(this, mouseLoc)
   }
 
+  this.toPush.forEach(element => {
+    element.layers.enable(2)
+  });
+
   this.updatePoint = this.obj3d.children.length
   this.obj3d.add(...this.toPush)
   this.linkedObjs.set(this.l_id, [this.mode, this.toPush.map(e => e.name)])

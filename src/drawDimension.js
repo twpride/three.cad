@@ -38,7 +38,8 @@ export async function drawDimension() {
 
   line.userData.ids = selection.map(e => e.name)
 
-
+  line.layers.enable(2)
+  point.layers.enable(2)
 
 
 

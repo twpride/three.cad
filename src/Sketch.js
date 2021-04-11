@@ -152,9 +152,11 @@ class Sketch {
 
     this.setDimLines()
 
-    this.obj3d.traverse(e=>e.layers.enable(0))
+    this.obj3d.traverse(e=>e.layers.enable(2))
+    this.obj3d.visible = true
     this.scene.axes.matrix = this.obj3d.matrix
     this.scene.axes.visible = true
+    this.scene.activeSketch = this
 
     window.sketcher = this
   }
@@ -165,8 +167,10 @@ class Sketch {
     this.canvas.removeEventListener('pointermove', this.onHover)
     this.store.dispatch({ type: 'exit-sketch' })
     this.labelContainer.innerHTML = ""
-    this.obj3d.traverse(e=>e.layers.disable(0))
+    this.obj3d.visible = false
+    this.obj3d.traverse(e=>e.layers.disable(2))
     this.scene.axes.visible = false
+    this.scene.activeSketch = null
   }
 
 

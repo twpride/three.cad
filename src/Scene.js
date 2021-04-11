@@ -7,7 +7,7 @@ import { Sketch } from './Sketch'
 import Stats from '../lib/stats.module.js';
 
 import { extrude } from './extrude'
-import { onHover, onPick } from './mouseEvents';
+import { onHover, onPick, setHover } from './mouseEvents';
 import { _vec2, _vec3, color, awaitSelection, ptObj } from './shared'
 
 import { AxesHelper } from './axes'
@@ -50,7 +50,6 @@ export class Scene {
       cameraDist * Math.cos(xzAngle)
     );
 
-    // const controls = new OrbitControls(camera, view1Elem);
     const controls = new TrackballControls(this.camera, this.canvas);
     controls.target.set(0, 0, 0);
     controls.update();
@@ -126,6 +125,7 @@ export class Scene {
     this.extrude = extrude.bind(this);
     this.onHover = onHover.bind(this);
     this.onPick = onPick.bind(this);
+    this.setHover = setHover.bind(this);
     this.awaitSelection = awaitSelection.bind(this);
 
     this.obj3d.addEventListener('change', this.render);
@@ -184,7 +184,7 @@ export class Scene {
       } else if (k[0] == 'm') {
 
         entries[k] = loader.parse(state.treeEntries.byId[k])
-        console.log(entries[k])
+        // console.log(entries[k])
         this.obj3d.add(entries[k])
 
       }
@@ -207,7 +207,7 @@ export class Scene {
     this.selected = []
 
     for (let x = 0; x < this.hovered.length; x++) {
-      const obj = this.selected[x]
+      const obj = this.hovered[x]
       obj.material.color.set(color[obj.userData.type])
       if (obj.userData.type == 'plane') {
         obj.material.opacity = 0.05
@@ -221,12 +221,84 @@ export class Scene {
   }
 
 
+  hover(obj) {
+
+    if (typeof obj == 'object' && !this.selected.includes(obj)) {
+
+      if (obj.userData.type == 'plane') {
+        obj.material.opacity = 0.02
+        obj.children[0].material.color.set(color['planeBorder'])
+      } else {
+        if (obj.userData.type == 'mesh') {
+          obj.material.emissive.set(color.emissive)
+        }
+        obj.material.color.set(color[obj.userData.type])
+      }
+
+    }
+
+
+    if (typeof obj == 'object' && !this.selected.includes(obj)) {
+
+      if (obj.userData.type == 'plane') {
+        obj.material.opacity = 0.02
+        obj.children[0].material.color.set(color['planeBorder'])
+      } else {
+        if (obj.userData.type == 'mesh') {
+          obj.material.emissive.set(color.emissive)
+        }
+        obj.material.color.set(color[obj.userData.type])
+      }
+
+    }
+
+
+    obj.material.color.set(color[obj.userData.type])
+
+    if (obj.userData.type == 'mesh') {
+      obj.material.emissive.set(color.emissive)
+    } else if (obj.userData.type == 'plane') {
+      obj.material.opacity = 0.02
+      obj.children[0].material.color.set(color['planeBorder'])
+    }
+
+    if (obj.userData.type == 'selpoint') {
+      obj.visible = false
+    }
+
+
+
+
+
+    if (typeof obj == 'object') {
+
+      if (obj.userData.type == 'plane') {
+        obj.material.opacity = 0.06
+        obj.children[0].material.color.set(hoverColor['planeBorder'])
+      } else {
+        if (obj.userData.type == 'mesh') {
+          obj.material.emissive.set(hoverColor.emissive)
+        }
+        obj.material.color.set(hoverColor[obj.userData.type])
+      }
+
+    }
+
+
+
+
+
+
+
+  }
 
   subtract(m1, m2) {
     let bspA = CSG.fromMesh(m1)
     let bspB = CSG.fromMesh(m2)
-    m1.traverse(e => e.layers.disableAll())
-    m2.traverse(e => e.layers.disableAll())
+    m1.visible = false
+    m2.visible = false
+    m1.traverse(e => e.layers.disable(1))
+    m2.traverse(e => e.layers.disable(1))
 
     // // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
 
@@ -241,9 +313,8 @@ export class Scene {
 
 
 
-    const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial());
+    const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial({ size: 0 }));
     vertices.userData.type = 'point'
-    vertices.layers.disable(0)
     vertices.layers.enable(1)
 
     // mesh.add(line)
@@ -251,6 +322,15 @@ export class Scene {
 
 
     sc.obj3d.add(mesh)
+
+    this.store.dispatch({
+      type: 'set-entry-visibility', obj: {
+        [m1.name]: false,
+        [m2.name]: false,
+        [mesh.name]: true,
+      }
+    })
+
     return mesh
   }
 }
@@ -333,18 +413,18 @@ async function addSketch() {
 
   this.clearSelection()
 
-  sketch.activate()
-  this.activeSketch = sketch
 
   sketch.obj3d.addEventListener('change', this.render);
-  this.render()
   console.log('render')
   this.store.dispatch({ type: 'rx-sketch', obj: sketch })
 
+  sketch.activate()
+
+  this.render()
 }
 
 window.sc = new Scene(store)
-sc.loadState()
+// sc.loadState()
 
 // sc.camera.layers.enable(1)
 // rc.layers.set(1)

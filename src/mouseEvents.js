@@ -22,7 +22,8 @@ export function onHover(e) {
     raycaster.layers.set(1)
     hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
   } else {
-    raycaster.layers.set(0)
+    // raycaster.layers.set(0)
+    raycaster.layers.set(2)
     hoverPts = raycaster.intersectObjects([...this.obj3d.children[1].children, ...this.obj3d.children])
   }
 
@@ -58,12 +59,7 @@ export function onHover(e) {
       for (let x = 0; x < this.hovered.length; x++) { // first clear old hovers that are not selected
         const obj = this.hovered[x]
         if (typeof obj == 'object' && !this.selected.includes(obj)) {
-          if (obj.userData.type == 'plane') {
-            obj.material.opacity = 0.02
-            obj.children[0].material.color.set(color['planeBorder'])
-          } else {
-            obj.material.color.set(color[obj.userData.type])
-          }
+          setHover(obj, 0)
         }
       }
       this.hovered = []
@@ -71,36 +67,23 @@ export function onHover(e) {
       for (let x = 0; x < idx.length; x++) {
         let obj = hoverPts[idx[x]].object
 
-        if (this.obj3d.userData.type == 'sketch') {
-          obj.material.color.set(hoverColor[obj.userData.type])
-        } else {
+        setHover(obj, 1, false)
 
-          if (obj.userData.type == 'mesh') {
-            obj.material.color.set(color['meshTempHover'])
-          } else if (obj.userData.type == 'plane') {
-            obj.material.opacity = 0.06
-            obj.children[0].material.color.set(hoverColor['planeBorder'])
-          } else if (obj.userData.type == 'point') {
+        if (this.obj3d.userData.type != 'sketch' && obj.userData.type == 'point') {
+          ptLoc = obj.geometry.attributes.position.array
+            .slice(
+              3 * hoverPts[idx[x]].index,
+              3 * hoverPts[idx[x]].index + 3
+            )
+          // const pp = this.obj3d.children[0].children[this.fptIdx % 3]
+          const pp = this.obj3d.children[0].children[0]
+          pp.geometry.attributes.position.array.set(ptLoc)
+          pp.matrix = obj.parent.matrix
+          pp.geometry.attributes.position.needsUpdate = true
+          pp.visible = true
 
-            ptLoc = obj.geometry.attributes.position.array
-              .slice(
-                3 * hoverPts[idx[x]].index,
-                3 * hoverPts[idx[x]].index + 3
-              )
-
-            // const pp = this.obj3d.children[0].children[this.fptIdx % 3]
-            const pp = this.obj3d.children[0].children[0]
-            pp.geometry.attributes.position.array.set(ptLoc)
-            pp.matrix = obj.parent.matrix
-            pp.geometry.attributes.position.needsUpdate = true
-            pp.visible = true
-
-            obj = hoverPts[idx[x]].index
-
-          }
-
+          obj = hoverPts[idx[x]].index
         }
-
 
         this.hovered.push(obj)
       }
@@ -114,14 +97,12 @@ export function onHover(e) {
 
       for (let x = 0; x < this.hovered.length; x++) {
         const obj = this.hovered[x]
+
         if (typeof obj == 'object' && !this.selected.includes(obj)) {
-          if (obj.userData.type == 'plane') {
-            obj.material.opacity = 0.02
-            obj.children[0].material.color.set(color['planeBorder'])
-          } else {
-            obj.material.color.set(color[obj.userData.type])
-          }
+          setHover(obj, 0)
         }
+
+
       }
       this.hovered = []
 
@@ -145,12 +126,9 @@ export function onPick(e) {
       this.selected.push(obj)
     } else {
       if (typeof obj == 'object') {
-        if (obj.userData.type == 'plane') {
-          obj.material.opacity = 0.06
-          obj.children[0].material.color.set(hoverColor['planeBorder'])
-        } else {
-          obj.material.color.set(hoverColor[obj.userData.type])
-        }
+
+        setHover(obj, 1)
+
       } else {
         const pp = this.obj3d.children[0].children[this.fptIdx % 3 + 1]
         const p0 = this.obj3d.children[0].children[0]
@@ -198,16 +176,11 @@ export function onPick(e) {
   } else {
     for (let x = 0; x < this.selected.length; x++) {
       const obj = this.selected[x]
-      obj.material.color.set(color[obj.userData.type])
+
+      setHover(obj, 0)
+
       if (obj.userData.type == 'selpoint') {
         obj.visible = false
-      } else {
-        if (obj.userData.type == 'plane') {
-          obj.material.opacity = 0.02
-          obj.children[0].material.color.set(color['planeBorder'])
-        } else {
-          obj.material.color.set(color[obj.userData.type])
-        }
       }
     }
     this.obj3d.dispatchEvent({ type: 'change' })
@@ -237,22 +210,55 @@ export function onDrag(e) {
 }
 
 
+export function setHover(obj, state, meshHover = true) {
+  let colObj, visible
+  if (state == 1) {
+    colObj = hoverColor
+    visible = true
+  } else {
+    colObj = color
+    visible = false
+  }
+
+  switch (obj.userData.type) {
+    case 'plane':
+      obj.material.opacity = colObj.opacity
+      obj.children[0].material.color.set(colObj['planeBorder'])
+      break;
+    case 'sketch':
+      obj.visible = visible
+      break;
+    case 'mesh':
+      if (meshHover) {
+        obj.material.emissive.set(colObj.emissive)
+      } else {
+        break
+      }
+    default:
+      obj.material.color.set(colObj[obj.userData.type])
+      break;
+  }
+
+
+  // if (obj.userData.type == 'plane') {
+  //   obj.material.opacity = colObj.opacity
+  //   obj.children[0].material.color.set(colObj['planeBorder'])
+  // } else if (obj.userData.type != 'mesh') {
+  //   obj.material.color.set(colObj[obj.userData.type])
+  // } else if (meshHover) {
+  //   obj.material.emissive.set(colObj.emissive)
+  //   obj.material.color.set(colObj[obj.userData.type])
+  // }
+
+}
+
 export function onRelease() {
   this.canvas.removeEventListener('pointermove', this.onDrag)
   this.canvas.removeEventListener('pointermove', this.onDragDim)
   this.canvas.removeEventListener('pointerup', this.onRelease)
 
-  // for (let x = 3; x < this.obj3d.children.length; x++) {
-  //   const obj = this.obj3d.children[x]
-  //   obj.geometry.computeBoundingSphere()
-  // }
-
-  // for (let x = 0; x < this.obj3d.children[1].children.length; x++) {
-  //   const obj = this.obj3d.children[1].children[x]
-  //   obj.geometry.computeBoundingSphere()
-  // }
-
   this.updateBoundingSpheres()
+
   if (draggedLabel) {
     draggedLabel.style.zIndex = 0;
   }
