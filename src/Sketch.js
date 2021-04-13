@@ -483,7 +483,7 @@ class Sketch {
 
 
     // this.setDimLines()
-    this.setAngLines()
+    // this.setAngLines()
 
     this.obj3d.dispatchEvent({ type: 'change' })
   }

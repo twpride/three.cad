@@ -206,7 +206,7 @@ export function onDrag(e) {
   }
 
   this.solve()
-  this.obj3d.dispatchEvent({ type: 'change' })
+  // this.obj3d.dispatchEvent({ type: 'change' })
 }
 
 
