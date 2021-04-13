@@ -1,6 +1,6 @@
 import * as THREE from '../node_modules/three/src/Three';
 import { raycaster, color, hoverColor } from './shared';
-
+import { onDimMoveEnd } from './drawDimension'
 
 let ptLoc
 
@@ -156,8 +156,15 @@ export function onPick(e) {
             this.obj3d.children[1].children[idx],
             this.obj3d.children[1].children[idx - 1],
           )
+          // this.onDragDim = this._onMoveAng(
+          //   this.obj3d.children[1].children[idx],
+          //   this.obj3d.children[1].children[idx - 1],
+          // )
           this.canvas.addEventListener('pointermove', this.onDragDim);
-          this.canvas.addEventListener('pointerup', this.onRelease)
+          this.canvas.addEventListener('pointerup', () => {
+            onDimMoveEnd(this.obj3d.children[1].children[idx])
+            this.onRelease()
+          })
         }
 
         draggedLabel = this.obj3d.children[1].children[idx].label
@@ -196,7 +203,6 @@ export function onDrag(e) {
   //   this.objIdx.get(obj.name) * 3
   // )
 
-
   for (let x = 0; x < this.hovered.length; x++) {
     const obj = this.hovered[x]
     this.ptsBuf.set(
@@ -206,7 +212,7 @@ export function onDrag(e) {
   }
 
   this.solve()
-  // this.obj3d.dispatchEvent({ type: 'change' })
+  this.scene.render()
 }
 
 

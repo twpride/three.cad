@@ -10,8 +10,8 @@ import { setCoincident, setOrdinate } from './constraintEvents'
 import { get3PtArc } from './drawArc'
 import { replacer, reviver } from './utils'
 import { AxesHelper } from './sketchAxes'
-import { drawDimension, _onMoveDimension, setDimLines, updateDim } from './drawDimension';
-import { drawAngle, _onMoveAngle, setAngLines, updateAng } from './drawAngle';
+import { drawDimension, _onMoveDimension, setDimLines, updateDim, drawAngle } from './drawDimension';
+import { updateAng } from './drawAngle';
 
 
 
@@ -131,9 +131,9 @@ class Sketch {
     this.drawDimension = drawDimension.bind(this)
     this.drawAngle = drawAngle.bind(this)
     this._onMoveDimension = _onMoveDimension.bind(this)
-    this._onMoveAngle = _onMoveAngle.bind(this)
+    // this._onMoveAngle = _onMoveAngle.bind(this)
     this.setDimLines = setDimLines.bind(this)
-    this.setAngLines = setAngLines.bind(this)
+    // this.setAngLines = setAngLines.bind(this)
     this.updateDim = updateDim.bind(this)
     this.updateAng = updateAng.bind(this)
 
@@ -223,11 +223,11 @@ class Sketch {
         this.mode = "arc"
         break;
       case 'd':
-        this.drawDimension()
+        this.drawDimension('d')
         this.mode = ""
         break;
       case 'q':
-        this.drawAngle()
+        this.drawDimension('a')
         this.mode = ""
         break;
       case 'p':
@@ -482,10 +482,10 @@ class Sketch {
     }
 
 
-    // this.setDimLines()
+    this.setDimLines()
     // this.setAngLines()
 
-    this.obj3d.dispatchEvent({ type: 'change' })
+    // this.obj3d.dispatchEvent({ type: 'change' })
   }
 
 

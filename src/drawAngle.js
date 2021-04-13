@@ -18,97 +18,6 @@ const pointMaterial = new THREE.PointsMaterial({
 
 const divisions = 12
 
-export async function drawAngle() {
-  let selection = await this.awaitSelection({ line: 2 })
-
-  if (selection == null) return;
-
-  const line = new THREE.LineSegments(
-    new THREE.BufferGeometry().setAttribute('position',
-      new THREE.Float32BufferAttribute(Array((divisions + 2) * 2 * 3).fill(-0.001), 3)
-    ),
-    lineMaterial.clone()
-  );
-
-  const point = new THREE.Points(
-    new THREE.BufferGeometry().setAttribute('position',
-      new THREE.Float32BufferAttribute(3, 3)
-    ),
-    pointMaterial.clone()
-  )
-
-  line.userData.ids = selection.map(e => e.name)
-
-  line.layers.enable(2)
-  point.layers.enable(2)
-
-  let angle = getAngle(selection)
-
-
-  this.obj3d.children[1].add(line).add(point)
-
-  const onMove = this._onMoveAngle(point, line)
-
-  point.label = document.createElement('div');
-  point.label.textContent = angle.toFixed(3);
-  point.label.contentEditable = true;
-  this.labelContainer.append(point.label)
-
-  let onEnd, onKey;
-  let add = await new Promise((res) => {
-    onEnd = (e) => {
-      point.userData.offset = vecArr[5].toArray()
-      res(true)
-    }
-    onKey = (e) => e.key == 'Escape' && res(false)
-
-    this.canvas.addEventListener('pointermove', onMove)
-    this.canvas.addEventListener('pointerdown', onEnd)
-    window.addEventListener('keydown', onKey)
-  })
-
-  this.canvas.removeEventListener('pointermove', onMove)
-  this.canvas.removeEventListener('pointerdown', onEnd)
-  window.removeEventListener('keydown', onKey)
-  point.geometry.computeBoundingSphere()
-  line.geometry.computeBoundingSphere()
-
-  if (add) {
-
-    this.constraints.set(++this.c_id,
-      [
-        'angle', angle,
-        [-1, -1, selection[0].name, selection[1].name]
-      ]
-    )
-
-    selection[0].userData.constraints.push(this.c_id)
-    selection[1].userData.constraints.push(this.c_id)
-
-    this.updateOtherBuffers()
-
-    line.name = this.c_id
-    line.userData.type = 'dimension'
-    point.name = this.c_id
-    point.userData.type = 'dimension'
-
-    point.label.addEventListener('focus', this.updateAng(this.c_id))
-
-  } else {
-
-    this.obj3d.children[1].children.splice(this.obj3d.children[1].length - 2, 2).forEach(
-      e => {
-        e.geometry.dispose()
-        e.material.dispose()
-      }
-    )
-    this.labelContainer.removeChild(this.labelContainer.lastChild);
-    sc.render()
-  }
-
-  return
-}
-
 
 
 export function updateAng(c_id) {
@@ -136,74 +45,74 @@ export function updateAng(c_id) {
 }
 
 
-let ids, _l1, _l2
-export function _onMoveAngle(point, line) {
+// let ids, _l1, _l2
+// export function _onMoveAngle(point, line) {
 
-  ids = line.userData.ids
+//   ids = line.userData.ids
 
-  _l1 = this.obj3d.children[this.objIdx.get(ids[0])].geometry.attributes.position.array
-  _l2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
+//   _l1 = this.obj3d.children[this.objIdx.get(ids[0])].geometry.attributes.position.array
+//   _l2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
 
-  let loc;
+//   let loc;
 
-  return (e) => {
-    loc = this.getLocation(e)
+//   return (e) => {
+//     loc = this.getLocation(e)
 
-    p3.set(loc.x, loc.y)
+//     p3.set(loc.x, loc.y)
 
-    update(
-      line.geometry.attributes.position,
-      point.geometry.attributes.position,
-      _l1, _l2
-    )
+//     update(
+//       line.geometry.attributes.position,
+//       point.geometry.attributes.position,
+//       _l1, _l2
+//     )
 
-    // point.userData.offset = tagOffset.toArray() // save offset vector from center
-    // point.userData.offset = tagOffset // save offset vector from center
-    // tagOffset = undefined
+//     // point.userData.offset = tagOffset.toArray() // save offset vector from center
+//     // point.userData.offset = tagOffset // save offset vector from center
+//     // tagOffset = undefined
 
-    sc.render()
-  }
-}
-
-
-export function setAngLines() {
-
-  const restoreLabels = this.labelContainer.childElementCount == 0;
-
-  const dims = this.obj3d.children[1].children
-
-  let point, dist;
-  for (let i = 0; i < dims.length; i += 2) {
-    // if (restoreLabels) {
-    //   point = dims[i + 1]  // point node is at i+1
-    //   dist = this.constraints.get(point.name)[1]
-    //   point.label = document.createElement('div');
-    //   point.label.textContent = dist.toFixed(3);
-    //   point.label.contentEditable = true;
-    //   this.labelContainer.append(point.label)
-
-    //   point.label.addEventListener('focus', this.updateAng(this.c_id))
-    // }
-
-    ids = dims[i].userData.ids
-
-    _l1 = this.obj3d.children[this.objIdx.get(ids[0])].geometry.attributes.position.array
-    _l2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
+//     sc.render()
+//   }
+// }
 
 
-    tagOffset = dims[i + 1].userData.offset
+// export function setAngLines() {
+
+//   const restoreLabels = this.labelContainer.childElementCount == 0;
+
+//   const dims = this.obj3d.children[1].children
+
+//   let point, dist;
+//   for (let i = 0; i < dims.length; i += 2) {
+//     // if (restoreLabels) {
+//     //   point = dims[i + 1]  // point node is at i+1
+//     //   dist = this.constraints.get(point.name)[1]
+//     //   point.label = document.createElement('div');
+//     //   point.label.textContent = dist.toFixed(3);
+//     //   point.label.contentEditable = true;
+//     //   this.labelContainer.append(point.label)
+
+//     //   point.label.addEventListener('focus', this.updateAng(this.c_id))
+//     // }
+
+//     ids = dims[i].userData.ids
+
+//     _l1 = this.obj3d.children[this.objIdx.get(ids[0])].geometry.attributes.position.array
+//     _l2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
 
 
+//     tagOffset = dims[i + 1].userData.offset
+//     p3.set(_l1[0] + tagOffset[0], _l1[1] + tagOffset[1])
 
-    update(
-      dims[i].geometry.attributes.position,
-      dims[i + 1].geometry.attributes.position,
-      _l1,
-      _l2
-    )
-  }
 
-}
+//     update(
+//       dims[i].geometry.attributes.position,
+//       dims[i + 1].geometry.attributes.position,
+//       _l1,
+//       _l2
+//     )
+//   }
+
+// }
 
 
 
@@ -271,120 +180,120 @@ const getAngle = (Obj3dLines) => {
   return deltaAngle / Math.PI * 180
 }
 
-function update(linegeom, pointgeom, _l1, _l2) {
+// function update(linegeom, pointgeom, _l1, _l2) {
 
-  let i = 0;
-  for (; i < 4;) {
-    const arr = i == 0 ? _l1 : _l2
-    vecArr[i++].set(arr[0], arr[1])
-    vecArr[i++].set(arr[3] - arr[0], arr[4] - arr[1])
-  }
+//   let i = 0;
+//   for (; i < 4;) {
+//     const arr = i == 0 ? _l1 : _l2
+//     vecArr[i++].set(arr[0], arr[1])
+//     vecArr[i++].set(arr[3] - arr[0], arr[4] - arr[1])
+//   }
 
-  const centerScalar = findIntersection(...vecArr.slice(0, 4))
-  const center = vecArr[i++].addVectors(vecArr[0], vecArr[1].clone().multiplyScalar(centerScalar))
+//   const centerScalar = findIntersection(...vecArr.slice(0, 4))
+//   const center = vecArr[4].addVectors(vecArr[0], vecArr[1].clone().multiplyScalar(centerScalar))
 
-  if (tagOffset === undefined) {
-    vecArr[i++].subVectors(p3, center)
-  } else {
-    p3.set(center.x + tagOffset[0], center.y + tagOffset[1])
-    vecArr[i++].subVectors(p3, center)
-  }
+//   // if (tagOffset === undefined) {
+//   //   vecArr[5].subVectors(p3, center)
+//   // } else {
+//   //   p3.set(center.x + tagOffset[0], center.y + tagOffset[1])
+//   // }
+//   vecArr[5].subVectors(p3, center)
 
-  const tagRadius = vecArr[5].length()
+//   const tagRadius = vecArr[5].length()
 
-  /*
-    if tag is more than 90 deg away from midline, we shift everything by 180
+//   /*
+//     if tag is more than 90 deg away from midline, we shift everything by 180
 
-    a: array that describes absolute angular position of angle start, angle end, and tag
+//     a: array that describes absolute angular position of angle start, angle end, and tag
 
-       a[2]:      
-        tag  a[1]:angle end
-      \  |  /
-       \ | /
-     ___\|/___ a[0]+dA/2:midline
-        / \
-       /   \
-      /     \
-             a[0]:angle start 
-  */
+//        a[2]:      
+//         tag  a[1]:angle end
+//       \  |  /
+//        \ | /
+//      ___\|/___ a[0]+dA/2:midline
+//         / \
+//        /   \
+//       /     \
+//              a[0]:angle start 
+//   */
 
-  for (let j = 1, i = 0; j < vecArr.length; j += 2, i++) {
-    a[i] = Math.atan2(vecArr[j].y, vecArr[j].x)
-  }
+//   for (let j = 1, i = 0; j < vecArr.length; j += 2, i++) {
+//     a[i] = Math.atan2(vecArr[j].y, vecArr[j].x)
+//   }
 
-  let dA = unreflex(a[1] - a[0])
-
-
-  let tagtoMidline = unreflex(a[2] - (a[0] + dA / 2))
-
-  let shift = Math.abs(tagtoMidline) < Math.PI / 2 ? 0 : Math.PI;
-
-  let tA1 = unreflex(a[2] - (a[0] + shift))
-  let tA2 = unreflex(a[2] - (a[0] + dA + shift))
+//   let dA = unreflex(a[1] - a[0])
 
 
-  let a1, deltaAngle;
-  if (dA * tA1 < 0) {
-    a1 = a[0] + tA1 + shift
-    deltaAngle = dA - tA1
-  } else if (dA * tA2 > 0) {
-    a1 = a[0] + shift
-    deltaAngle = dA + tA2
-  } else {
-    a1 = a[0] + shift
-    deltaAngle = dA
-  }
+//   let tagtoMidline = unreflex(a[2] - (a[0] + dA / 2))
 
-  let points = linegeom.array
+//   let shift = Math.abs(tagtoMidline) < Math.PI / 2 ? 0 : Math.PI;
 
-  let d = 0;
-  points[d++] = center.x + tagRadius * Math.cos(a1)
-  points[d++] = center.y + tagRadius * Math.sin(a1)
-  d++
-
-  const angle = a1 + (1 / divisions) * deltaAngle
-  points[d++] = center.x + tagRadius * Math.cos(angle)
-  points[d++] = center.y + tagRadius * Math.sin(angle)
-  d++
-
-  for (i = 2; i <= divisions; i++) {
-    points[d++] = points[d - 4]
-    points[d++] = points[d - 4]
-    d++
-    const angle = a1 + (i / divisions) * deltaAngle
-    points[d++] = center.x + tagRadius * Math.cos(angle)
-    points[d++] = center.y + tagRadius * Math.sin(angle)
-    d++
-  }
+//   let tA1 = unreflex(a[2] - (a[0] + shift))
+//   let tA2 = unreflex(a[2] - (a[0] + dA + shift))
 
 
-  for (i = 0; i < 2; i++) {
-    points[d++] = vecArr[2 * i].x
-    points[d++] = vecArr[2 * i].y
-    d++
-    points[d++] = center.x + tagRadius * Math.cos(a[i] + shift)
-    points[d++] = center.y + tagRadius * Math.sin(a[i] + shift)
-    d++
-  }
+//   let a1, deltaAngle;
+//   if (dA * tA1 < 0) {
+//     a1 = a[0] + tA1 + shift
+//     deltaAngle = dA - tA1
+//   } else if (dA * tA2 > 0) {
+//     a1 = a[0] + shift
+//     deltaAngle = dA + tA2
+//   } else {
+//     a1 = a[0] + shift
+//     deltaAngle = dA
+//   }
 
-  linegeom.needsUpdate = true;
+//   let points = linegeom.array
 
-  pointgeom.array.set(p3.toArray())
-  pointgeom.needsUpdate = true;
+//   let d = 0;
+//   points[d++] = center.x + tagRadius * Math.cos(a1)
+//   points[d++] = center.y + tagRadius * Math.sin(a1)
+//   d++
+
+//   const angle = a1 + (1 / divisions) * deltaAngle
+//   points[d++] = center.x + tagRadius * Math.cos(angle)
+//   points[d++] = center.y + tagRadius * Math.sin(angle)
+//   d++
+
+//   for (i = 2; i <= divisions; i++) {
+//     points[d++] = points[d - 4]
+//     points[d++] = points[d - 4]
+//     d++
+//     const angle = a1 + (i / divisions) * deltaAngle
+//     points[d++] = center.x + tagRadius * Math.cos(angle)
+//     points[d++] = center.y + tagRadius * Math.sin(angle)
+//     d++
+//   }
 
 
-}
+//   for (i = 0; i < 2; i++) {
+//     points[d++] = vecArr[2 * i].x
+//     points[d++] = vecArr[2 * i].y
+//     d++
+//     points[d++] = center.x + tagRadius * Math.cos(a[i] + shift)
+//     points[d++] = center.y + tagRadius * Math.sin(a[i] + shift)
+//     d++
+//   }
+
+//   linegeom.needsUpdate = true;
+
+//   pointgeom.array.set(p3.toArray())
+//   pointgeom.needsUpdate = true;
 
 
-const twoPi = Math.PI * 2
-const negTwoPi = - Math.PI * 2
-const negPi = - Math.PI
+// }
 
-function unreflex(angle) {
-  if (angle > Math.PI) {
-    angle = negTwoPi + angle
-  } else if (angle < negPi) {
-    angle = twoPi + angle
-  }
-  return angle
-}
+
+// const twoPi = Math.PI * 2
+// const negTwoPi = - Math.PI * 2
+// const negPi = - Math.PI
+
+// function unreflex(angle) {
+//   if (angle > Math.PI) {
+//     angle = negTwoPi + angle
+//   } else if (angle < negPi) {
+//     angle = twoPi + angle
+//   }
+//   return angle
+// }
