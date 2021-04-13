@@ -15,16 +15,18 @@ const pointMaterial = new THREE.PointsMaterial({
 
 export async function drawDimension(cc) {
   let selection
-  if (cc == 'd') {
+
+  if (cc == 'd') { ///////////////////////////
     selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 })
   } else {
     selection = await this.awaitSelection({ line: 2 })
-  }
+  }///////////////////////////
 
   if (selection == null) return;
 
   let line;
-  if (cc == 'd') {
+
+  if (cc == 'd') { ///////////////////////////////
     line = new THREE.LineSegments(
       new THREE.BufferGeometry().setAttribute('position',
         new THREE.Float32BufferAttribute(Array(3 * 8).fill(-0.001), 3)
@@ -38,8 +40,7 @@ export async function drawDimension(cc) {
       ),
       lineMaterial.clone()
     );
-  }
-
+  }////////////////////////////////
 
 
   const point = new THREE.Points(
@@ -48,17 +49,14 @@ export async function drawDimension(cc) {
     ),
     pointMaterial.clone()
   )
-
   line.userData.ids = selection.map(e => e.name)
-
   line.layers.enable(2)
   point.layers.enable(2)
 
 
-  //////////////
   let dimVal, ptLineOrder;
 
-  if (cc == 'd') {
+  if (cc == 'd') { /////////////////////////////
     if (selection.every(e => e.userData.type == 'point')) {
       dimVal = 0;
       for (let i = 0; i < 3; i++) {
@@ -80,29 +78,24 @@ export async function drawDimension(cc) {
     }
   } else {
     dimVal = getAngle(selection)
-  }
-  ////////////
-
-
+  } ///////////////////////
 
 
   this.obj3d.children[1].add(line).add(point)
   const onMove = this._onMoveDimension(point, line)
-
   point.label = document.createElement('div');
-  console.log(dimVal, 'dim')
   point.label.textContent = dimVal.toFixed(3);
   point.label.contentEditable = true;
   this.labelContainer.append(point.label)
 
   let onEnd, onKey;
   let add = await new Promise((res) => {
-    onEnd = (e) => {
-      if (cc == 'd') {
+    onEnd = () => {
+      if (cc == 'd') { /////////////////////////
         point.userData.offset = hyp2.toArray() // save offset vector from hyp2
       } else {
         point.userData.offset = vecArr[5].toArray()
-      }
+      } ///////////////////////////////////
       res(true)
     }
     onKey = (e) => e.key == 'Escape' && res(false)
@@ -119,7 +112,7 @@ export async function drawDimension(cc) {
   line.geometry.computeBoundingSphere()
 
   if (add) {
-    if (cc == 'd') {
+    if (cc == 'd') { ///////////////////////////
       if (ptLineOrder) {
         this.constraints.set(++this.c_id, //???
           [
@@ -142,7 +135,7 @@ export async function drawDimension(cc) {
           [-1, -1, selection[0].name, selection[1].name]
         ]
       )
-    }
+    } ////////////////////////////////////////
 
 
 
@@ -150,15 +143,11 @@ export async function drawDimension(cc) {
     selection[1].userData.constraints.push(this.c_id)
 
     this.updateOtherBuffers()
-
     line.name = this.c_id
     line.userData.type = 'dimension'
     point.name = this.c_id
     point.userData.type = 'dimension'
-
-
     point.label.addEventListener('focus', this.updateDim(this.c_id))
-
 
   } else {
 
@@ -252,9 +241,6 @@ export function setDimLines() {
 
     _p1 = this.obj3d.children[this.objIdx.get(ids[0])].geometry.attributes.position.array
     _p2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
-
-
-
 
     update(
       dims[i].geometry.attributes.position,
@@ -531,11 +517,6 @@ function unreflex(angle) {
   }
   return angle
 }
-
-
-
-
-
 
 
 const getAngle = (Obj3dLines) => {
