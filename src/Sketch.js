@@ -225,7 +225,10 @@ class Sketch {
         this.canvas.addEventListener('pointerdown', this.drawOnClick1)
         this.mode = "point"
         break;
-      case 'x':
+      case 'Delete':
+        this.deleteSelected()
+        break;
+      case 'Backspace':
         this.deleteSelected()
         break;
       case ' ':

@@ -19,9 +19,6 @@ export async function drawDimension() {
 
   let line, dimVal, constraint, dimType
   if (selection.every(e => e.userData.type == 'line')) {
-    selection = await this.awaitSelection({ line: 2 })
-    if (selection == null) return;
-
     line = new THREE.LineSegments(
       new THREE.BufferGeometry().setAttribute('position',
         new THREE.Float32BufferAttribute(Array((divisions + 2) * 2 * 3).fill(-0.001), 3)

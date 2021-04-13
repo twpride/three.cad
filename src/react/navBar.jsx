@@ -5,7 +5,7 @@ import React, { useEffect, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 
 import { FaCube, FaEdit } from 'react-icons/fa'
-import { MdDone } from 'react-icons/md'
+import { MdDone, MdSave, MdFolder} from 'react-icons/md'
 import * as Icon from "./icons";
 
 
@@ -42,35 +42,52 @@ export const NavBar = () => {
 
 
   const btnz = [
-    activeSketchId ?
-      [MdDone, () => {
-        treeEntries.byId[activeSketchId].deactivate()
-        // dispatch({ type: 'update-descendents', sketch})
-        sc.activeSketch = null
-        sc.render()
-        forceUpdate()
-        // sc.activeDim = this.activeSketch.obj3d.children[1].children
-      }, 'Finish'] :
-      [FaEdit, sc.addSketch, 'Sketch [s]']
-    ,
-    [FaCube, extrude , 'Extrude [e]'],
-    [Icon.Union, ()=>boolOp('u'), 'Union'],
-    [Icon.Subtract, ()=>boolOp('s'), 'Subtract'],
-    [Icon.Intersect, ()=>boolOp('i'), 'Intersect'],
+    [MdDone, () => {
+      treeEntries.byId[activeSketchId].deactivate()
+      // dispatch({ type: 'update-descendents', sketch})
+      sc.activeSketch = null
+      sc.render()
+      forceUpdate()
+      // sc.activeDim = this.activeSketch.obj3d.children[1].children
+    }, 'Finish'],
+    [FaCube, extrude, 'Extrude [e]'],
     [Icon.Dimension, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Dimension [d]'],
     [Icon.Line, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Line [l]'],
     [Icon.Arc, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],
+    [Icon.Coincident, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],
+    [Icon.Vertical, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],
+    [Icon.Horizontal, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],
+  ]
+
+
+  const btnz2 = [
+    [FaEdit, sc.addSketch, 'Sketch [s]']
+    ,
+    [FaCube, extrude, 'Extrude [e]'],
+    [Icon.Union, () => boolOp('u'), 'Union'],
+    [Icon.Subtract, () => boolOp('s'), 'Subtract'],
+    [Icon.Intersect, () => boolOp('i'), 'Intersect'],
+    [MdSave, () => boolOp('i'), 'Intersect'],
+    [MdFolder, () => boolOp('i'), 'Intersect'],
+    [Icon.Stl, () => boolOp('i'), 'Intersect'],
   ]
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
   return <div className='topNav flex justify-center items-center bg-gray-700'>
     {
-      btnz.map(([Icon, fcn, txt, shortcut], idx) => (
-        <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
-          onClick={fcn} key={idx}
-        />
-      ))
+      activeSketchId ?
+        btnz.map(([Icon, fcn, txt, shortcut], idx) => (
+          <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
+            onClick={fcn} key={idx}
+          />
+        ))
+        :
+        btnz2.map(([Icon, fcn, txt, shortcut], idx) => (
+          <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
+            onClick={fcn} key={idx}
+          />
+        ))
     }
   </div>
 }

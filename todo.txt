@@ -10,7 +10,7 @@ boolean flesh out refresh / replace mesh
   - / delete mesh \\ done
   - create derived part using relationship as name  \\ done
   - hidden bodies messes up hover highlight  \\ fixed
-  - add for union and intersect
+  - add for union and intersect // done
   - consume skeches after extrude // done
 - selection hover disspates when rehovered //fixed
 - boolean unable to select click //fixed
@@ -24,25 +24,50 @@ constraint angle // done
 
 
 -unable to delete arc
-hover not clearing
+hover not clearing sometimes
 dim tags are not clearing
 should unselect after boolean
 
-
 auto update extrude
 extrude dialogue 
-
 loopfind especially arc
-
 file save, stl export
 
-button panel cleanup
+
+
+
+
+button panel cleanup          
+- finish
+- extrude
+- dim
+-line
+- arc
+
+- vertical
+- horizontal
+-coincident
+
+
+sketch
+extrude
+boolean +
+boolean
+boolean
+
+
+load
+save
+stl
+
 
 better default ent names
 
 
 reattach sketch
-tree ent renaming
 3 pt arc
-constraint labels, tangent
+
 auto snap
+constraint labels,tangent, equal
+parallel
+tree ent renaming

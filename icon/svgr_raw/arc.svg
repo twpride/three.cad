@@ -23,17 +23,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="10.270466"
-     inkscape:cx="-8.3938354"
-     inkscape:cy="-3.3545709"
+     inkscape:zoom="20.540932"
+     inkscape:cx="3.3726703"
+     inkscape:cy="-0.099609255"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
      showgrid="false"
      inkscape:window-width="1514"
      inkscape:window-height="1199"
-     inkscape:window-x="254"
-     inkscape:window-y="48"
+     inkscape:window-x="1031"
+     inkscape:window-y="111"
      inkscape:window-maximized="0"
      units="px"
      inkscape:snap-object-midpoints="true"
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -56,34 +56,34 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:none;fill-opacity:0.7;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:none;fill-opacity:0.7;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none"
        id="path1525"
        sodipodi:type="arc"
-       sodipodi:cx="1.25"
-       sodipodi:cy="13.60833"
-       sodipodi:rx="13"
-       sodipodi:ry="13"
-       sodipodi:start="5.2359878"
-       sodipodi:end="0.0017453293"
+       sodipodi:cx="1.75"
+       sodipodi:cy="13.631019"
+       sodipodi:rx="12.5"
+       sodipodi:ry="12.5"
+       sodipodi:start="5.2879172"
+       sodipodi:end="6.1912839"
        sodipodi:arc-type="arc"
-       d="M 7.75,2.3499995 A 13,13 0 0 1 14.24998,13.631019"
+       d="M 8.5534749,3.1447071 A 12.5,12.5 0 0 1 14.19725,12.483867"
        sodipodi:open="true" />
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1542-6"
        width="2"
        height="2"
        x="0.75"
        y="12.631019" />
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1542-6-7"
        width="2"
        height="2"
        x="6.75"
        y="1.3499995" />
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1542-6-5"
        width="2"
        height="2"

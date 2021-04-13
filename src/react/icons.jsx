@@ -8,16 +8,38 @@ function Arc(props) {
       viewBox="0 0 16 16"
       {...props}
     >
-      <g stroke="currentColor" strokeLinecap="round">
+      <g stroke="currentColor">
         <path
-          d="M7.75 2.35a13 13 0 016.5 11.281"
+          d="M8.553 3.145a12.5 12.5 0 015.644 9.339"
           fill="none"
           strokeWidth={1.5}
         />
         <path
-          fill="#fff"
+          strokeLinecap="round"
           d="M.75 12.631h2v2h-2zM6.75 1.35h2v2h-2zM13.25 12.631h2v2h-2z"
         />
+      </g>
+    </svg>
+  );
+}
+
+function Coincident(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 16 16"
+      {...props}
+    >
+      <g stroke="currentColor">
+        <path strokeLinecap="round" d="M7 7h2v2H7z" />
+        <path
+          d="M1.847 14.153l4.305-4.306M9.847 6.153l4.305-4.306"
+          fill="none"
+          strokeWidth={0.983}
+        />
+        <path d="M10.034 10.034l3.932 3.932" fill="none" strokeWidth={1.51} />
       </g>
     </svg>
   );
@@ -79,6 +101,27 @@ function Dimension(props) {
         fill="none"
         stroke="currentColor"
         strokeWidth={0.893}
+      />
+    </svg>
+  );
+}
+
+function Horizontal(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      className="prefix__bi prefix__bi-intersect"
+      viewBox="0 0 16 16"
+      {...props}
+    >
+      <path
+        d="M14.506 8.007l-13-.012"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
       />
     </svg>
   );
@@ -176,13 +219,48 @@ function Line(props) {
       {...props}
     >
       <g stroke="currentColor">
-        <path d="M2 14l3-6h6l3-6" fill="none" strokeWidth={1.5} />
+        <path d="M2.5 13l2-4M6 8h4m1.5-1l2-4" fill="none" strokeWidth={1.5} />
         <path
-          fill="#fff"
           strokeLinecap="round"
           d="M1 13h2v2H1zM4 7h2v2H4zM10 7h2v2h-2zM13 1h2v2h-2z"
         />
       </g>
+    </svg>
+  );
+}
+
+function Stl(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 16 16"
+      {...props}
+    >
+      <text
+        style={{
+          lineHeight: 1.25,
+        }}
+        x={0.536}
+        y={12.164}
+        fontWeight={400}
+        fontSize={12}
+        fontFamily="sans-serif"
+        letterSpacing={0}
+        wordSpacing={0}
+      >
+        <tspan
+          x={0.536}
+          y={12.164}
+          style={{
+            InkscapeFontSpecification: "'Ubuntu Condensed, '",
+          }}
+          fontFamily="Ubuntu Condensed"
+        >
+          {"STL"}
+        </tspan>
+      </text>
     </svg>
   );
 }
@@ -319,4 +397,25 @@ function Union_thin(props) {
     </svg>
   );
 }
-export { Arc, Dimension, Intersect, Intersect_thin, Line, Subtract, Union, Union_thin };
+
+function Vertical(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      className="prefix__bi prefix__bi-intersect"
+      viewBox="0 0 16 16"
+      {...props}
+    >
+      <path
+        d="M8.012 1.5L8 14.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+      />
+    </svg>
+  );
+}
+export { Arc, Coincident, Dimension, Horizontal, Intersect, Intersect_thin, Line, Stl, Subtract, Union, Union_thin, Vertical };

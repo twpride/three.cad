@@ -2,9 +2,7 @@ import {color} from './shared'
 
 export async function setCoincident() {
   let selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 })
-
   if (selection == null) return;
-
   if (selection.every(e => e.userData.type == 'point')) {
     this.constraints.set(++this.c_id,
       [
@@ -13,9 +11,7 @@ export async function setCoincident() {
       ]
     )
   } else {
-
     const idx = selection[0].userData.type == 'point' ? [0, 1] : [1, 0]
-
     this.constraints.set(++this.c_id,
       [
         'pt_on_line', -1,
@@ -26,7 +22,6 @@ export async function setCoincident() {
 
   selection[1].userData.constraints.push(this.c_id)
   selection[0].userData.constraints.push(this.c_id)
-
 
   this.updateOtherBuffers()
   this.solve()
