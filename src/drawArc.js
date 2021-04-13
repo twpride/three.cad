@@ -83,9 +83,38 @@ export function get3PtArc(p1, p2, c, divisions = n) {
 
   const radius = Math.sqrt(v1[0] ** 2 + v1[1] ** 2)
 
+
   let deltaAngle = a2 - a1
   if (deltaAngle <=0) deltaAngle += Math.PI*2
-  // console.log(deltaAngle)
+
+  // let deltaAngle = a2 - a1
+  // if (deltaAngle > Math.PI ){
+  //   deltaAngle = - Math.PI*2 + deltaAngle
+  // } else if (deltaAngle < -Math.PI) {
+  //   deltaAngle =  Math.PI*2 + deltaAngle
+  // }
+
+  // let deltaAngle = Math.abs(a2 - a1)
+  // if (deltaAngle > Math.PI){
+  //   deltaAngle = Math.PI*2 - deltaAngle
+  // }
+
+  
+  let points = new Float32Array((divisions + 1) * 3)
+
+  for (let d = 0; d <= divisions; d++) {
+    const angle = a1 + (d / divisions) * deltaAngle;
+    points[3 * d] = c[0] + radius * Math.cos(angle);
+    points[3 * d + 1] = c[1] + radius * Math.sin(angle);
+  }
+  return points;
+}
+
+
+export function getAngleArc(a1, a2, c, radius, divisions = n) {
+
+
+  let deltaAngle = a2 - a1
   
   let points = new Float32Array((divisions + 1) * 3)
 

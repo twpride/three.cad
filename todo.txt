@@ -14,26 +14,30 @@ boolean flesh out refresh / replace mesh
   - consume skeches after extrude // done
 - selection hover disspates when rehovered //fixed
 - boolean unable to select click //fixed
+- hover sync between tree and work area // done, punt on stretch
 
 
 vertical  //  done
 horizontal // done
+- select sketch for extrusion, punt, leverage current sketch modality
 
 
-- hover sync between tree and work area
-- select sketch for extrusion 
+
 
 auto update extrude
 extrude dialogue 
 
 loopfind
-button panel cleanup
+
 file save, stl export
 
-constriant buttons ,tangent, angle
+button panel cleanup
+
+constraint angle
+3 pt arc
 
 
-constraint labels
 reattach sketch
+constraint labels, tangent
 auto snap
 tree ent renaming and better default names

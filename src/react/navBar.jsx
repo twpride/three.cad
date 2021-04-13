@@ -15,6 +15,20 @@ export const NavBar = () => {
   const treeEntries = useSelector(state => state.treeEntries)
   const activeSketchId = useSelector(state => state.treeEntries.activeSketchId)
 
+
+  const boolOp = (code) => {
+    if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
+    const [m1, m2] = sc.selected
+    const mesh = sc.subtract(m1, m2, code)
+    dispatch({ type: 'rx-boolean', mesh, deps: [m1.name, m2.name] })
+    sc.render()
+    forceUpdate()
+  }
+  const extrude = () => {
+    console.log(treeEntries.tree[activeSketchId])
+    sc.extrude(treeEntries.byId[activeSketchId])
+  }
+
   useEffect(() => {
     if (!activeSketchId) {
       sc.canvas.addEventListener('pointermove', sc.onHover)
@@ -39,19 +53,10 @@ export const NavBar = () => {
       }, 'Finish'] :
       [FaEdit, sc.addSketch, 'Sketch [s]']
     ,
-    [FaCube, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Extrude [e]'],
-    [Icon.Union, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Union'],
-    [Icon.Subtract, () => {
-      if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
-      // console.log('here')
-      const [m1, m2] = sc.selected
-      const mesh = sc.subtract(m1, m2)
-
-      dispatch({ type: 'rx-boolean', mesh, deps: [m1.name, m2.name] })
-      sc.render()
-      forceUpdate()
-    }, 'Subtract'],
-    [Icon.Intersect, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Intersect'],
+    [FaCube, extrude , 'Extrude [e]'],
+    [Icon.Union, ()=>boolOp('u'), 'Union'],
+    [Icon.Subtract, ()=>boolOp('s'), 'Subtract'],
+    [Icon.Intersect, ()=>boolOp('i'), 'Intersect'],
     [Icon.Dimension, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Dimension [d]'],
     [Icon.Line, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Line [l]'],
     [Icon.Arc, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],

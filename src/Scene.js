@@ -111,8 +111,8 @@ export class Scene {
     helpersGroup.add(this.axes);
 
 
-    const dist = 50
-    const light1 = new THREE.PointLight(color.lighting, 0.7);
+    const dist = 15
+    const light1 = new THREE.PointLight(color.lighting, 0.6);
     light1.position.set(dist, dist, dist);
     helpersGroup.add(light1);
     const light2 = new THREE.PointLight(color.lighting, 0.6);
@@ -292,7 +292,7 @@ export class Scene {
 
   }
 
-  subtract(m1, m2) {
+  subtract(m1, m2, op) {
     let bspA = CSG.fromMesh(m1)
     let bspB = CSG.fromMesh(m2)
     m1.visible = false
@@ -302,13 +302,30 @@ export class Scene {
 
     // // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
 
-    let bspResult = bspA.subtract(bspB)
+    let bspResult, opChar;
+    switch (op) {
+      case 's':
+        bspResult = bspA.subtract(bspB)
+        opChar = "-"
+        break;
+      case 'u':
+        bspResult = bspA.union(bspB)
+        opChar = "\u222a"
+        break;
+      case 'i':
+        bspResult = bspA.intersect(bspB)
+        opChar = "\u2229"
+        break;
+      default:
+        break;
+    }
 
     // //Get the resulting mesh from the result bsp, and assign meshA.material to the resulting mesh
 
     let mesh = CSG.toMesh(bspResult, m1.matrix, m1.material)
     mesh.userData.type = 'mesh'
-    mesh.name = `${m1.name}-${m2.name}`
+
+    mesh.name = `(${m1.name}${opChar}${m2.name})`
     mesh.layers.enable(1)
 
 

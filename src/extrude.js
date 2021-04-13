@@ -1,5 +1,5 @@
 import * as THREE from '../node_modules/three/src/Three';
-import { color, ptObj } from './shared'
+import { color} from './shared'
 export function extrude(sketch) {
 
   let constraints = sketch.constraints;
@@ -36,7 +36,7 @@ export function extrude(sketch) {
         )
       ]
       if (d == -1 || d == node) continue;
-      if (d == children[1]) {
+      if (d == children[4]) {
         console.log('pair found')
       };
       findTouching(d)
@@ -52,7 +52,7 @@ export function extrude(sketch) {
         if (c == -1) continue;
         const d = children[objIdx.get(c)]
         if (d == node) continue;
-        if (d == children[1]) {
+        if (d == children[4]) {
           console.log('loop found')
         } else {
           if (!visited.has(d)) {

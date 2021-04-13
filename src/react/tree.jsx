@@ -48,12 +48,10 @@ const TreeEntry = ({ entId }) => {
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
 
-  // const vis = obj3d.layers.mask & 1
-
   return <div className='btn select-none flex justify-start w-full h-7 items-center text-sm'
 
     onDoubleClick={() => {
-      if (entId[0] == 's') {
+      if (obj3d.userData.type == 'sketch') {
         activeSketchId && treeEntries[activeSketchId].deactivate()
         sketch.activate()
         sc.clearSelection()
@@ -67,14 +65,13 @@ const TreeEntry = ({ entId }) => {
       sc.render()
     }}
     onPointerLeave={() => {
-      // console.log('activeid',activeSketchId,'visstate',visState)
-      if (visible & entId[0] == 's') return
+      if (visible & obj3d.userData.type == 'sketch') return
       if (sc.selected.includes(obj3d) || activeSketchId == obj3d.name) return
       sc.setHover(obj3d, 0)
       sc.render()
     }}
     onClick={() => {
-      if (entId[0] == 'm') {
+      if (obj3d.userData.type == 'mesh') {
         sc.selected.push(
           obj3d
         )

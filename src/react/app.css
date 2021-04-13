@@ -11,7 +11,7 @@ body {
   font-family: sans-serif;
   overflow: hidden;
   --topNavH: 48px;
-  --sideNavW: 200px;
+  --sideNavW: 240px;
 }
 
 #c {

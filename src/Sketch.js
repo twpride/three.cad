@@ -11,6 +11,7 @@ import { get3PtArc } from './drawArc'
 import { replacer, reviver } from './utils'
 import { AxesHelper } from './sketchAxes'
 import { drawDimension, _onMoveDimension, setDimLines, updateDim } from './drawDimension';
+import { drawAngle, _onMoveAngle, setAngLines, updateAng } from './drawAngle';
 
 
 
@@ -128,9 +129,13 @@ class Sketch {
     this.drawOnClick2 = drawOnClick2.bind(this);
 
     this.drawDimension = drawDimension.bind(this)
+    this.drawAngle = drawAngle.bind(this)
     this._onMoveDimension = _onMoveDimension.bind(this)
+    this._onMoveAngle = _onMoveAngle.bind(this)
     this.setDimLines = setDimLines.bind(this)
+    this.setAngLines = setAngLines.bind(this)
     this.updateDim = updateDim.bind(this)
+    this.updateAng = updateAng.bind(this)
 
     this.awaitSelection = awaitSelection.bind(this);
 
@@ -152,7 +157,7 @@ class Sketch {
 
     this.setDimLines()
 
-    this.obj3d.traverse(e=>e.layers.enable(2))
+    this.obj3d.traverse(e => e.layers.enable(2))
     this.obj3d.visible = true
     this.scene.axes.matrix = this.obj3d.matrix
     this.scene.axes.visible = true
@@ -168,7 +173,7 @@ class Sketch {
     this.store.dispatch({ type: 'exit-sketch' })
     this.labelContainer.innerHTML = ""
     this.obj3d.visible = false
-    this.obj3d.traverse(e=>e.layers.disable(2))
+    this.obj3d.traverse(e => e.layers.disable(2))
     this.scene.axes.visible = false
     this.scene.activeSketch = null
   }
@@ -219,6 +224,10 @@ class Sketch {
         break;
       case 'd':
         this.drawDimension()
+        this.mode = ""
+        break;
+      case 'q':
+        this.drawAngle()
         this.mode = ""
         break;
       case 'p':
@@ -427,9 +436,9 @@ class Sketch {
       this.linkedObjs.size, links_buffer)
 
     /*
-    - loop to update all the children that are points
-    - why +6?  we skip first two triplets because it refers to a non-geometry children
-    - we also sneak in updating lines children as well, by checking when ptsBuf[ptr] is NaN
+      - loop to update all the children that are points
+      - why +6?  we skip first two triplets because it refers to a non-geometry children
+      - we also sneak in updating lines children as well, by checking when ptsBuf[ptr] is NaN
     */
 
     for (let i = 3, ptr = (pts_buffer >> 2) + 9; i < this.obj3d.children.length; i += 1, ptr += 3) {
@@ -455,8 +464,9 @@ class Sketch {
 
     /*
       arcs were not updated in above loop, we go through all arcs linkedObjs 
-      and updated based on the control pts (which were updated in loop above)
+      and updated based on the control pts (which were updated in loop above) 
     */
+
     for (let [k, obj] of this.linkedObjs) {
       if (obj[0] != 'arc') continue;
       const [p1, p2, c, arc] = obj[1].map(e => this.obj3d.children[this.objIdx.get(e)])
@@ -472,7 +482,8 @@ class Sketch {
     }
 
 
-    this.setDimLines()
+    // this.setDimLines()
+    this.setAngLines()
 
     this.obj3d.dispatchEvent({ type: 'change' })
   }

@@ -92,7 +92,7 @@ export function reducer(state = {}, action) {
 
 
       return update(state, {
-        treeEntries: { $set: obj }
+        treeEntries: { $merge: obj }
       })
 
 
