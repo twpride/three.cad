@@ -112,10 +112,10 @@ export class Scene {
 
 
     const dist = 15
-    const light1 = new THREE.PointLight(color.lighting, 0.6);
+    const light1 = new THREE.PointLight(color.lighting, 0.7);
     light1.position.set(dist, dist, dist);
     helpersGroup.add(light1);
-    const light2 = new THREE.PointLight(color.lighting, 0.6);
+    const light2 = new THREE.PointLight(color.lighting, 0.7);
     light2.position.set(-dist, -dist, -dist);
     helpersGroup.add(light2);
 

@@ -150,18 +150,14 @@ export function onPick(e) {
     switch (obj.userData.type) {
       case 'dimension':
         const idx = this.obj3d.children[1].children.indexOf(this.hovered[0])
-        if (idx % 2) {
-
+        if (idx % 2) { // we only allow tag point (odd idx) to be dragged
           this.onDragDim = this._onMoveDimension(
             this.obj3d.children[1].children[idx],
             this.obj3d.children[1].children[idx - 1],
           )
-          // this.onDragDim = this._onMoveAng(
-          //   this.obj3d.children[1].children[idx],
-          //   this.obj3d.children[1].children[idx - 1],
-          // )
           this.canvas.addEventListener('pointermove', this.onDragDim);
           this.canvas.addEventListener('pointerup', () => {
+            console.log('heree')
             onDimMoveEnd(this.obj3d.children[1].children[idx])
             this.onRelease()
           })
@@ -173,7 +169,10 @@ export function onPick(e) {
       case 'point':
 
         this.canvas.addEventListener('pointermove', this.onDrag);
-        this.canvas.addEventListener('pointerup', this.onRelease)
+        this.canvas.addEventListener('pointerup', () => {
+          // onDimMoveEnd(this.obj3d.children[1].children[idx])
+          this.onRelease()
+        })
         break;
 
       default:

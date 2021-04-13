@@ -20,24 +20,29 @@ boolean flesh out refresh / replace mesh
 vertical  //  done
 horizontal // done
 - select sketch for extrusion, punt, leverage current sketch modality
+constraint angle // done
 
 
+-unable to delete arc
+hover not clearing
+dim tags are not clearing
+should unselect after boolean
 
 
 auto update extrude
 extrude dialogue 
 
-loopfind
+loopfind especially arc
 
 file save, stl export
 
 button panel cleanup
 
-constraint angle
-3 pt arc
+better default ent names
 
 
 reattach sketch
+tree ent renaming
+3 pt arc
 constraint labels, tangent
 auto snap
-tree ent renaming and better default names

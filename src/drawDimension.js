@@ -13,14 +13,31 @@ const pointMaterial = new THREE.PointsMaterial({
 })
 
 
-export async function drawDimension(cc) {
+export async function drawDimension() {
+  let selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 }, { line: 2 })
+  if (selection == null) return;
 
-  let selection, line, dimVal, constraint
-
-  if (cc == 'd') { ///////////////////////////////
-    selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 })
+  let line, dimVal, constraint, dimType
+  if (selection.every(e => e.userData.type == 'line')) {
+    selection = await this.awaitSelection({ line: 2 })
     if (selection == null) return;
 
+    line = new THREE.LineSegments(
+      new THREE.BufferGeometry().setAttribute('position',
+        new THREE.Float32BufferAttribute(Array((divisions + 2) * 2 * 3).fill(-0.001), 3)
+      ),
+      lineMaterial.clone()
+    );
+
+    dimVal = getAngle(selection)
+
+    constraint = [
+      'angle', dimVal,
+      [-1, -1, selection[0].name, selection[1].name]
+    ]
+
+    dimType = 'a'
+  } else {
     line = new THREE.LineSegments(
       new THREE.BufferGeometry().setAttribute('position',
         new THREE.Float32BufferAttribute(Array(3 * 8).fill(-0.001), 3)
@@ -41,9 +58,9 @@ export async function drawDimension(cc) {
       const lineArr = selection[ptLineOrder[1]].geometry.attributes.position.array
       p1.set(lineArr[0], lineArr[1])
       p2.set(lineArr[3], lineArr[4])
-      p3.set(ptArr[0], ptArr[1])
+      tagPos.set(ptArr[0], ptArr[1])
       dir = p2.clone().sub(p1).normalize()
-      disp = p3.clone().sub(p1)
+      disp = tagPos.clone().sub(p1)
       proj = dir.multiplyScalar(disp.dot(dir))
       perpOffset = disp.clone().sub(proj)
       dimVal = Math.sqrt(perpOffset.x ** 2 + perpOffset.y ** 2)
@@ -60,27 +77,8 @@ export async function drawDimension(cc) {
       ]
     }
 
-
-  } else {
-    selection = await this.awaitSelection({ line: 2 })
-    if (selection == null) return;
-
-    line = new THREE.LineSegments(
-      new THREE.BufferGeometry().setAttribute('position',
-        new THREE.Float32BufferAttribute(Array((divisions + 2) * 2 * 3).fill(-0.001), 3)
-      ),
-      lineMaterial.clone()
-    );
-
-    dimVal = getAngle(selection)
-
-    constraint = [
-      'angle', dimVal,
-      [-1, -1, selection[0].name, selection[1].name]
-    ]
-  }////////////////////////////////
-
-
+    dimType = 'd'
+  }
 
   const point = new THREE.Points(
     new THREE.BufferGeometry().setAttribute('position',
@@ -89,10 +87,13 @@ export async function drawDimension(cc) {
     pointMaterial.clone()
   )
   line.userData.ids = selection.map(e => e.name)
+
+  line.userData.type = 'dimension'
+  line.userData.dimType = dimType
+  point.userData.type = 'dimension'
+  point.userData.dimType = dimType
   line.layers.enable(2)
   point.layers.enable(2)
-
-
 
   this.obj3d.children[1].add(line).add(point)
   const onMove = this._onMoveDimension(point, line)
@@ -104,11 +105,11 @@ export async function drawDimension(cc) {
   let onEnd, onKey;
   let add = await new Promise((res) => {
     onEnd = () => {
-      if (cc == 'd') { /////////////////////////
+      if (point.userData.dimType == 'd') {
         point.userData.offset = hyp2.toArray() // save offset vector from hyp2
       } else {
         point.userData.offset = vecArr[5].toArray()
-      } ///////////////////////////////////
+      }
       res(true)
     }
     onKey = (e) => e.key == 'Escape' && res(false)
@@ -133,9 +134,9 @@ export async function drawDimension(cc) {
 
     this.updateOtherBuffers()
     line.name = this.c_id
-    line.userData.type = 'dimension'
+
+
     point.name = this.c_id
-    point.userData.type = 'dimension'
     point.label.addEventListener('focus', this.updateDim(this.c_id))
 
   } else {
@@ -149,11 +150,8 @@ export async function drawDimension(cc) {
     this.labelContainer.removeChild(this.labelContainer.lastChild);
     sc.render()
   }
-
   return
 }
-
-
 
 export function updateDim(c_id) {
   return (ev_focus) => {
@@ -180,39 +178,41 @@ export function updateDim(c_id) {
 }
 
 
-let ids, _p1, _p2
+const tagPos = new THREE.Vector2()
+let ids
 export function _onMoveDimension(point, line) {
 
   ids = line.userData.ids
 
-  _p1 = this.obj3d.children[this.objIdx.get(ids[0])].geometry.attributes.position.array
-  _p2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
+  let _p1 = this.obj3d.children[this.objIdx.get(ids[0])].geometry.attributes.position.array
+  let _p2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
 
   let loc;
+
+  let update;
+  if (line.userData.dimType == 'd') {
+    update = updateDistance
+  } else {
+    update = updateAngle
+  }
 
   return (e) => {
     loc = this.getLocation(e)
 
-    p3.set(loc.x, loc.y)
+    tagPos.set(loc.x, loc.y)
 
     update(
       line.geometry.attributes.position,
       point.geometry.attributes.position,
       _p1, _p2
     )
-
-
-
     sc.render()
   }
 }
 
 export function setDimLines() {
-
   const restoreLabels = this.labelContainer.childElementCount == 0;
-
   const dims = this.obj3d.children[1].children
-
   let point, dist;
   for (let i = 0; i < dims.length; i += 2) {
     if (restoreLabels) {
@@ -222,14 +222,20 @@ export function setDimLines() {
       point.label.textContent = dist.toFixed(3);
       point.label.contentEditable = true;
       this.labelContainer.append(point.label)
-
       point.label.addEventListener('focus', this.updateDim(this.c_id))
     }
 
     ids = dims[i].userData.ids
 
-    _p1 = this.obj3d.children[this.objIdx.get(ids[0])].geometry.attributes.position.array
-    _p2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
+    let _p1 = this.obj3d.children[this.objIdx.get(ids[0])].geometry.attributes.position.array
+    let _p2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
+
+    let update;
+    if (dims[i].userData.dimType == 'd') {
+      update = updateDistance
+    } else {
+      update = updateAngle
+    }
 
     update(
       dims[i].geometry.attributes.position,
@@ -243,43 +249,33 @@ export function setDimLines() {
 }
 
 
-export function onDimMoveEnd(point) {
-  if (hyp2) {
-    point.userData.offset = hyp2.toArray() // save offset vector from hyp2
-  } else {
-    point.userData.offset = vecArr[5].clone().sub(vecArr[2]).toArray()
-  }
-}
 
 const p1 = new THREE.Vector2()
 let mdpt
 const p1x = new THREE.Vector2()
 const p2 = new THREE.Vector2()
-const p3 = new THREE.Vector2()
 let disp, hyp1, hyp2
 let proj, proj1, proj2
 let p1e, p2e
-let p1eArr, p2eArr, p3Arr
+let p1eArr, p2eArr, tagPosArr
 let dir, linedir, perpOffset
 let dp1e, dp2e, dp12
 
-function updatex(linegeom, pointgeom, _p1, _p2, offset) {
-
+function updateDistance(linegeom, pointgeom, _p1, _p2, offset) {
   if (offset) {
     if (_p1.length < _p2.length) { // corner case when p1 is pt and p2 is line
-      p3.set(_p1[0] + offset[0], _p1[1] + offset[1])
+      tagPos.set(_p1[0] + offset[0], _p1[1] + offset[1])
     } else {
-      p3.set(_p2[0] + offset[0], _p2[1] + offset[1])
+      tagPos.set(_p2[0] + offset[0], _p2[1] + offset[1])
     }
   }
-
 
   if (_p1.length == _p2.length) {
     p1.set(_p1[0], _p1[1])
     p2.set(_p2[0], _p2[1])
 
     dir = p2.clone().sub(p1).normalize()
-    hyp2 = p3.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
+    hyp2 = tagPos.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
     proj = dir.multiplyScalar(hyp2.dot(dir))
     perpOffset = hyp2.clone().sub(proj)
 
@@ -287,14 +283,13 @@ function updatex(linegeom, pointgeom, _p1, _p2, offset) {
     p1eArr = p1e.toArray()
     p2e = p2.clone().add(perpOffset)
     p2eArr = p2e.toArray()
-    p3Arr = p3.toArray()
+    tagPosArr = tagPos.toArray()
 
-    dp1e = p1e.distanceToSquared(p3)
-    dp2e = p2e.distanceToSquared(p3)
+    dp1e = p1e.distanceToSquared(tagPos)
+    dp2e = p2e.distanceToSquared(tagPos)
     dp12 = p1e.distanceToSquared(p2e)
 
     linegeom.array.set(p1.toArray(), 0)
-
 
   } else {
     if (_p1.length > _p2.length) { // when p1 is line, p2 is point
@@ -318,17 +313,16 @@ function updatex(linegeom, pointgeom, _p1, _p2, offset) {
     dp12 = dir.lengthSq()
     dir.normalize()
 
-
-    hyp1 = p3.clone().sub(mdpt)
+    hyp1 = tagPos.clone().sub(mdpt)
     proj1 = dir.clone().multiplyScalar(hyp1.dot(dir))
 
-    hyp2 = p3.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
+    hyp2 = tagPos.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
+    console.log(hyp2, 'hereeeeee')
     proj2 = dir.clone().multiplyScalar(hyp2.dot(dir))
 
-
-    p1eArr = p3.clone().sub(proj1).toArray()
-    p2eArr = p3.clone().sub(proj2).toArray()
-    p3Arr = p3.toArray()
+    p1eArr = tagPos.clone().sub(proj1).toArray()
+    p2eArr = tagPos.clone().sub(proj2).toArray()
+    tagPosArr = tagPos.toArray()
 
     dp1e = proj1.lengthSq()
     dp2e = proj2.lengthSq()
@@ -343,7 +337,7 @@ function updatex(linegeom, pointgeom, _p1, _p2, offset) {
   linegeom.array.set(p2eArr, 12)
   linegeom.array.set(p2.toArray(), 15)
   if (dp12 >= dp1e && dp12 >= dp2e) {
-    linegeom.array.set(p3Arr, 18)
+    linegeom.array.set(tagPosArr, 18)
   } else {
     if (dp1e > dp2e) {
       linegeom.array.set(p2eArr, 18)
@@ -351,64 +345,65 @@ function updatex(linegeom, pointgeom, _p1, _p2, offset) {
       linegeom.array.set(p1eArr, 18)
     }
   }
-  linegeom.array.set(p3Arr, 21)
+  linegeom.array.set(tagPosArr, 21)
 
   linegeom.needsUpdate = true;
 
-  pointgeom.array.set(p3Arr)
+  pointgeom.array.set(tagPosArr)
   pointgeom.needsUpdate = true;
 
 
 }
 
+
 const divisions = 12
-export function findIntersection(q, s, p, r) {
-  /*
-    Based on: https://stackoverflow.com/questions/563198/
-
-    q+s  p+r
-      \/__________ q+u*s
-      /\  
-     /  \
-    p    q
-    
-    u = (q − p) × r / (r × s)
-    when r × s = 0, the lines are either colinear or parallel
-
-    function returns u
-    for "real" intersection to exist, 0<u<1
-  */
-  const q_minus_p = q.clone().sub(p);
-  const r_cross_s = r.cross(s);
-  if (r_cross_s === 0) return null; //either colinear or parallel
-  return q_minus_p.cross(r) / r_cross_s;
-}
-
-
-
 const vecArr = Array(6)
-for (var i = 0; i < vecArr.length; i++) vecArr[i] = new THREE.Vector2();
+for (let k = 0; k < vecArr.length; k++) vecArr[k] = new THREE.Vector2();
 const a = Array(3)
+const _vec2 = new THREE.Vector2()
+let arr, i, j, centerScalar, r_cross_s, center, tagRadius
+let dA, tagtoMidline, shift, tA1, tA2, a1, deltaAngle;
 
-function update(linegeom, pointgeom, _l1, _l2, offset) {
+function updateAngle(linegeom, pointgeom, _l1, _l2, offset) {
+  /*
+                          l2:[x0,y0,z0,x1,y1,z1]
+                          /
+            tagPos:tag-""/-. 
+                   |        \
+    vecArr[5][1]-->|___.    _|__ l1:[x0,y0,z0,x1,y1,z1]
+    vecArr[5][0]----^  ^--center
 
-  let i = 0;
-  for (; i < 4;) {
-    const arr = i == 0 ? _l1 : _l2
+    vecArr = [
+      0: _l1 origin
+      1: _l1 disp
+      2: _l2 origin
+      3: _l2 disp
+      4: center
+      5: tag offset from center
+    ]
+  */
+
+  for (i = 0; i < 4;) {
+    arr = i == 0 ? _l1 : _l2
     vecArr[i++].set(arr[0], arr[1])
     vecArr[i++].set(arr[3] - arr[0], arr[4] - arr[1])
   }
 
-  const centerScalar = findIntersection(...vecArr.slice(0, 4))
-  const center = vecArr[4].addVectors(vecArr[0], vecArr[1].clone().multiplyScalar(centerScalar))
+  // https://stackoverflow.com/questions/563198/
+  r_cross_s = vecArr[3].cross(vecArr[1]);
+  if (r_cross_s === 0) {
+    centerScalar = 0.5
+  } else {
+    centerScalar = _vec2.subVectors(vecArr[0], vecArr[2]).cross(vecArr[3]) / r_cross_s;
+  }
+  center = vecArr[4].addVectors(vecArr[0], vecArr[1].clone().multiplyScalar(centerScalar))
 
   if (offset) {
-    p3.set(center.x + offset[0], center.y + offset[1])
+    tagPos.set(center.x + offset[0], center.y + offset[1])
   }
 
-  vecArr[5].subVectors(p3, center)
-
-  const tagRadius = vecArr[5].length()
+  vecArr[5].subVectors(tagPos, center) // tag offset
+  tagRadius = vecArr[5].length()
 
   /*
     if tag is more than 90 deg away from midline, we shift everything by 180
@@ -426,22 +421,16 @@ function update(linegeom, pointgeom, _l1, _l2, offset) {
              a[0]:angle start 
   */
 
-  for (let j = 1, i = 0; j < vecArr.length; j += 2, i++) {
+  for (j = 1, i = 0; j < vecArr.length; j += 2, i++) {
     a[i] = Math.atan2(vecArr[j].y, vecArr[j].x)
   }
 
-  let dA = unreflex(a[1] - a[0])
+  dA = unreflex(a[1] - a[0])
+  tagtoMidline = unreflex(a[2] - (a[0] + dA / 2))
+  shift = Math.abs(tagtoMidline) < Math.PI / 2 ? 0 : Math.PI;
+  tA1 = unreflex(a[2] - (a[0] + shift))
+  tA2 = unreflex(a[2] - (a[0] + dA + shift))
 
-
-  let tagtoMidline = unreflex(a[2] - (a[0] + dA / 2))
-
-  let shift = Math.abs(tagtoMidline) < Math.PI / 2 ? 0 : Math.PI;
-
-  let tA1 = unreflex(a[2] - (a[0] + shift))
-  let tA2 = unreflex(a[2] - (a[0] + dA + shift))
-
-
-  let a1, deltaAngle;
   if (dA * tA1 < 0) {
     a1 = a[0] + tA1 + shift
     deltaAngle = dA - tA1
@@ -453,51 +442,42 @@ function update(linegeom, pointgeom, _l1, _l2, offset) {
     deltaAngle = dA
   }
 
-  let points = linegeom.array
-
-  let d = 0;
-  points[d++] = center.x + tagRadius * Math.cos(a1)
-  points[d++] = center.y + tagRadius * Math.sin(a1)
-  d++
-
-  const angle = a1 + (1 / divisions) * deltaAngle
-  points[d++] = center.x + tagRadius * Math.cos(angle)
-  points[d++] = center.y + tagRadius * Math.sin(angle)
-  d++
-
+  j = 0;
+  linegeom.array[j++] = center.x + tagRadius * Math.cos(a1)
+  linegeom.array[j++] = center.y + tagRadius * Math.sin(a1)
+  j++
+  let angle = a1 + (1 / divisions) * deltaAngle
+  linegeom.array[j++] = center.x + tagRadius * Math.cos(angle)
+  linegeom.array[j++] = center.y + tagRadius * Math.sin(angle)
+  j++
   for (i = 2; i <= divisions; i++) {
-    points[d++] = points[d - 4]
-    points[d++] = points[d - 4]
-    d++
-    const angle = a1 + (i / divisions) * deltaAngle
-    points[d++] = center.x + tagRadius * Math.cos(angle)
-    points[d++] = center.y + tagRadius * Math.sin(angle)
-    d++
+    linegeom.array[j++] = linegeom.array[j - 4]
+    linegeom.array[j++] = linegeom.array[j - 4]
+    j++
+    angle = a1 + (i / divisions) * deltaAngle
+    linegeom.array[j++] = center.x + tagRadius * Math.cos(angle)
+    linegeom.array[j++] = center.y + tagRadius * Math.sin(angle)
+    j++
   }
-
-
   for (i = 0; i < 2; i++) {
-    points[d++] = vecArr[2 * i].x
-    points[d++] = vecArr[2 * i].y
-    d++
-    points[d++] = center.x + tagRadius * Math.cos(a[i] + shift)
-    points[d++] = center.y + tagRadius * Math.sin(a[i] + shift)
-    d++
+    linegeom.array[j++] = vecArr[2 * i].x
+    linegeom.array[j++] = vecArr[2 * i].y
+    j++
+    linegeom.array[j++] = center.x + tagRadius * Math.cos(a[i] + shift)
+    linegeom.array[j++] = center.y + tagRadius * Math.sin(a[i] + shift)
+    j++
   }
 
   linegeom.needsUpdate = true;
-
-  pointgeom.array.set(p3.toArray())
+  pointgeom.array.set(tagPos.toArray())
   pointgeom.needsUpdate = true;
-
-
 }
+
 
 
 const twoPi = Math.PI * 2
 const negTwoPi = - Math.PI * 2
 const negPi = - Math.PI
-
 function unreflex(angle) {
   if (angle > Math.PI) {
     angle = negTwoPi + angle
@@ -522,4 +502,13 @@ const getAngle = (Obj3dLines) => {
     deltaAngle = Math.PI * 2 - deltaAngle
   }
   return deltaAngle / Math.PI * 180
+}
+
+
+export function onDimMoveEnd(point) {
+  if (point.userData.dimType == 'd') {
+    point.userData.offset = hyp2.toArray() // save offset vector from hyp2
+  } else {
+    point.userData.offset = vecArr[5].toArray()
+  }
 }

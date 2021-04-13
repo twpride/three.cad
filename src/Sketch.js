@@ -218,11 +218,7 @@ class Sketch {
         this.mode = "arc"
         break;
       case 'd':
-        this.drawDimension('d')
-        this.mode = ""
-        break;
-      case 'q':
-        this.drawDimension('a')
+        this.drawDimension()
         this.mode = ""
         break;
       case 'p':
@@ -232,22 +228,16 @@ class Sketch {
       case 'x':
         this.deleteSelected()
         break;
-      case 'c':
-
+      case ' ':
         setCoincident.call(this)
-
         this.mode = ""
         break;
       case 'v':
-
         setOrdinate.call(this, 0)
-
         this.mode = ""
         break;
       case 'h':
-
         setOrdinate.call(this, 1)
-
         this.mode = ""
         break;
 
