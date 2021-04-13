@@ -14,15 +14,12 @@ const pointMaterial = new THREE.PointsMaterial({
 
 
 export async function drawDimension(cc) {
-  //////////
   let selection
   if (cc == 'd') {
     selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 })
   } else {
     selection = await this.awaitSelection({ line: 2 })
   }
-
-  /////////
 
   if (selection == null) return;
 
@@ -45,7 +42,6 @@ export async function drawDimension(cc) {
 
 
 
-
   const point = new THREE.Points(
     new THREE.BufferGeometry().setAttribute('position',
       new THREE.Float32BufferAttribute(3, 3)
@@ -64,6 +60,7 @@ export async function drawDimension(cc) {
 
   if (cc == 'd') {
     if (selection.every(e => e.userData.type == 'point')) {
+      dimVal = 0;
       for (let i = 0; i < 3; i++) {
         dimVal += (selection[0].geometry.attributes.position.array[i] - selection[1].geometry.attributes.position.array[i]) ** 2
       }
@@ -93,6 +90,7 @@ export async function drawDimension(cc) {
   const onMove = this._onMoveDimension(point, line)
 
   point.label = document.createElement('div');
+  console.log(dimVal, 'dim')
   point.label.textContent = dimVal.toFixed(3);
   point.label.contentEditable = true;
   this.labelContainer.append(point.label)
@@ -256,7 +254,6 @@ export function setDimLines() {
     _p2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
 
 
-    let offset = dims[i + 1].userData.offset
 
 
     update(
@@ -264,7 +261,7 @@ export function setDimLines() {
       dims[i + 1].geometry.attributes.position,
       _p1,
       _p2,
-      offset
+      dims[i + 1].userData.offset
     )
   }
 
@@ -538,108 +535,7 @@ function unreflex(angle) {
 
 
 
-export async function drawAngle() {
-  /////////
-  let selection = await this.awaitSelection({ line: 2 })
-  //////////
 
-  if (selection == null) return;
-
-  const line = new THREE.LineSegments(
-    new THREE.BufferGeometry().setAttribute('position',
-      new THREE.Float32BufferAttribute(Array((divisions + 2) * 2 * 3).fill(-0.001), 3)
-    ),
-    lineMaterial.clone()
-  );
-
-  const point = new THREE.Points(
-    new THREE.BufferGeometry().setAttribute('position',
-      new THREE.Float32BufferAttribute(3, 3)
-    ),
-    pointMaterial.clone()
-  )
-
-  line.userData.ids = selection.map(e => e.name)
-
-  line.layers.enable(2)
-  point.layers.enable(2)
-
-
-  /////////////
-  let angle = getAngle(selection)
-  //////////
-
-
-
-
-  this.obj3d.children[1].add(line).add(point)
-  const onMove = this._onMoveDimension(point, line)
-
-  point.label = document.createElement('div');
-  point.label.textContent = angle.toFixed(3);
-  point.label.contentEditable = true;
-  this.labelContainer.append(point.label)
-
-  let onEnd, onKey;
-  let add = await new Promise((res) => {
-    onEnd = (e) => {
-      point.userData.offset = vecArr[5].toArray()
-      res(true)
-    }
-    onKey = (e) => e.key == 'Escape' && res(false)
-
-    this.canvas.addEventListener('pointermove', onMove)
-    this.canvas.addEventListener('pointerdown', onEnd)
-    window.addEventListener('keydown', onKey)
-  })
-
-  this.canvas.removeEventListener('pointermove', onMove)
-  this.canvas.removeEventListener('pointerdown', onEnd)
-  window.removeEventListener('keydown', onKey)
-  point.geometry.computeBoundingSphere()
-  line.geometry.computeBoundingSphere()
-
-  if (add) {
-
-    this.constraints.set(++this.c_id,
-      [
-        'angle', angle,
-        [-1, -1, selection[0].name, selection[1].name]
-      ]
-    )
-
-
-
-
-
-
-
-    selection[0].userData.constraints.push(this.c_id)
-    selection[1].userData.constraints.push(this.c_id)
-
-    this.updateOtherBuffers()
-
-    line.name = this.c_id
-    line.userData.type = 'dimension'
-    point.name = this.c_id
-    point.userData.type = 'dimension'
-
-    point.label.addEventListener('focus', this.updateAng(this.c_id))
-
-  } else {
-
-    this.obj3d.children[1].children.splice(this.obj3d.children[1].length - 2, 2).forEach(
-      e => {
-        e.geometry.dispose()
-        e.material.dispose()
-      }
-    )
-    this.labelContainer.removeChild(this.labelContainer.lastChild);
-    sc.render()
-  }
-
-  return
-}
 
 
 const getAngle = (Obj3dLines) => {

@@ -10,8 +10,7 @@ import { setCoincident, setOrdinate } from './constraintEvents'
 import { get3PtArc } from './drawArc'
 import { replacer, reviver } from './utils'
 import { AxesHelper } from './sketchAxes'
-import { drawDimension, _onMoveDimension, setDimLines, updateDim, drawAngle } from './drawDimension';
-import { updateAng } from './drawAngle';
+import { drawDimension, _onMoveDimension, setDimLines, updateDim } from './drawDimension';
 
 
 
@@ -129,13 +128,9 @@ class Sketch {
     this.drawOnClick2 = drawOnClick2.bind(this);
 
     this.drawDimension = drawDimension.bind(this)
-    this.drawAngle = drawAngle.bind(this)
     this._onMoveDimension = _onMoveDimension.bind(this)
-    // this._onMoveAngle = _onMoveAngle.bind(this)
     this.setDimLines = setDimLines.bind(this)
-    // this.setAngLines = setAngLines.bind(this)
     this.updateDim = updateDim.bind(this)
-    this.updateAng = updateAng.bind(this)
 
     this.awaitSelection = awaitSelection.bind(this);
 
