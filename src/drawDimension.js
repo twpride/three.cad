@@ -14,49 +14,21 @@ const pointMaterial = new THREE.PointsMaterial({
 
 
 export async function drawDimension(cc) {
-  let selection
 
-  if (cc == 'd') { ///////////////////////////
-    selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 })
-  } else {
-    selection = await this.awaitSelection({ line: 2 })
-  }///////////////////////////
-
-  if (selection == null) return;
-
-  let line;
+  let selection, line, dimVal, constraint
 
   if (cc == 'd') { ///////////////////////////////
+    selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 })
+    if (selection == null) return;
+
     line = new THREE.LineSegments(
       new THREE.BufferGeometry().setAttribute('position',
         new THREE.Float32BufferAttribute(Array(3 * 8).fill(-0.001), 3)
       ),
       lineMaterial.clone()
     );
-  } else {
-    line = new THREE.LineSegments(
-      new THREE.BufferGeometry().setAttribute('position',
-        new THREE.Float32BufferAttribute(Array((divisions + 2) * 2 * 3).fill(-0.001), 3)
-      ),
-      lineMaterial.clone()
-    );
-  }////////////////////////////////
 
-
-  const point = new THREE.Points(
-    new THREE.BufferGeometry().setAttribute('position',
-      new THREE.Float32BufferAttribute(3, 3)
-    ),
-    pointMaterial.clone()
-  )
-  line.userData.ids = selection.map(e => e.name)
-  line.layers.enable(2)
-  point.layers.enable(2)
-
-
-  let dimVal, ptLineOrder;
-
-  if (cc == 'd') { /////////////////////////////
+    let ptLineOrder
     if (selection.every(e => e.userData.type == 'point')) {
       dimVal = 0;
       for (let i = 0; i < 3; i++) {
@@ -76,9 +48,50 @@ export async function drawDimension(cc) {
       perpOffset = disp.clone().sub(proj)
       dimVal = Math.sqrt(perpOffset.x ** 2 + perpOffset.y ** 2)
     }
+    if (ptLineOrder) {
+      constraint = [
+        'pt_line_distance', dimVal,
+        [selection[ptLineOrder[0]].name, -1, selection[ptLineOrder[1]].name, -1]
+      ]
+    } else {
+      constraint = [
+        'pt_pt_distance', dimVal,
+        [selection[0].name, selection[1].name, -1, -1]
+      ]
+    }
+
+
   } else {
+    selection = await this.awaitSelection({ line: 2 })
+    if (selection == null) return;
+
+    line = new THREE.LineSegments(
+      new THREE.BufferGeometry().setAttribute('position',
+        new THREE.Float32BufferAttribute(Array((divisions + 2) * 2 * 3).fill(-0.001), 3)
+      ),
+      lineMaterial.clone()
+    );
+
     dimVal = getAngle(selection)
-  } ///////////////////////
+
+    constraint = [
+      'angle', dimVal,
+      [-1, -1, selection[0].name, selection[1].name]
+    ]
+  }////////////////////////////////
+
+
+
+  const point = new THREE.Points(
+    new THREE.BufferGeometry().setAttribute('position',
+      new THREE.Float32BufferAttribute(3, 3)
+    ),
+    pointMaterial.clone()
+  )
+  line.userData.ids = selection.map(e => e.name)
+  line.layers.enable(2)
+  point.layers.enable(2)
+
 
 
   this.obj3d.children[1].add(line).add(point)
@@ -112,32 +125,8 @@ export async function drawDimension(cc) {
   line.geometry.computeBoundingSphere()
 
   if (add) {
-    if (cc == 'd') { ///////////////////////////
-      if (ptLineOrder) {
-        this.constraints.set(++this.c_id, //???
-          [
-            'pt_line_distance', dimVal,
-            [selection[ptLineOrder[0]].name, -1, selection[ptLineOrder[1]].name, -1]
-          ]
-        )
-      } else {
-        this.constraints.set(++this.c_id, //???
-          [
-            'pt_pt_distance', dimVal,
-            [selection[0].name, selection[1].name, -1, -1]
-          ]
-        )
-      }
-    } else {
-      this.constraints.set(++this.c_id,
-        [
-          'angle', dimVal,
-          [-1, -1, selection[0].name, selection[1].name]
-        ]
-      )
-    } ////////////////////////////////////////
 
-
+    this.constraints.set(++this.c_id, constraint)
 
     selection[0].userData.constraints.push(this.c_id)
     selection[1].userData.constraints.push(this.c_id)
