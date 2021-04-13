@@ -106,6 +106,142 @@ function Dimension(props) {
   );
 }
 
+function Extrude(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 512 512"
+      {...props}
+    >
+      <path
+        style={{
+          lineHeight: "normal",
+          fontVariantLigatures: "normal",
+          fontVariantPosition: "normal",
+          fontVariantCaps: "normal",
+          fontVariantNumeric: "normal",
+          fontVariantAlternates: "normal",
+          fontVariantEastAsian: "normal",
+          fontFeatureSettings: "normal",
+          fontVariationSettings: "normal",
+          textIndent: 0,
+          textAlign: "start",
+          textDecorationLine: "none",
+          textDecorationStyle: "solid",
+          textDecorationColor: "#000",
+          textTransform: "none",
+          textOrientation: "mixed",
+          whiteSpace: "normal",
+          shapePadding: 0,
+          shapeMargin: 0,
+          inlineSize: 0,
+          isolation: "auto",
+          mixBlendMode: "normal",
+          solidColor: "#000",
+          solidOpacity: 1,
+        }}
+        d="M256 0L144 144h64v240h96V144.802l64-1.604z"
+        color="currentColor"
+        fontWeight={400}
+        fontFamily="sans-serif"
+        overflow="visible"
+        fillRule="evenodd"
+      />
+      <path
+        style={{
+          lineHeight: "normal",
+          fontVariantLigatures: "normal",
+          fontVariantPosition: "normal",
+          fontVariantCaps: "normal",
+          fontVariantNumeric: "normal",
+          fontVariantAlternates: "normal",
+          fontVariantEastAsian: "normal",
+          fontFeatureSettings: "normal",
+          fontVariationSettings: "normal",
+          textIndent: 0,
+          textAlign: "start",
+          textDecorationLine: "none",
+          textDecorationStyle: "solid",
+          textDecorationColor: "#000",
+          textTransform: "none",
+          textOrientation: "mixed",
+          whiteSpace: "normal",
+          shapePadding: 0,
+          shapeMargin: 0,
+          inlineSize: 0,
+          isolation: "auto",
+          mixBlendMode: "normal",
+          solidColor: "#000",
+          solidOpacity: 1,
+        }}
+        d="M176 302.768L10.059 369.145a16.002 16.002 0 00-.825 29.353l240 112a16.002 16.002 0 0013.532 0l240-112a16.002 16.002 0 00-.825-29.353L336 302.768v34.464l119.746 47.899L256 478.344 56.254 385.13 176 337.232v-34.464z"
+        color="currentColor"
+        fontWeight={400}
+        fontFamily="sans-serif"
+        overflow="visible"
+      />
+    </svg>
+  );
+}
+
+function Extrude_master(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 512 512"
+      {...props}
+    >
+      <path
+        style={{
+          lineHeight: "normal",
+          fontVariantLigatures: "normal",
+          fontVariantPosition: "normal",
+          fontVariantCaps: "normal",
+          fontVariantNumeric: "normal",
+          fontVariantAlternates: "normal",
+          fontVariantEastAsian: "normal",
+          fontFeatureSettings: "normal",
+          fontVariationSettings: "normal",
+          textIndent: 0,
+          textAlign: "start",
+          textDecorationLine: "none",
+          textDecorationStyle: "solid",
+          textDecorationColor: "#000",
+          textTransform: "none",
+          textOrientation: "mixed",
+          whiteSpace: "normal",
+          shapePadding: 0,
+          shapeMargin: 0,
+          inlineSize: 0,
+          isolation: "auto",
+          mixBlendMode: "normal",
+          solidColor: "#000",
+          solidOpacity: 1,
+        }}
+        d="M256 0L144 144h64v240h96V144.802l64-1.604z"
+        color="currentColor"
+        fontWeight={400}
+        fontFamily="sans-serif"
+        overflow="visible"
+        fillRule="evenodd"
+      />
+      <path
+        d="M256 288L16 384l240 112 240-112z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={32}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M176 223.932h160v158.285H176z" />
+    </svg>
+  );
+}
+
 function Horizontal(props) {
   return (
     <svg
@@ -238,29 +374,24 @@ function Stl(props) {
       viewBox="0 0 16 16"
       {...props}
     >
-      <text
+      <g
+        aria-label="STL"
         style={{
           lineHeight: 1.25,
         }}
-        x={0.536}
-        y={12.164}
         fontWeight={400}
         fontSize={12}
-        fontFamily="sans-serif"
+        fontFamily="Ubuntu Condensed"
         letterSpacing={0}
         wordSpacing={0}
       >
-        <tspan
-          x={0.536}
-          y={12.164}
+        <path
+          d="M2.576 11.42q.648 0 .996-.36.36-.36.36-.972 0-.324-.108-.576-.108-.252-.288-.456-.168-.204-.396-.372t-.468-.336q-.276-.192-.576-.408-.3-.216-.552-.504-.24-.288-.396-.672-.156-.384-.156-.9 0-.504.168-.912.18-.408.48-.696.312-.288.732-.444.432-.156.924-.156.48 0 .888.12.408.12.684.288l-.336.852q-.252-.168-.552-.252-.288-.096-.612-.096-.588 0-.948.324-.348.312-.348.924 0 .336.108.588.12.252.3.456.192.204.432.372.252.168.528.348.276.18.564.396.288.216.516.504.24.276.384.66.156.372.156.888 0 .468-.144.888t-.456.744q-.3.312-.768.504-.456.18-1.08.18-.576 0-1.008-.132-.432-.132-.768-.348L1.172 11q.312.192.636.312.336.108.768.108zM10.28 3.848v.924H8.432v7.392h-1.08V4.772H5.504v-.924zM15.164 11.24v.924h-3.708V3.848h1.08v7.392z"
           style={{
             InkscapeFontSpecification: "'Ubuntu Condensed, '",
           }}
-          fontFamily="Ubuntu Condensed"
-        >
-          {"STL"}
-        </tspan>
-      </text>
+        />
+      </g>
     </svg>
   );
 }
@@ -418,4 +549,4 @@ function Vertical(props) {
     </svg>
   );
 }
-export { Arc, Coincident, Dimension, Horizontal, Intersect, Intersect_thin, Line, Stl, Subtract, Union, Union_thin, Vertical };
+export { Arc, Coincident, Dimension, Extrude, Extrude_master, Horizontal, Intersect, Intersect_thin, Line, Stl, Subtract, Union, Union_thin, Vertical };

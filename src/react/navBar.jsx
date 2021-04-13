@@ -5,6 +5,7 @@ import React, { useEffect, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 
 import { FaCube, FaEdit } from 'react-icons/fa'
+import { BsBoxArrowUp} from 'react-icons/bs'
 import { MdDone, MdSave, MdFolder} from 'react-icons/md'
 import * as Icon from "./icons";
 
@@ -50,26 +51,26 @@ export const NavBar = () => {
       forceUpdate()
       // sc.activeDim = this.activeSketch.obj3d.children[1].children
     }, 'Finish'],
-    [FaCube, extrude, 'Extrude [e]'],
-    [Icon.Dimension, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Dimension [d]'],
+    [Icon.Extrude, extrude, 'Extrude [e]'],
+    [Icon.Dimension, () => sc.activeSketch.drawDimension(), 'Dimension [d]'],
     [Icon.Line, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Line [l]'],
     [Icon.Arc, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],
-    [Icon.Coincident, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],
-    [Icon.Vertical, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],
-    [Icon.Horizontal, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],
+    [Icon.Coincident, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [space]'],
+    [Icon.Vertical, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [v]'],
+    [Icon.Horizontal, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [h]'],
   ]
 
 
   const btnz2 = [
     [FaEdit, sc.addSketch, 'Sketch [s]']
     ,
-    [FaCube, extrude, 'Extrude [e]'],
+    [Icon.Extrude, extrude, 'Extrude [e]'],
     [Icon.Union, () => boolOp('u'), 'Union'],
     [Icon.Subtract, () => boolOp('s'), 'Subtract'],
     [Icon.Intersect, () => boolOp('i'), 'Intersect'],
-    [MdSave, () => boolOp('i'), 'Intersect'],
-    [MdFolder, () => boolOp('i'), 'Intersect'],
-    [Icon.Stl, () => boolOp('i'), 'Intersect'],
+    [MdSave, () => boolOp('i'), 'Save [ctrl+s]'],
+    [MdFolder, () => boolOp('i'), 'Load'],
+    [Icon.Stl, () => boolOp('i'), 'Export STL'],
   ]
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);

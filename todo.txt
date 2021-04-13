@@ -22,6 +22,8 @@ horizontal // done
 - select sketch for extrusion, punt, leverage current sketch modality
 constraint angle // done
 
+button panel cleanup // done
+
 
 -unable to delete arc
 hover not clearing sometimes
@@ -33,32 +35,6 @@ extrude dialogue
 loopfind especially arc
 file save, stl export
 
-
-
-
-
-button panel cleanup          
-- finish
-- extrude
-- dim
--line
-- arc
-
-- vertical
-- horizontal
--coincident
-
-
-sketch
-extrude
-boolean +
-boolean
-boolean
-
-
-load
-save
-stl
 
 
 better default ent names
