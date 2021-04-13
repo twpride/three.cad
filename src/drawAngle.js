@@ -156,7 +156,7 @@ export function _onMoveAngle(point, line) {
 
     // point.userData.offset = tagOffset.toArray() // save offset vector from center
     point.userData.offset = tagOffset // save offset vector from center
-    tagOffset = undefined
+    // tagOffset = undefined
 
     sc.render()
   }
@@ -286,7 +286,9 @@ function update(linegeom, pointgeom, _l1, _l2) {
     tagOffset = vecArr[i++].subVectors(p3, center)
   // } else if (Array.isArray(tagOffset)) {
     // tagOffset = new THREE.Vector2(tagOffset[0],tagOffset[1])
+    console.log('undefined')
   } else {
+    console.log('tagdefined', tagOffset)
     p3.addVectors(center, tagOffset)
   }
 
