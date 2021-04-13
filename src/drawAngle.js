@@ -56,7 +56,10 @@ export async function drawAngle() {
 
   let onEnd, onKey;
   let add = await new Promise((res) => {
-    onEnd = (e) => res(true)
+    onEnd = (e) => {
+      point.userData.offset = vecArr[5].toArray()
+      res(true)
+    }
     onKey = (e) => e.key == 'Escape' && res(false)
 
     this.canvas.addEventListener('pointermove', onMove)
@@ -155,7 +158,7 @@ export function _onMoveAngle(point, line) {
     )
 
     // point.userData.offset = tagOffset.toArray() // save offset vector from center
-    point.userData.offset = tagOffset // save offset vector from center
+    // point.userData.offset = tagOffset // save offset vector from center
     // tagOffset = undefined
 
     sc.render()
@@ -171,16 +174,16 @@ export function setAngLines() {
 
   let point, dist;
   for (let i = 0; i < dims.length; i += 2) {
-    if (restoreLabels) {
-      point = dims[i + 1]  // point node is at i+1
-      dist = this.constraints.get(point.name)[1]
-      point.label = document.createElement('div');
-      point.label.textContent = dist.toFixed(3);
-      point.label.contentEditable = true;
-      this.labelContainer.append(point.label)
+    // if (restoreLabels) {
+    //   point = dims[i + 1]  // point node is at i+1
+    //   dist = this.constraints.get(point.name)[1]
+    //   point.label = document.createElement('div');
+    //   point.label.textContent = dist.toFixed(3);
+    //   point.label.contentEditable = true;
+    //   this.labelContainer.append(point.label)
 
-      point.label.addEventListener('focus', this.updateAng(this.c_id))
-    }
+    //   point.label.addEventListener('focus', this.updateAng(this.c_id))
+    // }
 
     ids = dims[i].userData.ids
 
@@ -242,7 +245,7 @@ export function findIntersection(q, s, p, r) {
     2: _l2 origin
     3: _l2 disp
     4: center
-    5: tag disp from center
+    5: tag offset from center
   ]
 */
 
@@ -280,24 +283,14 @@ function update(linegeom, pointgeom, _l1, _l2) {
   const centerScalar = findIntersection(...vecArr.slice(0, 4))
   const center = vecArr[i++].addVectors(vecArr[0], vecArr[1].clone().multiplyScalar(centerScalar))
 
-  // tagOffset = vecArr[i++].subVectors(p3, center)
-
   if (tagOffset === undefined) {
-    tagOffset = vecArr[i++].subVectors(p3, center)
-  // } else if (Array.isArray(tagOffset)) {
-    // tagOffset = new THREE.Vector2(tagOffset[0],tagOffset[1])
-    console.log('undefined')
+    vecArr[i++].subVectors(p3, center)
   } else {
-    console.log('tagdefined', tagOffset)
-    p3.addVectors(center, tagOffset)
+    p3.set(center.x + tagOffset[0], center.y + tagOffset[1])
+    vecArr[i++].subVectors(p3, center)
   }
 
-  // console.log(p3, center, 'vr')
-  // console.log(vecArr, 'vecArr')
-
-  // console.log(tagOffset, xx)
-  // console.log(tagOffset.length())
-  const tagRadius = tagOffset.length()
+  const tagRadius = vecArr[5].length()
 
   /*
     if tag is more than 90 deg away from midline, we shift everything by 180

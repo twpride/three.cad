@@ -441,7 +441,7 @@ async function addSketch() {
 }
 
 window.sc = new Scene(store)
-// sc.loadState()
+sc.loadState()
 
 // sc.camera.layers.enable(1)
 // rc.layers.set(1)

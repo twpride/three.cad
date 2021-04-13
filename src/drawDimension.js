@@ -196,6 +196,8 @@ export function _onMoveDimension(point, line) {
       point.geometry.attributes.position,
       _p1, _p2
     )
+    // console.log('heree')
+    console.trace()
 
     point.userData.offset = hyp2.toArray() // save offset vector from hyp2
 
