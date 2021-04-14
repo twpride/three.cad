@@ -213,20 +213,23 @@ class Sketch {
         if (this.mode == 'line') {
           drawClear.call(this)
         }
-        this.canvas.addEventListener('pointerdown', this.drawOnClick1)
         this.mode = "line"
+        this.canvas.addEventListener('pointerdown', this.drawOnClick1, {once:true})
         break;
       case 'a':
-        this.canvas.addEventListener('pointerdown', this.drawOnClick1)
         this.mode = "arc"
+        this.canvas.addEventListener('pointerdown', this.drawOnClick1, {once:true})
         break;
       case 'd':
-        this.drawDimension()
+        if (this.mode != '') {
+          drawClear.call(this)
+        }
         this.mode = ""
+        this.drawDimension()
         break;
       case 'p':
-        this.canvas.addEventListener('pointerdown', this.drawOnClick1)
         this.mode = "point"
+        this.canvas.addEventListener('pointerdown', this.drawOnClick1, {once:true})
         break;
       case 'Delete':
         this.deleteSelected()
@@ -234,19 +237,31 @@ class Sketch {
       case 'Backspace':
         this.deleteSelected()
         break;
-      case ' ':
+      case 'c':
+        if (this.mode != '') {
+          drawClear.call(this)
+        }
         setCoincident.call(this)
         this.mode = ""
         break;
       case 'v':
+        if (this.mode != '') {
+          drawClear.call(this)
+        }
         setOrdinate.call(this, 0)
         this.mode = ""
         break;
       case 'h':
+        if (this.mode != '') {
+          drawClear.call(this)
+        }
         setOrdinate.call(this, 1)
         this.mode = ""
         break;
       case 't':
+        if (this.mode != '') {
+          drawClear.call(this)
+        }
         setTangent.call(this)
         this.mode = ""
         break;
@@ -287,7 +302,7 @@ class Sketch {
   }
 
   delete(obj) {
-
+    if (!obj) return
     if (obj.userData.type == 'dimension') {
       this.deleteConstraints(obj.name)
       return

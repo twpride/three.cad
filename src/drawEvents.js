@@ -1,18 +1,38 @@
 
-import { drawArc, drawArc2, arcOnClick2, drawArc3 } from './drawArc'
+import { drawArc, drawArc2, drawArc3, drawArc4 } from './drawArc'
 import { drawLine, drawLine2 } from './drawLine'
 import { ptObj } from './shared'
 
 export function drawOnClick1(e) {
   if (e.buttons !== 1) return
-  this.canvas.removeEventListener('pointerdown', this.drawOnClick1)
+
+  // this.canvas.removeEventListener('pointerdown', this.drawOnClick1)
+
   this.canvas.addEventListener('pointermove', this.drawPreClick2)
-  this.canvas.addEventListener('pointerdown', this.drawOnClick2)
+  this.canvas.addEventListener('pointerdown', this.drawOnClick2, { once: true })
 
   const mouseLoc = this.getLocation(e).toArray();
 
+  // this.mode allow alow following modes to create new obj3ds
   if (this.mode == "line") {
-    this.toPush = drawLine.call(this, mouseLoc)
+    this.toPush = drawLine(mouseLoc)
+
+    if (this.subsequent) {
+      const p1 = this.toPush[0]
+
+      this.constraints.set(++this.c_id,  //??? why incremennt before not after
+        [
+          'points_coincident', -1,
+          [this.obj3d.children[this.obj3d.children.length - 2].name, p1.name, -1, -1]
+        ]
+      )
+
+      p1.userData.constraints.push(this.c_id)
+      this.obj3d.children[this.obj3d.children.length - 2].userData.constraints.push(this.c_id)
+
+    }
+
+
   } else if (this.mode == "arc") {
     this.toPush = drawArc(mouseLoc)
   } else if (this.mode == 'point') {
@@ -50,11 +70,11 @@ export function drawPreClick2(e) {
 export function drawOnClick2(e) {
   if (e.buttons !== 1) return;
   this.canvas.removeEventListener('pointermove', this.drawPreClick2);
-  this.canvas.removeEventListener('pointerdown', this.drawOnClick2);
 
   this.updatePointsBuffer(this.updatePoint)
   this.updateOtherBuffers()
 
+  // a this.mode == "" will prevent event chain from persisisting
   if (this.mode == "line") {
     this.subsequent = true
     this.drawOnClick1(e)
@@ -63,10 +83,10 @@ export function drawOnClick2(e) {
     this.drawOnClick1(e)
   } else if (this.mode == "arc") {
 
-    arcOnClick2(this.toPush[0], this.toPush[1])
+    drawArc3(this.toPush[0], this.toPush[1])
 
     this.canvas.addEventListener('pointermove', this.drawPreClick3)
-    this.canvas.addEventListener('pointerdown', this.drawOnClick3)
+    this.canvas.addEventListener('pointerdown', this.drawOnClick3, { once: true })
   }
 
 }
@@ -75,14 +95,14 @@ export function drawOnClick2(e) {
 let ccw;
 export function drawPreClick3(e) {
   const mouseLoc = this.getLocation(e);
-  ccw = drawArc3(mouseLoc, this.toPush)
+  ccw = drawArc4(mouseLoc, this.toPush)
   sc.render()
 }
 
 export function drawOnClick3(e) {
   if (e.buttons !== 1) return;
   this.canvas.removeEventListener('pointermove', this.drawPreClick3);
-  this.canvas.removeEventListener('pointerdown', this.drawOnClick3);
+
   if (!ccw) {
     let temp
     const ent = this.linkedObjs.get(this.l_id - 1)
@@ -95,7 +115,10 @@ export function drawOnClick3(e) {
     this.linksBuf[i + 1] = this.linksBuf[i + 2]
     this.linksBuf[i + 2] = temp
   }
-  this.canvas.addEventListener('pointerdown', this.drawOnClick1)
+
+
+  this.updatePoint = this.obj3d.children.length
+  this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
 }
 
 
@@ -103,17 +126,7 @@ export function drawOnClick3(e) {
 export function drawClear() {
   if (this.mode == "") return
 
-  if (this.mode == "line") {
-    this.canvas.removeEventListener('pointerdown', this.drawOnClick1)
-    this.canvas.removeEventListener('pointermove', this.drawPreClick2);
-    this.canvas.removeEventListener('pointerdown', this.drawOnClick2);
-
-    this.delete(this.obj3d.children[this.updatePoint])
-
-    this.obj3d.dispatchEvent({ type: 'change' })
-    this.subsequent = false
-    this.toPush = []
-  } if (this.mode == "arc") {
+  if (['line', 'arc'].includes(this.mode)) {
     this.canvas.removeEventListener('pointerdown', this.drawOnClick1)
     this.canvas.removeEventListener('pointermove', this.drawPreClick2);
     this.canvas.removeEventListener('pointerdown', this.drawOnClick2);
@@ -126,6 +139,7 @@ export function drawClear() {
     this.subsequent = false
     this.toPush = []
   }
+  
 }
 
 

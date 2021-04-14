@@ -58,7 +58,7 @@ const _p2 = new Vector2()
 const _l12 = new Vector2()
 
 
-export function arcOnClick2(p1, p2) {
+export function drawArc3(p1, p2) {
   _p1.set(
     p1.geometry.attributes.position.array[0],
     p1.geometry.attributes.position.array[1]
@@ -73,7 +73,7 @@ export function arcOnClick2(p1, p2) {
 }
 
 let r_cross_s, centerScalar, ccw, points
-export function drawArc3(mouseLoc, toPush) {
+export function drawArc4(mouseLoc, toPush) {
   const [p1, p2, p3, arc] = toPush
 
   _vec2.set(mouseLoc.x - _p1.x, mouseLoc.y - _p1.y)
