@@ -4,9 +4,9 @@ import * as THREE from '../node_modules/three/src/Three';
 
 import { _vec2, _vec3, raycaster, awaitSelection, ptObj } from './shared'
 
-import { drawOnClick1, drawOnClick2, drawPreClick2, drawClear, drawPoint } from './drawEvents'
+import { drawOnClick1, drawOnClick2, drawPreClick2, drawOnClick3, drawPreClick3, drawClear, drawPoint } from './drawEvents'
 import { onHover, onDrag, onPick, onRelease } from './mouseEvents'
-import { setCoincident, setOrdinate } from './constraintEvents'
+import { setCoincident, setOrdinate, setTangent } from './constraintEvents'
 import { get3PtArc } from './drawArc'
 import { replacer, reviver } from './utils'
 import { AxesHelper } from './sketchAxes'
@@ -127,6 +127,9 @@ class Sketch {
     this.drawPreClick2 = drawPreClick2.bind(this);
     this.drawOnClick2 = drawOnClick2.bind(this);
 
+    this.drawPreClick3 = drawPreClick3.bind(this);
+    this.drawOnClick3 = drawOnClick3.bind(this);
+
     this.drawDimension = drawDimension.bind(this)
     this._onMoveDimension = _onMoveDimension.bind(this)
     this.setDimLines = setDimLines.bind(this)
@@ -202,13 +205,13 @@ class Sketch {
   onKeyPress(e) {
     switch (e.key) {
       case 'Escape':
-        drawClear.bind(this)()
+        drawClear.call(this)
         this.mode = ""
         document.activeElement.blur()
         break;
       case 'l':
         if (this.mode == 'line') {
-          drawClear.bind(this)()
+          drawClear.call(this)
         }
         this.canvas.addEventListener('pointerdown', this.drawOnClick1)
         this.mode = "line"
@@ -243,7 +246,10 @@ class Sketch {
         setOrdinate.call(this, 1)
         this.mode = ""
         break;
-
+      case 't':
+        setTangent.call(this)
+        this.mode = ""
+        break;
       case 'z':
         var string = JSON.stringify(this.toJSON());
         window.string = string;
@@ -340,7 +346,7 @@ class Sketch {
       this.constraintsBuf.set(
         [
           this.constraintNum[obj[0]], obj[1],
-          ...obj[2].map(ele => this.objIdx.get(ele) ?? -1),
+          ...obj[2].map(ele => this.objIdx.get(ele) ?? 0),
         ],
         (i) * 6
       )
@@ -459,7 +465,9 @@ class Sketch {
       if (obj[0] != 'arc') continue;
       const [p1, p2, c, arc] = obj[1].map(e => this.obj3d.children[this.objIdx.get(e)])
 
-      const points = get3PtArc(
+      let points
+
+      points = get3PtArc(
         p1.geometry.attributes.position.array,
         p2.geometry.attributes.position.array,
         c.geometry.attributes.position.array
@@ -469,13 +477,8 @@ class Sketch {
       arc.needsUpdate = true;
     }
 
-
     this.setDimLines()
-    // this.setAngLines()
-
-    // this.obj3d.dispatchEvent({ type: 'change' })
   }
-
 
 
 }

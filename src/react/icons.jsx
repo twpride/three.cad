@@ -8,17 +8,25 @@ function Arc(props) {
       viewBox="0 0 16 16"
       {...props}
     >
-      <g stroke="currentColor">
-        <path
-          d="M8.553 3.145a12.5 12.5 0 015.644 9.339"
-          fill="none"
-          strokeWidth={1.5}
-        />
-        <path
-          strokeLinecap="round"
-          d="M.75 12.631h2v2h-2zM6.75 1.35h2v2h-2zM13.25 12.631h2v2h-2z"
-        />
-      </g>
+      <path
+        d="M3.92 1.94a12.5 12.5 0 014.454 1.71"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+      />
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        d="M.75.75h2v2h-2zM13.25 13.25h2v2h-2zM9.433 4.336h2v2h-2z"
+      />
+      <rect width={0.8} height={4} x={1.35} y={12} ry={0} />
+      <rect width={0.8} height={4} x={-14.65} ry={0} transform="rotate(-90)" />
+      <path
+        d="M12.113 7.26a12.5 12.5 0 011.983 5.035"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+      />
     </svg>
   );
 }
@@ -355,10 +363,14 @@ function Line(props) {
       {...props}
     >
       <g stroke="currentColor">
-        <path d="M2.5 13l2-4M6 8h4m1.5-1l2-4" fill="none" strokeWidth={1.5} />
+        <path
+          d="M2.75 11.75l1.5-4.5m2.5-.5l2.5 2.5m2.5-.5l1.5-4.5"
+          fill="none"
+          strokeWidth={1.5}
+        />
         <path
           strokeLinecap="round"
-          d="M1 13h2v2H1zM4 7h2v2H4zM10 7h2v2h-2zM13 1h2v2h-2z"
+          d="M1 13h2v2H1zM4 4h2v2H4zM10 10h2v2h-2zM13 1h2v2h-2z"
         />
       </g>
     </svg>
@@ -433,6 +445,29 @@ function Subtract(props) {
         strokeWidth={1.5}
         strokeLinecap="round"
       />
+    </svg>
+  );
+}
+
+function Tangent(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 16 16"
+      {...props}
+    >
+      <g fill="none" stroke="currentColor">
+        <path d="M1.497 15.004l13.847-8.686" strokeWidth={2} />
+        <circle
+          cx={5.25}
+          cy={5.25}
+          r={4.5}
+          strokeWidth={1.5}
+          strokeLinejoin="round"
+        />
+      </g>
     </svg>
   );
 }
@@ -549,4 +584,4 @@ function Vertical(props) {
     </svg>
   );
 }
-export { Arc, Coincident, Dimension, Extrude, Extrude_master, Horizontal, Intersect, Intersect_thin, Line, Stl, Subtract, Union, Union_thin, Vertical };
+export { Arc, Coincident, Dimension, Extrude, Extrude_master, Horizontal, Intersect, Intersect_thin, Line, Stl, Subtract, Tangent, Union, Union_thin, Vertical };

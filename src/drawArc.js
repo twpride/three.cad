@@ -1,6 +1,7 @@
 
 
-import {ptObj, lineObj} from './shared'
+import { Vector2 } from 'three';
+import { ptObj, lineObj } from './shared'
 
 const n = 30
 
@@ -9,13 +10,14 @@ export function drawArc(mouseLoc) {
   const p1 = ptObj(mouseLoc)
   p1.matrixAutoUpdate = false;
   p1.userData.constraints = []
-  
+
   const p2 = ptObj()
   p2.matrixAutoUpdate = false;
   p2.userData.constraints = []
 
   const arc = lineObj(n)
   arc.frustumCulled = false;
+  arc.userData.constraints = []
 
   const p3 = ptObj()
   p3.matrixAutoUpdate = false;
@@ -42,6 +44,81 @@ export function drawArc2(mouseLoc, toPush) {
   p3.geometry.attributes.position.set(center);
   p3.geometry.attributes.position.needsUpdate = true;
   p3.geometry.computeBoundingSphere()
+}
+
+
+
+const mdpt1 = new Vector2()
+const mdpt2 = new Vector2()
+const bis1 = new Vector2()
+const bis2 = new Vector2()
+const _vec2 = new Vector2()
+const _p1 = new Vector2()
+const _p2 = new Vector2()
+const _l12 = new Vector2()
+
+
+export function arcOnClick2(p1, p2) {
+  _p1.set(
+    p1.geometry.attributes.position.array[0],
+    p1.geometry.attributes.position.array[1]
+  )
+  _p2.set(
+    p2.geometry.attributes.position.array[0],
+    p2.geometry.attributes.position.array[1]
+  )
+  _l12.subVectors(_p2, _p1)
+  bis1.set(-_l12.y, _l12.x)
+  mdpt1.addVectors(_p1, _l12.multiplyScalar(0.5))
+}
+
+let r_cross_s, centerScalar, ccw, points
+export function drawArc3(mouseLoc, toPush) {
+  const [p1, p2, p3, arc] = toPush
+
+  _vec2.set(mouseLoc.x - _p1.x, mouseLoc.y - _p1.y)
+
+  ccw = _l12.cross(_vec2) < 0 ? 1 : 0;
+
+  bis2.set(-_vec2.y, _vec2.x)
+  mdpt2.addVectors(_p1, _vec2.multiplyScalar(0.5))
+
+  // https://stackoverflow.com/questions/563198/
+  r_cross_s = bis1.cross(bis2);
+  if (r_cross_s === 0) {
+    centerScalar = 0.5
+  } else {
+    centerScalar = _vec2.subVectors(mdpt2, mdpt1).cross(bis1) / r_cross_s;
+  }
+
+  p3.geometry.attributes.position.set(
+    _vec2.addVectors(mdpt2, bis2.multiplyScalar(centerScalar)).toArray()
+  );
+
+  p3.geometry.attributes.position.needsUpdate = true;
+  p3.geometry.computeBoundingSphere()
+
+  if (ccw) {
+    points = get3PtArc(
+      p1.geometry.attributes.position.array,
+      p2.geometry.attributes.position.array,
+      p3.geometry.attributes.position.array
+    )
+  } else {
+    points = get3PtArc(
+      p2.geometry.attributes.position.array,
+      p1.geometry.attributes.position.array,
+      p3.geometry.attributes.position.array
+    )
+  }
+
+  arc.geometry.attributes.position.set(
+    points
+  );
+  arc.geometry.attributes.position.needsUpdate = true;
+  arc.userData.ccw = ccw;
+
+  return ccw
 }
 
 export function get2PtArc(p1, p2, divisions = n) {
@@ -85,7 +162,7 @@ export function get3PtArc(p1, p2, c, divisions = n) {
 
 
   let deltaAngle = a2 - a1
-  if (deltaAngle <=0) deltaAngle += Math.PI*2
+  if (deltaAngle <= 0) deltaAngle += Math.PI * 2
 
   // let deltaAngle = a2 - a1
   // if (deltaAngle > Math.PI ){
@@ -99,7 +176,7 @@ export function get3PtArc(p1, p2, c, divisions = n) {
   //   deltaAngle = Math.PI*2 - deltaAngle
   // }
 
-  
+
   let points = new Float32Array((divisions + 1) * 3)
 
   for (let d = 0; d <= divisions; d++) {
@@ -115,7 +192,7 @@ export function getAngleArc(a1, a2, c, radius, divisions = n) {
 
 
   let deltaAngle = a2 - a1
-  
+
   let points = new Float32Array((divisions + 1) * 3)
 
   for (let d = 0; d <= divisions; d++) {

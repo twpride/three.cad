@@ -314,7 +314,6 @@ function updateDistance(linegeom, pointgeom, _p1, _p2, offset) {
     proj1 = dir.clone().multiplyScalar(hyp1.dot(dir))
 
     hyp2 = tagPos.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
-    console.log(hyp2, 'hereeeeee')
     proj2 = dir.clone().multiplyScalar(hyp2.dot(dir))
 
     p1eArr = tagPos.clone().sub(proj1).toArray()

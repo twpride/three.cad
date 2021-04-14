@@ -41,7 +41,7 @@ better default ent names
 
 
 reattach sketch
-3 pt arc
+3 pt arc // done
 
 auto snap
 constraint labels,tangent, equal

@@ -13,7 +13,7 @@
    version="1.1"
    id="svg2112"
    inkscape:version="1.0.2 (1.0.2+r75+1)"
-   sodipodi:docname="line_alt.svg">
+   sodipodi:docname="tangent.svg">
   <defs
      id="defs2106" />
   <sodipodi:namedview
@@ -23,17 +23,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="21.732946"
-     inkscape:cx="12.114256"
-     inkscape:cy="10.927332"
+     inkscape:zoom="45.254834"
+     inkscape:cx="7.7067495"
+     inkscape:cy="8.4442635"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
      showgrid="false"
      inkscape:window-width="1514"
      inkscape:window-height="964"
-     inkscape:window-x="963"
-     inkscape:window-y="314"
+     inkscape:window-x="578"
+     inkscape:window-y="307"
      inkscape:window-maximized="0"
      units="px"
      inkscape:snap-object-midpoints="true"
@@ -56,37 +56,15 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 2.75,11.75 1.5,-4.5 m 2.5,-0.5 2.5,2.5 m 2.5,-0.5 1.5,-4.5"
-       id="path1710"
-       sodipodi:nodetypes="cccccc" />
-    <rect
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect1542-6-5-6"
-       width="2"
-       height="2"
-       x="1"
-       y="13" />
-    <rect
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect1542-6-5-6-2"
-       width="2"
-       height="2"
-       x="4"
-       y="4" />
-    <rect
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect1542-6-5-6-9"
-       width="2"
-       height="2"
-       x="10"
-       y="10" />
-    <rect
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect1542-6-5-6-1"
-       width="2"
-       height="2"
-       x="13"
-       y="1" />
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 1.4973263,15.00401 15.343728,6.3184778"
+       id="path835"
+       sodipodi:nodetypes="cc" />
+    <circle
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path834"
+       cx="5.25"
+       cy="5.25"
+       r="4.5" />
   </g>
 </svg>

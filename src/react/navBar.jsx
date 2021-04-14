@@ -5,10 +5,10 @@ import React, { useEffect, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 
 import { FaCube, FaEdit } from 'react-icons/fa'
-import { BsBoxArrowUp} from 'react-icons/bs'
-import { MdDone, MdSave, MdFolder} from 'react-icons/md'
+import { BsBoxArrowUp } from 'react-icons/bs'
+import { MdDone, MdSave, MdFolder } from 'react-icons/md'
 import * as Icon from "./icons";
-
+import { setCoincident, setOrdinate, setTangent } from '../constraintEvents'
 
 
 export const NavBar = () => {
@@ -55,9 +55,10 @@ export const NavBar = () => {
     [Icon.Dimension, () => sc.activeSketch.drawDimension(), 'Dimension [d]'],
     [Icon.Line, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Line [l]'],
     [Icon.Arc, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],
-    [Icon.Coincident, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [space]'],
-    [Icon.Vertical, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [v]'],
-    [Icon.Horizontal, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [h]'],
+    [Icon.Coincident, () => setCoincident.call(sc.activeSketch), 'Coincident [c]'],
+    [Icon.Vertical, () => setOrdinate.call(sc.activeSketch, 0), 'Vertical [v]'],
+    [Icon.Horizontal, () => setOrdinate.call(sc.activeSketch, 1), 'Horizontal [h]'],
+    [Icon.Tangent, () => setTangent.call(sc.activeSketch), 'Tangent [t]'],
   ]
 
 
