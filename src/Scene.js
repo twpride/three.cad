@@ -194,8 +194,10 @@ export class Scene {
   }
 
   clearSelection() {
-    for (let x = 0; x < this.selected.length; x++) {
-      const obj = this.selected[x]
+    for (let x = 0, obj; x < this.selected.length; x++) {
+      obj = this.selected[x]
+      if (obj.userData.type == 'sketch') continue
+
       if (obj.userData.type == 'plane') {
         obj.material.opacity = 0.05
         obj.children[0].material.color.set(color['planeBorder'])
@@ -217,80 +219,8 @@ export class Scene {
       }
     }
 
-    this.obj3d.dispatchEvent({ type: 'change' })
   }
 
-
-  hover(obj) {
-
-    if (typeof obj == 'object' && !this.selected.includes(obj)) {
-
-      if (obj.userData.type == 'plane') {
-        obj.material.opacity = 0.02
-        obj.children[0].material.color.set(color['planeBorder'])
-      } else {
-        if (obj.userData.type == 'mesh') {
-          obj.material.emissive.set(color.emissive)
-        }
-        obj.material.color.set(color[obj.userData.type])
-      }
-
-    }
-
-
-    if (typeof obj == 'object' && !this.selected.includes(obj)) {
-
-      if (obj.userData.type == 'plane') {
-        obj.material.opacity = 0.02
-        obj.children[0].material.color.set(color['planeBorder'])
-      } else {
-        if (obj.userData.type == 'mesh') {
-          obj.material.emissive.set(color.emissive)
-        }
-        obj.material.color.set(color[obj.userData.type])
-      }
-
-    }
-
-
-    obj.material.color.set(color[obj.userData.type])
-
-    if (obj.userData.type == 'mesh') {
-      obj.material.emissive.set(color.emissive)
-    } else if (obj.userData.type == 'plane') {
-      obj.material.opacity = 0.02
-      obj.children[0].material.color.set(color['planeBorder'])
-    }
-
-    if (obj.userData.type == 'selpoint') {
-      obj.visible = false
-    }
-
-
-
-
-
-    if (typeof obj == 'object') {
-
-      if (obj.userData.type == 'plane') {
-        obj.material.opacity = 0.06
-        obj.children[0].material.color.set(hoverColor['planeBorder'])
-      } else {
-        if (obj.userData.type == 'mesh') {
-          obj.material.emissive.set(hoverColor.emissive)
-        }
-        obj.material.color.set(hoverColor[obj.userData.type])
-      }
-
-    }
-
-
-
-
-
-
-
-  }
 
   subtract(m1, m2, op) {
     let bspA = CSG.fromMesh(m1)
@@ -432,7 +362,6 @@ async function addSketch() {
 
 
   sketch.obj3d.addEventListener('change', this.render);
-  console.log('render')
   this.store.dispatch({ type: 'rx-sketch', obj: sketch })
 
   sketch.activate()

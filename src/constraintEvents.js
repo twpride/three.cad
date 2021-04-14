@@ -36,7 +36,7 @@ export async function setCoincident() {
   }
 
   this.selected = []
-  this.obj3d.dispatchEvent({ type: 'change' })
+  this.scene.render()
 }
 
 
@@ -67,7 +67,7 @@ export async function setOrdinate(dir = 0) {
   this.updateBoundingSpheres()
 
   this.selected = []
-  this.obj3d.dispatchEvent({ type: 'change' })
+  this.scene.render()
 }
 
 export async function setTangent() {
@@ -104,7 +104,7 @@ export async function setTangent() {
   this.updateBoundingSpheres()
 
   this.selected = []
-  this.obj3d.dispatchEvent({ type: 'change' })
+  this.scene.render()
 }
 
 

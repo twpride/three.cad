@@ -39,8 +39,8 @@ export function reducer(state = {}, action) {
     case 'set-active-sketch':
       return update(state, {
         treeEntries: {
-          visible: { [action.sketch]: { $set: true } },
-          activeSketchId: { $set: action.sketch },
+          visible: { [action.activeSketchId]: { $set: true } },
+          activeSketchId: { $set: action.activeSketchId },
         },
       })
     case 'exit-sketch':

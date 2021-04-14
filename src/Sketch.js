@@ -151,7 +151,7 @@ class Sketch {
     window.addEventListener('keydown', this.onKeyPress)
     this.canvas.addEventListener('pointerdown', this.onPick)
     this.canvas.addEventListener('pointermove', this.onHover)
-    this.store.dispatch({ type: 'set-active-sketch', sketch: this.obj3d.name })
+    this.store.dispatch({ type: 'set-active-sketch', activeSketchId: this.obj3d.name })
 
     this.setDimLines()
 
@@ -203,10 +203,14 @@ class Sketch {
 
 
   onKeyPress(e) {
-    switch (e.key) {
+    this.command(e.key)
+  }
+
+  command(key) {
+
+    switch (key) {
       case 'Escape':
         drawClear.call(this)
-        this.mode = ""
         document.activeElement.blur()
         break;
       case 'l':
@@ -214,56 +218,41 @@ class Sketch {
           drawClear.call(this)
         }
         this.mode = "line"
-        this.canvas.addEventListener('pointerdown', this.drawOnClick1, {once:true})
+        this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
         break;
       case 'a':
         this.mode = "arc"
-        this.canvas.addEventListener('pointerdown', this.drawOnClick1, {once:true})
-        break;
-      case 'd':
-        if (this.mode != '') {
-          drawClear.call(this)
-        }
-        this.mode = ""
-        this.drawDimension()
+        this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
         break;
       case 'p':
         this.mode = "point"
-        this.canvas.addEventListener('pointerdown', this.drawOnClick1, {once:true})
+        this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
+        break;
+      case 'd':
+        drawClear.call(this)
+        this.drawDimension()
+        break;
+      case 'c':
+        drawClear.call(this)
+        setCoincident.call(this)
+        break;
+      case 'v':
+        drawClear.call(this)
+        setOrdinate.call(this, 0)
+        break;
+      case 'h':
+        drawClear.call(this)
+        setOrdinate.call(this, 1)
+        break;
+      case 't':
+        drawClear.call(this)
+        setTangent.call(this)
         break;
       case 'Delete':
         this.deleteSelected()
         break;
       case 'Backspace':
         this.deleteSelected()
-        break;
-      case 'c':
-        if (this.mode != '') {
-          drawClear.call(this)
-        }
-        setCoincident.call(this)
-        this.mode = ""
-        break;
-      case 'v':
-        if (this.mode != '') {
-          drawClear.call(this)
-        }
-        setOrdinate.call(this, 0)
-        this.mode = ""
-        break;
-      case 'h':
-        if (this.mode != '') {
-          drawClear.call(this)
-        }
-        setOrdinate.call(this, 1)
-        this.mode = ""
-        break;
-      case 't':
-        if (this.mode != '') {
-          drawClear.call(this)
-        }
-        setTangent.call(this)
-        this.mode = ""
         break;
       case 'z':
         var string = JSON.stringify(this.toJSON());
@@ -298,7 +287,7 @@ class Sketch {
     this.updateOtherBuffers()
 
     this.selected = []
-    this.obj3d.dispatchEvent({ type: 'change' })
+    this.scene.render()
   }
 
   delete(obj) {

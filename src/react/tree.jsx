@@ -29,8 +29,6 @@ const TreeEntry = ({ entId }) => {
   const treeEntries = useSelector(state => state.treeEntries.byId)
   const dispatch = useDispatch()
 
-  const activeSketchId = useSelector(state => state.treeEntries.activeSketchId)
-  // const activeSketchId = treeEntries.activeSketchId
 
   const visible = useSelector(state => state.treeEntries.visible[entId])
 
@@ -52,7 +50,7 @@ const TreeEntry = ({ entId }) => {
 
     onDoubleClick={() => {
       if (obj3d.userData.type == 'sketch') {
-        activeSketchId && treeEntries[activeSketchId].deactivate()
+        sc.activeSketch && sc.activeSketch.deactivate()
         sketch.activate()
         sc.clearSelection()
         sc.activeSketch = sketch;
@@ -66,17 +64,17 @@ const TreeEntry = ({ entId }) => {
     }}
     onPointerLeave={() => {
       if (visible & obj3d.userData.type == 'sketch') return
-      if (sc.selected.includes(obj3d) || activeSketchId == obj3d.name) return
+      if (sc.selected.includes(obj3d) || sc.activeSketch && sc.activeSketch.name == obj3d.name) return
       sc.setHover(obj3d, 0)
       sc.render()
     }}
     onClick={() => {
-      if (obj3d.userData.type == 'mesh') {
+      // if (obj3d.userData.type == 'mesh') {
         sc.selected.push(
           obj3d
         )
         sc.render()
-      }
+      // }
     }}
   >
     <Icon className='h-full w-auto p-1.5' />

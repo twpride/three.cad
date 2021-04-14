@@ -127,19 +127,20 @@ export function drawClear() {
   if (this.mode == "") return
 
   if (['line', 'arc'].includes(this.mode)) {
-    this.canvas.removeEventListener('pointerdown', this.drawOnClick1)
-    this.canvas.removeEventListener('pointermove', this.drawPreClick2);
-    this.canvas.removeEventListener('pointerdown', this.drawOnClick2);
-    this.canvas.removeEventListener('pointermove', this.drawPreClick3);
-    this.canvas.removeEventListener('pointerdown', this.drawOnClick3);
-
     this.delete(this.obj3d.children[this.updatePoint])
-
-    this.obj3d.dispatchEvent({ type: 'change' })
-    this.subsequent = false
-    this.toPush = []
   }
-  
+
+  this.canvas.removeEventListener('pointerdown', this.drawOnClick1)
+  this.canvas.removeEventListener('pointermove', this.drawPreClick2);
+  this.canvas.removeEventListener('pointerdown', this.drawOnClick2);
+  this.canvas.removeEventListener('pointermove', this.drawPreClick3);
+  this.canvas.removeEventListener('pointerdown', this.drawOnClick3);
+
+  this.scene.render()
+  this.subsequent = false
+  this.toPush = []
+
+  this.mode = ""
 }
 
 

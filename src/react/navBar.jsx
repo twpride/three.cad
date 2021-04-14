@@ -8,12 +8,11 @@ import { FaCube, FaEdit } from 'react-icons/fa'
 import { BsBoxArrowUp } from 'react-icons/bs'
 import { MdDone, MdSave, MdFolder } from 'react-icons/md'
 import * as Icon from "./icons";
-import { setCoincident, setOrdinate, setTangent } from '../constraintEvents'
 
 
 export const NavBar = () => {
   const dispatch = useDispatch()
-  const treeEntries = useSelector(state => state.treeEntries)
+  const treeEntriesById = useSelector(state => state.treeEntries.byId)
   const activeSketchId = useSelector(state => state.treeEntries.activeSketchId)
 
 
@@ -26,8 +25,14 @@ export const NavBar = () => {
     forceUpdate()
   }
   const extrude = () => {
-    console.log(treeEntries.tree[activeSketchId])
-    sc.extrude(treeEntries.byId[activeSketchId])
+    // sc.extrude(treeEntriesById[activeSketchId])
+    sc.extrude(sc.activeSketch)
+  }
+
+  const addSketch = () => {
+    sc.addSketch()
+    console.log(!!sc.activeSketch,'state')
+    forceUpdate()
   }
 
   useEffect(() => {
@@ -41,29 +46,33 @@ export const NavBar = () => {
     }
   }, [activeSketchId])
 
+  useEffect(() => {
+    console.log(treeEntriesById)
+  }, [treeEntriesById])
+
 
   const btnz = [
     [MdDone, () => {
-      treeEntries.byId[activeSketchId].deactivate()
+      // treeEntriesById[activeSketchId].deactivate()
       // dispatch({ type: 'update-descendents', sketch})
-      sc.activeSketch = null
+      sc.activeSketch.deactivate()
       sc.render()
       forceUpdate()
       // sc.activeDim = this.activeSketch.obj3d.children[1].children
     }, 'Finish'],
     [Icon.Extrude, extrude, 'Extrude [e]'],
-    [Icon.Dimension, () => sc.activeSketch.drawDimension(), 'Dimension [d]'],
-    [Icon.Line, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Line [l]'],
-    [Icon.Arc, () => sc.extrude(treeEntries.byId[activeSketchId]), 'Arc [a]'],
-    [Icon.Coincident, () => setCoincident.call(sc.activeSketch), 'Coincident [c]'],
-    [Icon.Vertical, () => setOrdinate.call(sc.activeSketch, 0), 'Vertical [v]'],
-    [Icon.Horizontal, () => setOrdinate.call(sc.activeSketch, 1), 'Horizontal [h]'],
-    [Icon.Tangent, () => setTangent.call(sc.activeSketch), 'Tangent [t]'],
+    [Icon.Dimension, () => sc.activeSketch.command('d'), 'Dimension [d]'],
+    [Icon.Line, () => sc.activeSketch.command('l'), 'Line [l]'],
+    [Icon.Arc, () => sc.activeSketch.command('a'), 'Arc [a]'],
+    [Icon.Coincident, () => sc.activeSketch.command('c'), 'Coincident [c]'],
+    [Icon.Vertical, () => sc.activeSketch.command('v'), 'Vertical [v]'],
+    [Icon.Horizontal, () => sc.activeSketch.command('h'), 'Horizontal [h]'],
+    [Icon.Tangent, () => sc.activeSketch.command('t'), 'Tangent [t]'],
   ]
 
 
   const btnz2 = [
-    [FaEdit, sc.addSketch, 'Sketch [s]']
+    [FaEdit, addSketch, 'Sketch [s]']
     ,
     [Icon.Extrude, extrude, 'Extrude [e]'],
     [Icon.Union, () => boolOp('u'), 'Union'],
@@ -78,7 +87,7 @@ export const NavBar = () => {
 
   return <div className='topNav flex justify-center items-center bg-gray-700'>
     {
-      activeSketchId ?
+      activeSketchId?
         btnz.map(([Icon, fcn, txt, shortcut], idx) => (
           <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
             onClick={fcn} key={idx}
