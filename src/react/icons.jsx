@@ -250,6 +250,24 @@ function Extrude_master(props) {
   );
 }
 
+function Flip(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 16 16"
+      {...props}
+    >
+      <path d="M14.87.102L4.968 4.346l2.129 2.127-6.952 6.994 1.418 1.408 6.948-6.988 2.115 2.115 4.242-9.9z" />
+      <path
+        d="M15.281 8.387l-3.999 4-.96-.961-1.96 4.573 4.574-1.96-.96-.96 3.998-4z"
+        fillOpacity={0.7}
+      />
+    </svg>
+  );
+}
+
 function Horizontal(props) {
   return (
     <svg
@@ -584,4 +602,4 @@ function Vertical(props) {
     </svg>
   );
 }
-export { Arc, Coincident, Dimension, Extrude, Extrude_master, Horizontal, Intersect, Intersect_thin, Line, Stl, Subtract, Tangent, Union, Union_thin, Vertical };
+export { Arc, Coincident, Dimension, Extrude, Extrude_master, Flip, Horizontal, Intersect, Intersect_thin, Line, Stl, Subtract, Tangent, Union, Union_thin, Vertical };

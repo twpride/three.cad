@@ -114,8 +114,8 @@ export function onHover(e) {
 
 let draggedLabel;
 export function onPick(e) {
-  console.log(e)
   if (this.mode || e.buttons != 1) return
+  // if (this.mode || e.buttons != 1 || e.ctrlKey || e.metaKey) return
 
   if (this.hovered.length) {
     let obj = this.hovered[this.hovered.length - 1]

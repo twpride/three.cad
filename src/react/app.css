@@ -36,6 +36,12 @@ body {
   width: var(--sideNavW);
 }
 
+.dialog {
+  position: absolute;
+  top: var(--topNavH);
+  left: var(--sideNavW);
+}
+
 
 #labels > div {
   position: absolute;

@@ -10,7 +10,7 @@ import { MdDone, MdSave, MdFolder } from 'react-icons/md'
 import * as Icon from "./icons";
 
 
-export const NavBar = () => {
+export const NavBar = ({setDialog}) => {
   const dispatch = useDispatch()
   const treeEntriesById = useSelector(state => state.treeEntries.byId)
   const activeSketchId = useSelector(state => state.treeEntries.activeSketchId)
@@ -25,13 +25,19 @@ export const NavBar = () => {
     forceUpdate()
   }
   const extrude = () => {
-    // sc.extrude(treeEntriesById[activeSketchId])
-    sc.extrude(sc.activeSketch)
+    setDialog('dd')
+    // if (sc.activeSketch) {
+    //   sc.extrude(sc.activeSketch)
+    // } else if (sc.selected.length === 1 && sc.selected[0].userData.type == 'sketch') {
+    //   sc.extrude(treeEntriesById[sc.selected[0].name])
+    // } else {
+    //   console.log('invalid selection')
+    // }
   }
 
   const addSketch = () => {
     sc.addSketch()
-    console.log(!!sc.activeSketch,'state')
+    console.log(!!sc.activeSketch, 'state')
     forceUpdate()
   }
 
@@ -46,9 +52,9 @@ export const NavBar = () => {
     }
   }, [activeSketchId])
 
-  useEffect(() => {
-    console.log(treeEntriesById)
-  }, [treeEntriesById])
+  // useEffect(() => {
+  //   console.log(treeEntriesById)
+  // }, [treeEntriesById])
 
 
   const btnz = [
@@ -87,7 +93,7 @@ export const NavBar = () => {
 
   return <div className='topNav flex justify-center items-center bg-gray-700'>
     {
-      activeSketchId?
+      activeSketchId ?
         btnz.map(([Icon, fcn, txt, shortcut], idx) => (
           <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
             onClick={fcn} key={idx}

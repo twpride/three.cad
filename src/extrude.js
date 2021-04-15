@@ -1,6 +1,7 @@
 import * as THREE from '../node_modules/three/src/Three';
 import { color} from './shared'
-export function extrude(sketch) {
+export function extrude(sketch, depth) {
+  console.log(sketch,'here')
 
   let constraints = sketch.constraints;
   let linkedObjs = sketch.linkedObjs;
@@ -67,7 +68,7 @@ export function extrude(sketch) {
   findPair(children[4]) //??? need fixing
 
   const shape = new THREE.Shape(v2s);
-  const extrudeSettings = { depth: 8, bevelEnabled: false };
+  const extrudeSettings = { depth, bevelEnabled: false };
 
 
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
@@ -100,6 +101,7 @@ export function extrude(sketch) {
     sketch.deactivate()
   }
 
+  // this.clearSelection()
   this.render()
 }
 
