@@ -7,8 +7,8 @@ import { Sketch } from './Sketch'
 import Stats from '../lib/stats.module.js';
 
 import { extrude } from './extrude'
-import { onHover, onPick, setHover } from './mouseEvents';
-import { _vec2, _vec3, color, awaitSelection, ptObj } from './shared'
+import { onHover, onPick } from './mouseEvents';
+import { _vec2, _vec3, color, awaitSelection, ptObj, setHover } from './shared'
 
 import { AxesHelper } from './axes'
 
@@ -70,9 +70,9 @@ export class Scene {
       freePt.visible = false
       freePt.depthTest = false
       freePt.userData.type = 'selpoint'
-
       helpersGroup.add(freePt);
     }
+    this.selpoints = this.obj3d.children[0].children
     this.fptIdx = 0;
     this.fptObj = {}
 
@@ -196,27 +196,20 @@ export class Scene {
   clearSelection() {
     for (let x = 0, obj; x < this.selected.length; x++) {
       obj = this.selected[x]
-      if (obj.userData.type == 'sketch') continue
-
-      if (obj.userData.type == 'plane') {
-        obj.material.opacity = 0.05
-        obj.children[0].material.color.set(color['planeBorder'])
+      if (obj.userData.type == 'selpoint') {
+        obj.visible = false
       } else {
-        obj.material.color.set(color[obj.userData.type])
+        setHover(obj, 0)
       }
-      if (obj.userData.type == 'selpoint') obj.visible = false
     }
     this.selected = []
 
     for (let x = 0; x < this.hovered.length; x++) {
+
       const obj = this.hovered[x]
-      obj.material.color.set(color[obj.userData.type])
-      if (obj.userData.type == 'plane') {
-        obj.material.opacity = 0.05
-        obj.children[0].material.color.set(color['planeBorder'])
-      } else {
-        obj.material.color.set(color[obj.userData.type])
-      }
+      setHover(obj, 0)
+
+
     }
 
   }
@@ -370,7 +363,7 @@ async function addSketch() {
 }
 
 window.sc = new Scene(store)
-// sc.loadState()
+sc.loadState()
 
 // sc.camera.layers.enable(1)
 // rc.layers.set(1)

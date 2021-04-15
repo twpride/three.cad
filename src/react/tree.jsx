@@ -54,6 +54,7 @@ const TreeEntry = ({ entId }) => {
         sketch.activate()
         sc.clearSelection()
         sc.activeSketch = sketch;
+        sc.render()
       }
 
     }}
@@ -63,18 +64,32 @@ const TreeEntry = ({ entId }) => {
       sc.render()
     }}
     onPointerLeave={() => {
-      if (visible & obj3d.userData.type == 'sketch') return
+      // if (visible & obj3d.userData.type == 'sketch') return
       if (sc.selected.includes(obj3d) || sc.activeSketch && sc.activeSketch.name == obj3d.name) return
       sc.setHover(obj3d, 0)
       sc.render()
     }}
     onClick={() => {
       // if (obj3d.userData.type == 'mesh') {
+      // console.log(obj3d, sc.selected)
+      const idx = sc.selected.indexOf(obj3d)
+
+      if (idx == -1) {
         sc.selected.push(
           obj3d
         )
-        sc.render()
+        sc.setHover(obj3d, 1)
+      } else {
+        sc.setHover(sc.selected[idx], 0)
+        sc.selected.splice(idx, 1)
+      }
+
+      // sc.selected.push(
+      //   obj3d
+      // )
+
       // }
+      sc.render()
     }}
   >
     <Icon className='h-full w-auto p-1.5' />
@@ -97,7 +112,7 @@ const TreeEntry = ({ entId }) => {
             onClick={(e) => {
               e.stopPropagation()
               console.log('hide')
-              dispatch({ type: "set-entry-visibility", obj: {[entId]:false} })
+              dispatch({ type: "set-entry-visibility", obj: { [entId]: false } })
               obj3d.visible = false;
               if (obj3d.userData.type == 'mesh') {
                 obj3d.traverse((e) => e.layers.disable(1))
@@ -113,7 +128,7 @@ const TreeEntry = ({ entId }) => {
               e.stopPropagation()
               console.log('show')
               obj3d.visible = true;
-              dispatch({ type: "set-entry-visibility", obj: {[entId]:true} })
+              dispatch({ type: "set-entry-visibility", obj: { [entId]: true } })
               if (obj3d.userData.type == 'mesh') {
                 obj3d.traverse((e) => {
                   e.layers.enable(1)

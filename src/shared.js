@@ -17,14 +17,14 @@ const color = {
   emissive: 0x072534,
   meshTempHover: 0x9DCFED,
 
-  point: 0xffffff, 
-  selpoint: 0xff0000, 
-  line: 0xffffff, 
-  mesh: 0x9DCFED, 
-  dimension: 0x0000ff, 
+  point: 0xffffff,
+  selpoint: 0xff0000,
+  line: 0xffffff,
+  mesh: 0x9DCFED,
+  dimension: 0x0000ff,
 
-  plane: 0xffff00, 
-  planeBorder: 0x2e2e00, 
+  plane: 0xffff00,
+  planeBorder: 0x2e2e00,
   opacity: 0.02
 }
 
@@ -32,11 +32,11 @@ const hoverColor = {
   emissive: 0x343407,
   point: 0x00ff00,
   selpoint: 0xff0000,
-  line: 0x00ff00, 
-  mesh: 0xFAB601, 
-  dimension: 0x00ff00, 
+  line: 0x00ff00,
+  mesh: 0xFAB601,
+  dimension: 0x00ff00,
 
-  plane: 0xffff00, 
+  plane: 0xffff00,
   planeBorder: 0x919100,
   opacity: 0.06
 }
@@ -148,7 +148,38 @@ async function awaitSelection(...criteria) {
   return null
 }
 
+
+function setHover(obj, state, meshHover = true) {
+  let colObj = state == 1 ? hoverColor : color
+
+  switch (obj.userData.type) {
+    case 'plane':
+      obj.material.opacity = colObj.opacity
+      obj.children[0].material.color.set(colObj['planeBorder'])
+      break;
+    case 'sketch':
+      obj.traverse(ele => {
+        if (ele.userData.type == 'line') {
+          ele.material.color.set(colObj['line'])
+        }
+      })
+      break;
+    case 'mesh':
+      if (meshHover) {
+        obj.material.emissive.set(colObj.emissive)
+      } else {
+        break
+      }
+    default:
+      obj.material.color.set(colObj[obj.userData.type])
+      break;
+  }
+
+}
+
+
+
 window.rc = raycaster
 
 
-export { lineMaterial, pointMaterial, _vec2, _vec3, raycaster, color, hoverColor, ptObj, lineObj, awaitSelection }
+export { lineMaterial, pointMaterial, _vec2, _vec3, raycaster, color, hoverColor, ptObj, lineObj, awaitSelection, setHover }

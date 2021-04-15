@@ -1,5 +1,5 @@
 import * as THREE from '../node_modules/three/src/Three';
-import { raycaster, color, hoverColor } from './shared';
+import { raycaster, setHover } from './shared';
 import { onDimMoveEnd } from './drawDimension'
 
 let ptLoc
@@ -18,7 +18,7 @@ export function onHover(e) {
   let hoverPts;
 
   if (this.obj3d.userData.type != 'sketch') {
-    this.obj3d.children[0].children[0].visible = false // hide selpoint[0] before each redraw
+    this.selpoints[0].visible = false // hide selpoint[0] before each redraw
     raycaster.layers.set(1)
     hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
   } else {
@@ -75,12 +75,10 @@ export function onHover(e) {
               3 * hoverPts[idx[x]].index,
               3 * hoverPts[idx[x]].index + 3
             )
-          // const pp = this.obj3d.children[0].children[this.fptIdx % 3]
-          const pp = this.obj3d.children[0].children[0]
-          pp.geometry.attributes.position.array.set(ptLoc)
-          pp.matrix = obj.parent.matrix
-          pp.geometry.attributes.position.needsUpdate = true
-          pp.visible = true
+          this.selpoints[0].geometry.attributes.position.array.set(ptLoc)
+          this.selpoints[0].matrix = obj.parent.matrix
+          this.selpoints[0].geometry.attributes.position.needsUpdate = true
+          this.selpoints[0].visible = true
 
           obj = hoverPts[idx[x]].index
         }
@@ -120,30 +118,49 @@ export function onPick(e) {
 
   if (this.hovered.length) {
     let obj = this.hovered[this.hovered.length - 1]
+    // if (sc.selected.includes(obj3d)) continue
+
+    if (typeof obj != 'object') {
+
+      const pp = this.selpoints[this.fptIdx % 3 + 1]
+      const p0 = this.selpoints[0]
+
+      pp.geometry.attributes.position.array.set(p0.geometry.attributes.position.array)
+      pp.matrix = p0.matrix
+      pp.geometry.attributes.position.needsUpdate = true
+      pp.visible = true
+
+      obj = pp
+      this.fptIdx++
 
 
-    if (this.obj3d.userData.type == 'sketch') {
-      this.selected.push(obj)
-    } else {
-      if (typeof obj == 'object') {
-
-        setHover(obj, 1)
-
+      const idx = this.selected.indexOf(obj)
+      if (idx == -1) {
+        this.selected.push(
+          obj
+        )
       } else {
-        const pp = this.obj3d.children[0].children[this.fptIdx % 3 + 1]
-        const p0 = this.obj3d.children[0].children[0]
-
-        pp.geometry.attributes.position.array.set(p0.geometry.attributes.position.array)
-        pp.matrix = p0.matrix
-        pp.geometry.attributes.position.needsUpdate = true
-        pp.visible = true
-
-        obj = pp
-        this.fptObj[obj] = this.fptIdx
-        this.fptIdx++
+        this.selected.splice(idx, 1, obj)
       }
-      this.obj3d.dispatchEvent({ type: 'change' })
-      this.selected.push(obj)
+
+    } else {
+
+      const idx = this.selected.indexOf(obj)
+      if (idx == -1) {
+        this.selected.push(
+          obj
+        )
+        this.setHover(obj, 1)
+      } else {
+        this.setHover(this.selected[idx], 0)
+        this.selected.splice(idx, 1)
+      }
+    }
+
+
+    this.obj3d.dispatchEvent({ type: 'change' })
+
+    if (this.obj3d.userData.type != 'sketch') {
       return;
     }
 
@@ -157,7 +174,6 @@ export function onPick(e) {
           )
           this.canvas.addEventListener('pointermove', this.onDragDim);
           this.canvas.addEventListener('pointerup', () => {
-            console.log('heree')
             onDimMoveEnd(this.obj3d.children[1].children[idx])
             this.onRelease()
           })
@@ -215,47 +231,7 @@ export function onDrag(e) {
 }
 
 
-export function setHover(obj, state, meshHover = true) {
-  let colObj, visible
-  if (state == 1) {
-    colObj = hoverColor
-    visible = true
-  } else {
-    colObj = color
-    visible = false
-  }
 
-  switch (obj.userData.type) {
-    case 'plane':
-      obj.material.opacity = colObj.opacity
-      obj.children[0].material.color.set(colObj['planeBorder'])
-      break;
-    case 'sketch':
-      obj.visible = visible
-      break;
-    case 'mesh':
-      if (meshHover) {
-        obj.material.emissive.set(colObj.emissive)
-      } else {
-        break
-      }
-    default:
-      obj.material.color.set(colObj[obj.userData.type])
-      break;
-  }
-
-
-  // if (obj.userData.type == 'plane') {
-  //   obj.material.opacity = colObj.opacity
-  //   obj.children[0].material.color.set(colObj['planeBorder'])
-  // } else if (obj.userData.type != 'mesh') {
-  //   obj.material.color.set(colObj[obj.userData.type])
-  // } else if (meshHover) {
-  //   obj.material.emissive.set(colObj.emissive)
-  //   obj.material.color.set(colObj[obj.userData.type])
-  // }
-
-}
 
 export function onRelease() {
   this.canvas.removeEventListener('pointermove', this.onDrag)
