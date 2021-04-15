@@ -29,11 +29,9 @@ const TreeEntry = ({ entId }) => {
   const treeEntries = useSelector(state => state.treeEntries.byId)
   const dispatch = useDispatch()
 
-
   const visible = useSelector(state => state.treeEntries.visible[entId])
 
   let obj3d, sketch;
-
 
   if (treeEntries[entId].obj3d) {
     obj3d = treeEntries[entId].obj3d
@@ -44,10 +42,9 @@ const TreeEntry = ({ entId }) => {
   let Icon = treeIcons[obj3d.userData.type]
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
-
+  const [mouseOn, setMouseOn] = useState(false)
 
   return <div className='btn select-none flex justify-start w-full h-7 items-center text-sm'
-
     onDoubleClick={() => {
       if (obj3d.userData.type == 'sketch') {
         sc.activeSketch && sc.activeSketch.deactivate()
@@ -60,35 +57,43 @@ const TreeEntry = ({ entId }) => {
     }}
 
     onPointerEnter={() => {
+      if (mouseOn) return
+      setMouseOn(true)
+
+      if (obj3d.userData.type == 'sketch') {
+        obj3d.visible = true
+      }
+
       sc.setHover(obj3d, 1)
       sc.render()
     }}
     onPointerLeave={() => {
-      // if (visible & obj3d.userData.type == 'sketch') return
-      if (sc.selected.includes(obj3d) || sc.activeSketch && sc.activeSketch.name == obj3d.name) return
+      if (!mouseOn) return
+      setMouseOn(false)
+
+      if (obj3d.userData.type == 'sketch'
+        && !sc.selected.includes(obj3d)
+        && !visible
+      ) {
+        obj3d.visible = false
+      }
+
+      if (sc.selected.includes(obj3d)) return
+
       sc.setHover(obj3d, 0)
+
       sc.render()
     }}
     onClick={() => {
-      // if (obj3d.userData.type == 'mesh') {
-      // console.log(obj3d, sc.selected)
       const idx = sc.selected.indexOf(obj3d)
 
       if (idx == -1) {
-        sc.selected.push(
-          obj3d
-        )
+        sc.selected.push(obj3d)
         sc.setHover(obj3d, 1)
       } else {
         sc.setHover(sc.selected[idx], 0)
         sc.selected.splice(idx, 1)
       }
-
-      // sc.selected.push(
-      //   obj3d
-      // )
-
-      // }
       sc.render()
     }}
   >

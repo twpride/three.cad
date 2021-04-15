@@ -215,7 +215,7 @@ export class Scene {
   }
 
 
-  subtract(m1, m2, op) {
+  boolOp(m1, m2, op) {
     let bspA = CSG.fromMesh(m1)
     let bspB = CSG.fromMesh(m2)
     m1.visible = false
@@ -223,7 +223,6 @@ export class Scene {
     m1.traverse(e => e.layers.disable(1))
     m2.traverse(e => e.layers.disable(1))
 
-    // // Subtract one bsp from the other via .subtract... other supported modes are .union and .intersect
 
     let bspResult, opChar;
     switch (op) {
@@ -243,23 +242,17 @@ export class Scene {
         break;
     }
 
-    // //Get the resulting mesh from the result bsp, and assign meshA.material to the resulting mesh
-
     let mesh = CSG.toMesh(bspResult, m1.matrix, m1.material)
     mesh.userData.type = 'mesh'
 
     mesh.name = `(${m1.name}${opChar}${m2.name})`
     mesh.layers.enable(1)
 
-
-
     const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial({ size: 0 }));
     vertices.userData.type = 'point'
     vertices.layers.enable(1)
 
-    // mesh.add(line)
     mesh.add(vertices)
-
 
     sc.obj3d.add(mesh)
 
@@ -313,17 +306,8 @@ function render() {
   }
 
 
-
-
-
-
-
-
   this.stats.end();
 }
-
-
-
 
 
 async function addSketch() {

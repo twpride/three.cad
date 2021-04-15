@@ -114,6 +114,7 @@ export function onHover(e) {
 
 let draggedLabel;
 export function onPick(e) {
+  console.log(e)
   if (this.mode || e.buttons != 1) return
 
   if (this.hovered.length) {
@@ -151,9 +152,13 @@ export function onPick(e) {
           obj
         )
         this.setHover(obj, 1)
+
       } else {
+        
         this.setHover(this.selected[idx], 0)
+
         this.selected.splice(idx, 1)
+
       }
     }
 
@@ -204,6 +209,13 @@ export function onPick(e) {
       if (obj.userData.type == 'selpoint') {
         obj.visible = false
       }
+
+      // dont think this would have been possible without redux
+      if (obj.userData.type == 'sketch' && !sc.store.getState().treeEntries.visible[obj.name]) {
+        obj.visible = false
+      }
+
+
     }
     this.obj3d.dispatchEvent({ type: 'change' })
     this.selected = []

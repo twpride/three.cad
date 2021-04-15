@@ -23,12 +23,16 @@ horizontal // done
 constraint angle // done
 
 button panel cleanup // done
+3 pt arc // done
+tangent // done to the best of my ability
 
 
 -unable to delete arc
 hover not clearing sometimes
 dim tags are not clearing
 should unselect after boolean
+
+
 
 auto update extrude
 extrude dialogue 
@@ -37,13 +41,28 @@ file save, stl export
 
 
 
+
 better default ent names
 
-
 reattach sketch
-3 pt arc // done
 
 auto snap
-constraint labels,tangent, equal
+constraint labels,equal
 parallel
 tree ent renaming
+
+
+
+
+set pieces
+
+hover state for sketch
+await selection
+3 point arc implementation
+
+
+
+
+
+
+

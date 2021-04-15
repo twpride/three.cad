@@ -19,7 +19,7 @@ export const NavBar = () => {
   const boolOp = (code) => {
     if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
     const [m1, m2] = sc.selected
-    const mesh = sc.subtract(m1, m2, code)
+    const mesh = sc.boolOp(m1, m2, code)
     dispatch({ type: 'rx-boolean', mesh, deps: [m1.name, m2.name] })
     sc.render()
     forceUpdate()
