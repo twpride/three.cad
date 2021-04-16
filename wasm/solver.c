@@ -105,16 +105,16 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
     l_ptr += 4;
   }
 
-  int c_id = 1;
+  int c_pre = 1;
   sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
-      c_id++, 2,
+      c_pre++, 2,
       SLVS_C_POINTS_COINCIDENT,
       200,
       -1,
       101, geomStartIdx, -1, -1);
-      
-  // it's 2 + nConst because c_id at this point is 2
-  for (; c_id < 2 + nConst; c_id++, c_ptr += 6)
+
+
+  for (int c_id=c_pre; c_id < c_pre + nConst; c_id++, c_ptr += 6)
   {
     sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
         c_id, g,

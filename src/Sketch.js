@@ -313,9 +313,10 @@ class Sketch {
       obj.geometry.dispose()
       obj.material.dispose()
 
-      for (let c_id of obj.userData.constraints) {
+      for (let c_id of obj.userData.constraints.slice()) { // i hate js
         this.deleteConstraints(c_id)
       }
+      obj.userData.constraints = []
     }
 
     this.obj3d.children.splice(i, link.length)
@@ -336,10 +337,11 @@ class Sketch {
     }
     this.constraints.delete(c_id)
 
-    for (let i = 0; i < this.obj3d.children[1].children.length; i++) {
-      if (this.obj3d.children[1].children[i].name == c_id) {
-        this.obj3d.children[1].children.splice(i, i + 2).forEach(
+    for (let i = 0; i < this.dimGroup.children.length; i++) {
+      if (this.dimGroup.children[i].name == c_id) {
+        this.dimGroup.children.splice(i, i + 2).forEach(
           e => {
+            if (e.label) e.label.remove()
             e.geometry.dispose()
             e.material.dispose()
           }
