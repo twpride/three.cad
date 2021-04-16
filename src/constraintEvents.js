@@ -1,8 +1,15 @@
 import { color } from './shared'
 
-export async function setCoincident() {
-  let selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 })
-  if (selection == null) return;
+export async function setCoincident(sel) {
+  let selection
+  if (sel === undefined) {
+    selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 })
+    if (selection == null) return;
+  } else {
+    selection = sel
+  }
+
+
   if (selection.every(e => e.userData.type == 'point')) {
     this.constraints.set(++this.c_id,
       [

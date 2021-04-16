@@ -2,9 +2,11 @@
 
 import React, { useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { MdVisibilityOff, MdVisibility, MdDelete } from 'react-icons/md'
+import { MdVisibilityOff, MdVisibility, MdDelete, MdRefresh } from 'react-icons/md'
 
 import { FaCube, FaEdit } from 'react-icons/fa'
+
+import { DepTree } from './depTree.mjs'
 
 export const Tree = () => {
   const treeEntries = useSelector(state => state.treeEntries)
@@ -26,6 +28,7 @@ const treeIcons = {
 
 const TreeEntry = ({ entId }) => {
 
+  const state = useSelector(state => state.treeEntries)
   const treeEntries = useSelector(state => state.treeEntries.byId)
   const dispatch = useDispatch()
 
@@ -108,6 +111,14 @@ const TreeEntry = ({ entId }) => {
           dispatch({ type: 'delete-node', id: entId })
           sc.render()
           e.stopPropagation()
+        }}
+      />
+      <MdRefresh className='btn-green h-full w-auto p-1.5'
+        onClick={(e) => {
+          e.stopPropagation()
+
+          sc.refreshNode(entId)
+          sc.render()
         }}
       />
 

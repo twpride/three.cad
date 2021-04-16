@@ -22,21 +22,28 @@ export const Dialog = ({ dialog, setDialog }) => {
   }, [])
 
   const extrude = () => {
+    let sketch
     if (sc.activeSketch) {
-      sc.extrude(sc.activeSketch, ref.current.value)
-      setDialog(null)
+      sketch = sc.activeSketch 
     } else if (sc.selected.length === 1 && sc.selected[0].userData.type == 'sketch') {
-      sc.extrude(treeEntriesById[sc.selected[0].name], ref.current.value)
-      setDialog(null)
+      sketch = treeEntriesById[sc.selected[0].name] 
     } else {
       console.log('invalid selection')
+      return
     }
+
+    setDialog(null)
+    sc.extrude(sketch, ref.current.value)
+
+    sc.render()
+    forceUpdate()    
   }
 
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
   return <div className='dialog w-40 h-10 flex items-center bg-gray-700'>
+  {/* return <div className='w-40 h-full flex items-center bg-gray-700'> */}
     <input className='w-1/2' type="number" {...useNumField(1)} step="0.1" ref={ref} />
     <Icon.Flip className="btn w-auto h-full p-2"
       onClick={() => ref.current.value *= -1}

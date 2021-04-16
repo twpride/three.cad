@@ -1,20 +1,15 @@
+
 export class DepTree {
   constructor(obj) {
-    if (obj) {
-      this.order = { ...obj.order }
-      this.byId = { ...obj.byId }
-      this.allIds = [...obj.allIds]
+    this.order = { ...obj.order }
+    this.byId = { ...obj.byId }
+    this.allIds = [...obj.allIds]
 
-      this.tree = {}
-      for (let k in obj.tree) {
-        this.tree[k] = { ...obj.tree[k] }
-      }
-
-    } else {
-      this.tree = {}
-      this.order = {}
-      this.allIds = []
+    this.tree = {}
+    for (let k in obj.tree) {
+      this.tree[k] = { ...obj.tree[k] }
     }
+
   }
 
   addParent(id) {
@@ -71,7 +66,7 @@ export class DepTree {
 
       const deletedObj = sc.obj3d.children.splice(spliceIdx + 1, 1)[0] // first 1 elements are non geom
 
-      deletedObj.traverse((obj)=>{
+      deletedObj.traverse((obj) => {
         if (obj.geometry) obj.geometry.dispose()
         if (obj.material) obj.material.dispose()
       })
@@ -95,6 +90,9 @@ export class DepTree {
     }
     return this
   }
+
+
+
 }
 
 
@@ -103,7 +101,7 @@ export class DepTree {
 // const dt = new DepTree()
 // dt.addParent('r1')
 // dt.addParent('r2')
-// dt.addChild('r3', 'r1', 'r2')
+// dt.addChild('r3', 'r1', 'r2')s
 // dt.addParent('r4')
 // dt.addChild('r5', 'r4', 'r3')
 // dt.addChild('r6', 'r1', 'r5')
@@ -127,4 +125,7 @@ export class DepTree {
 //   order: { r1: 0, r2: 1, r3: 2, r4: 3, r8: 4 },
 //   allIds: [ 'r1', 'r2', 'r3', 'r4', 'r8' ]
 // }
+
+
+
 

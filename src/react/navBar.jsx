@@ -17,8 +17,7 @@ export const NavBar = ({ setDialog }) => {
   const boolOp = (code) => {
     if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
     const [m1, m2] = sc.selected
-    const mesh = sc.boolOp(m1, m2, code)
-    dispatch({ type: 'rx-boolean', mesh, deps: [m1.name, m2.name] })
+    sc.boolOp(m1, m2, code)
     sc.render()
     forceUpdate()
   }
@@ -65,8 +64,7 @@ export const NavBar = ({ setDialog }) => {
 
 
   const btnz2 = [
-    [FaEdit, addSketch, 'Sketch [s]']
-    ,
+    [FaEdit, addSketch, 'Sketch [s]'],
     [Icon.Extrude, extrude, 'Extrude [e]'],
     [Icon.Union, () => boolOp('u'), 'Union'],
     [Icon.Subtract, () => boolOp('s'), 'Subtract'],

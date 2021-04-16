@@ -194,10 +194,10 @@ export class Scene {
       } else if (k[0] == 'e') {
 
         entries[k] = loader.parse(state.byId[k])
-        
+
         if (entries[k].userData.inverted) {
           flipBufferGeometryNormals(entries[k].geometry)
-        } 
+        }
 
         this.obj3d.add(entries[k])
 
@@ -235,7 +235,7 @@ export class Scene {
   }
 
 
-  boolOp(m1, m2, op) {
+  boolOp(m1, m2, op, refresh = false) {
     let bspA = CSG.fromMesh(m1)
     let bspB = CSG.fromMesh(m2)
     m1.visible = false
@@ -275,18 +275,51 @@ export class Scene {
 
     mesh.add(vertices)
 
-    sc.obj3d.add(mesh)
+    if (!refresh) {
+      sc.obj3d.add(mesh)
 
-    this.store.dispatch({
-      type: 'set-entry-visibility', obj: {
-        [m1.name]: false,
-        [m2.name]: false,
-        [mesh.name]: true,
-      }
-    })
+      this.store.dispatch({
+        type: 'set-entry-visibility', obj: {
+          [m1.name]: false,
+          [m2.name]: false,
+          [mesh.name]: true,
+        }
+      })
 
-    return mesh
+      this.store.dispatch({
+        type: 'rx-boolean', mesh, deps: [m1.name, m2.name]
+      })
+    } else {
+      return mesh
+    }
+
   }
+
+  refreshNode(id) {
+    let curId
+    let que = [id]
+    let idx = 0
+
+    const { byId, tree } = this.store.getState().treeEntries
+    while (idx < que.length) {
+      curId = que[idx++]
+
+      const info = byId[curId].userData.featureInfo
+      let newNode
+      if (info.length == 2) {
+        newNode = this.extrude(byId[info[0]], info[1], true)
+      } else if (info.length == 3) {
+        newNode = this.boolOp(byId[info[0]], byId[info[1]], info[2], true)
+      }
+
+      byId[curId].geometry.copy(newNode.geometry)
+
+      for (let k in tree[curId]) {
+        que.push(k)
+      }
+    }
+  }
+
 }
 
 

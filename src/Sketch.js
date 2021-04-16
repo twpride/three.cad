@@ -310,12 +310,36 @@ class Sketch {
 
     for (let j = 0; j < link.length; j++) {
       const obj = this.obj3d.children[i + j]
-      obj.geometry.dispose()
-      obj.material.dispose()
+      // obj.geometry.dispose()
+      // obj.material.dispose()
 
-      for (let c_id of obj.userData.constraints.slice()) { // i hate js
+      obj.traverse((ob) => {
+        if (ob.geometry) ob.geometry.dispose()
+        if (ob.material) ob.material.dispose()
+      })
+
+      // collect all coincident constraints to be reconnected
+      // after deleting this point
+      let arr = []  
+      let cons
+      for (let c_id of obj.userData.constraints.slice()) { 
+        // i hate js, slice is important because deleteContraints mutates constraints array
+        cons = this.constraints.get(c_id)
+        if (cons[0] == 'points_coincident') {
+          arr.push(cons[2][0] == obj.name ?
+            cons[2][1] : cons[2][0]
+          )
+        }
         this.deleteConstraints(c_id)
       }
+
+      for (let i = 0; i < arr.length - 1; i++) {
+        setCoincident.call(this,[
+          this.obj3d.children[this.objIdx.get(arr[i])],
+          this.obj3d.children[this.objIdx.get(arr[i+1])]
+        ])
+      }
+
       obj.userData.constraints = []
     }
 

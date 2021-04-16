@@ -1,6 +1,6 @@
 import * as THREE from '../node_modules/three/src/Three';
 import { color } from './shared'
-export function extrude(sketch, depth) {
+export function extrude(sketch, depth, refresh=false) {
 
   let constraints = sketch.constraints;
   let linkedObjs = sketch.linkedObjs;
@@ -10,7 +10,7 @@ export function extrude(sketch, depth) {
   let v2s = []
 
   function findPair(node) {
-    console.log(node.name,'xx')
+    // console.log(node.name, 'xx')
     if (node.userData.construction) return;
     visited.add(node)
     let linkedObj = linkedObjs.get(node.userData.l_id)
@@ -43,7 +43,7 @@ export function extrude(sketch, depth) {
       )
     ]
     if (d == children[2]) {
-      console.log('pair found')
+      // console.log('pair found')
     };
     findTouching(d)
 
@@ -51,19 +51,19 @@ export function extrude(sketch, depth) {
 
 
   function findTouching(node) {
-    console.log(node.name,'yy')
+    // console.log(node.name, 'yy')
     for (let t of node.userData.constraints) {
-      console.log(constraints.get(t)[2],node.name )
+      // console.log(constraints.get(t)[2], node.name)
       if (constraints.get(t)[0] != 'points_coincident') continue
       for (let c of constraints.get(t)[2]) {
         if (c == -1) continue;
         const d = children[objIdx.get(c)]
         if (d == node) continue;
         if (d == children[2]) {
-          console.log('loop found')
+          // console.log('loop found')
         } else {
           // if (!visited.has(d)) {
-            findPair(d)
+          findPair(d)
           // }
         };
       }
@@ -71,7 +71,7 @@ export function extrude(sketch, depth) {
   }
 
 
-  findPair(children[2]) //??? need fixing
+  findPair(children[sketch.geomStartIdx + 1]) // ?? possibly allow user select search start point
 
   const shape = new THREE.Shape(v2s);
   // const extrudeSettings = { depth: Math.abs(depth), bevelEnabled: false };
@@ -88,27 +88,9 @@ export function extrude(sketch, depth) {
 
   const mesh = new THREE.Mesh(geometry, material)
 
-  // const material = new THREE.MeshPhongMaterial({
-  // color: color.mesh,
-  // });
-
-  // const wireframe = new THREE.WireframeGeometry( geometry );
-  // const mesh = new THREE.LineSegments( wireframe );
-  // mesh.material.depthTest = true;
-  // mesh.material.opacity = 0.8;
-  // mesh.material.transparent = true;
-
-  // const edges = new THREE.EdgesGeometry( geometry, 15 );
-  // edges.type  = 'BufferGeometry'
-  // edges.parameters = undefined
-
-  // const mesh = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) );
-
 
 
   mesh.name = 'e' + this.mid++
-  // mesh.name = 'm' + sketch.obj3d.name.slice(1)
-  // mesh.name = 'e' + sketch.obj3d.name.slice(1)
   mesh.userData.type = 'mesh'
   mesh.userData.featureInfo = [sketch.obj3d.name, depth]
   mesh.layers.enable(1)
@@ -119,12 +101,6 @@ export function extrude(sketch, depth) {
 
   mesh.add(vertices)
 
-
-
-
-
-
-
   mesh.matrixAutoUpdate = false;
   mesh.matrix.multiply(sketch.obj3d.matrix)
 
@@ -134,23 +110,20 @@ export function extrude(sketch, depth) {
   }
 
 
-  this.obj3d.add(mesh)
+  if (!refresh) {
+    this.obj3d.add(mesh)
 
-  this.store.dispatch({ type: 'rx-extrusion', mesh, sketchId: sketch.obj3d.name })
+    this.store.dispatch({ type: 'rx-extrusion', mesh, sketchId: sketch.obj3d.name })
 
-  // sketch.userData
-  if (this.activeSketch == sketch) {
-    this.activeSketch = null
-    sketch.deactivate()
+    if (this.activeSketch == sketch) {
+      sketch.deactivate()
+    }
+    this.render()
+  } else {
+    return mesh
   }
 
-  // this.clearSelection()
-  this.render()
 }
-
-
-
-
 
 
 export function flipBufferGeometryNormals(geometry) {

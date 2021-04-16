@@ -166,7 +166,7 @@ function setHover(obj, state, meshHover = true) {
       break;
     case 'mesh':
       if (meshHover) {
-        // obj.material.emissive.set(colObj.emissive)
+        obj.material.emissive.set(colObj.emissive)
       } else {
         break
       }

@@ -48,7 +48,7 @@ export function treeEntries(state = defaultState, action) {
         },
         allIds: { $push: [action.mesh.name] },
         tree: {
-          [action.sketchId]: { [action.mesh.name]: { $set: true} },
+          [action.sketchId]: { [action.mesh.name]: { $set: true } },
           [action.mesh.name]: { $set: {} }
         },
         order: { [action.mesh.name]: { $set: state.allIds.length } },
