@@ -24,7 +24,7 @@ export function onHover(e) {
   } else {
     // raycaster.layers.set(0)
     raycaster.layers.set(2)
-    hoverPts = raycaster.intersectObjects([...this.obj3d.children[1].children, ...this.obj3d.children])
+    hoverPts = raycaster.intersectObjects([...this.dimGroup.children, ...this.obj3d.children])
   }
 
 
@@ -171,27 +171,26 @@ export function onPick(e) {
 
     switch (obj.userData.type) {
       case 'dimension':
-        const idx = this.obj3d.children[1].children.indexOf(this.hovered[0])
+        const idx = this.dimGroup.children.indexOf(this.hovered[0])
         if (idx % 2) { // we only allow tag point (odd idx) to be dragged
           this.onDragDim = this._onMoveDimension(
-            this.obj3d.children[1].children[idx],
-            this.obj3d.children[1].children[idx - 1],
+            this.dimGroup.children[idx],
+            this.dimGroup.children[idx - 1],
           )
           this.canvas.addEventListener('pointermove', this.onDragDim);
           this.canvas.addEventListener('pointerup', () => {
-            onDimMoveEnd(this.obj3d.children[1].children[idx])
+            onDimMoveEnd(this.dimGroup.children[idx])
             this.onRelease()
           })
         }
 
-        draggedLabel = this.obj3d.children[1].children[idx].label
+        draggedLabel = this.dimGroup.children[idx].label
         draggedLabel.style.zIndex = -1;
         break;
       case 'point':
 
         this.canvas.addEventListener('pointermove', this.onDrag);
         this.canvas.addEventListener('pointerup', () => {
-          // onDimMoveEnd(this.obj3d.children[1].children[idx])
           this.onRelease()
         })
         break;

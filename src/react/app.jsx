@@ -26,7 +26,10 @@ const preloadedState = {
 }
 
 // const store = createStore(reducer, preloadedState, applyMiddleware(logger))
+
+
 const store = createStore(reducer, {}, applyMiddleware(logger))
+// const store = createStore(reducer, sc.loadState(), applyMiddleware(logger))
 
 const App = ({ store }) => {
   const [dialog, setDialog] = useState()
@@ -34,7 +37,7 @@ const App = ({ store }) => {
   return <Provider store={store}>
     <NavBar setDialog={setDialog}/>
     <Tree />
-    <Dialog dd={dialog}/>
+    <Dialog {...{dialog, setDialog}}/>
     <ToolTip/>
   </Provider>
 };

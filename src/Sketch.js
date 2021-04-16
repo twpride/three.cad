@@ -5,7 +5,7 @@ import * as THREE from '../node_modules/three/src/Three';
 import { _vec2, _vec3, raycaster, awaitSelection, ptObj, setHover } from './shared'
 
 import { drawOnClick1, drawOnClick2, drawPreClick2, drawOnClick3, drawPreClick3, drawClear, drawPoint } from './drawEvents'
-import { onHover, onDrag, onPick, onRelease} from './mouseEvents'
+import { onHover, onDrag, onPick, onRelease } from './mouseEvents'
 import { setCoincident, setOrdinate, setTangent } from './constraintEvents'
 import { get3PtArc } from './drawArc'
 import { replacer, reviver } from './utils'
@@ -37,7 +37,7 @@ class Sketch {
     if (preload === undefined) {
 
       this.obj3d = new THREE.Group()
-      this.obj3d.name = "s" + id++
+      this.obj3d.name = "s" + scene.sid++
       this.obj3d.userData.type = "sketch"
       this.obj3d.matrixAutoUpdate = false;
 
@@ -50,8 +50,10 @@ class Sketch {
       this.c_id = 1;
 
       this.obj3d.add(new THREE.Group());
-      this.obj3d.add(new THREE.Group());
-      this.obj3d.add(new THREE.Group());
+
+      this.geomStartIdx = this.obj3d.children.length
+      this.obj3d.userData.geomStartIdx = this.geomStartIdx
+      this.dimGroup = this.obj3d.children[this.geomStartIdx - 1]
 
       this.labels = []
 
@@ -80,6 +82,8 @@ class Sketch {
       this.constraints = JSON.parse(preload.constraints, reviver)
       this.c_id = preload.c_id;
 
+      this.geomStartIdx = this.obj3d.userData.geomStartIdx
+      this.dimGroup = this.obj3d.children[this.geomStartIdx - 1]
 
       this.updatePointsBuffer()
       this.updateOtherBuffers()
@@ -385,13 +389,14 @@ class Sketch {
 
 
   updateBoundingSpheres() {
-    for (let x = 3; x < this.obj3d.children.length; x++) { // geometry boundign spheres
+
+    for (let x = this.geomStartIdx; x < this.obj3d.children.length; x++) { // geometry boundign spheres
       const obj = this.obj3d.children[x]
       obj.geometry.computeBoundingSphere()
     }
 
-    for (let x = 0; x < this.obj3d.children[1].children.length; x++) { // dimension bounding sphere
-      const obj = this.obj3d.children[1].children[x]
+    for (let x = 0; x < this.dimGroup.children.length; x++) { // dimension bounding sphere
+      const obj = this.dimGroup.children[x]
       obj.geometry.computeBoundingSphere()
     }
   }
@@ -432,16 +437,16 @@ class Sketch {
     Module["_solver"](
       this.obj3d.children.length, pts_buffer,
       this.constraints.size, constraints_buffer,
-      this.linkedObjs.size, links_buffer)
+      this.linkedObjs.size, links_buffer,
+      this.geomStartIdx
+    )
 
     /*
       - loop to update all the children that are points
-      - why +6?  we skip first two triplets because it refers to a non-geometry children
       - we also sneak in updating lines children as well, by checking when ptsBuf[ptr] is NaN
     */
 
-    for (let i = 3, ptr = (pts_buffer >> 2) + 9; i < this.obj3d.children.length; i += 1, ptr += 3) {
-      // for (let i = 0, ptr = (pts_buffer >> 2) + 3; i < this.obj3d.children.length; i += 1, ptr += 3) {
+    for (let i = this.geomStartIdx, ptr = (pts_buffer >> 2) + this.geomStartIdx * 3; i < this.obj3d.children.length; i += 1, ptr += 3) {
 
       const pos = this.obj3d.children[i].geometry.attributes.position;
       if (isNaN(Module.HEAPF32[ptr])) {

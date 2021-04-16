@@ -6,7 +6,7 @@ import { TrackballControls } from '../lib/trackball'
 import { Sketch } from './Sketch'
 import Stats from '../lib/stats.module.js';
 
-import { extrude } from './extrude'
+import { extrude, flipBufferGeometryNormals } from './extrude'
 import { onHover, onPick } from './mouseEvents';
 import { _vec2, _vec3, color, awaitSelection, ptObj, setHover } from './shared'
 
@@ -26,9 +26,19 @@ const eq = (a1, a2) => {
 
 window.loader = new THREE.ObjectLoader();
 window.id = 0
+window.sid = 1
+window.mid = 1
+
+
+const pointMaterial = new THREE.PointsMaterial({
+  color: color.selpoint,
+  size: 4,
+})
 
 export class Scene {
   constructor(store) {
+    this.sid = 1
+    this.mid = 1
 
     this.store = store;
     this.canvas = document.querySelector('#c');
@@ -63,10 +73,14 @@ export class Scene {
 
 
     for (let i = 0; i < 4; i++) {
-      const freePt = ptObj()
+      const freePt = new THREE.Points(
+        new THREE.BufferGeometry().setAttribute('position',
+          new THREE.Float32BufferAttribute(3, 3)
+        ),
+        pointMaterial.clone()
+      )
+
       freePt.matrixAutoUpdate = false
-      freePt.material.size = 4
-      freePt.material.color.set(color.selpoint)
       freePt.visible = false
       freePt.depthTest = false
       freePt.userData.type = 'selpoint'
@@ -160,37 +174,49 @@ export class Scene {
   saveState() {
 
     localStorage.setItem(
-      'sv', JSON.stringify([id, this.store.getState()])
+      'sv2', JSON.stringify([id, this.sid, this.mid, this.store.getState().treeEntries])
     )
 
   }
 
   loadState() {  //uglyyy
-    const [curid, state] = JSON.parse(
-      localStorage.getItem('sv')
+    const [curid, cursid, curmid, state] = JSON.parse(
+      localStorage.getItem('sv2')
     )
 
     window.id = curid
+    this.sid = cursid
+    this.mid = curmid
 
-    const entries = state.treeEntries.byId
+    const entries = state.byId
     for (let k in entries) {
 
       if (k[0] == 's') {
         entries[k].obj3d = loader.parse(entries[k].obj3d)
         this.obj3d.add(entries[k].obj3d)
-        entries[k] = new Sketch(this, state.treeEntries.byId[k])
+        entries[k] = new Sketch(this, state.byId[k])
         entries[k].obj3d.addEventListener('change', this.render) // !! took 3 hours to realize
 
-      } else if (k[0] == 'm') {
+      } else if (k[0] == 'e') {
 
-        entries[k] = loader.parse(state.treeEntries.byId[k])
-        // console.log(entries[k])
+        entries[k] = loader.parse(state.byId[k])
+        
+        if (entries[k].userData.inverted) {
+          flipBufferGeometryNormals(entries[k].geometry)
+        } 
+
+        this.obj3d.add(entries[k])
+
+      } else {
+        entries[k] = loader.parse(state.byId[k])
+
         this.obj3d.add(entries[k])
 
       }
     }
 
     this.store.dispatch({ type: 'restore-state', state })
+    return state
   }
 
   clearSelection() {
@@ -244,8 +270,9 @@ export class Scene {
 
     let mesh = CSG.toMesh(bspResult, m1.matrix, m1.material)
     mesh.userData.type = 'mesh'
+    mesh.userData.featureInfo = [m1.name, m2.name, op]
 
-    mesh.name = `(${m1.name}${opChar}${m2.name})`
+    mesh.name = `(${m1.name} ${opChar} ${m2.name})`
     mesh.layers.enable(1)
 
     const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial({ size: 0 }));
@@ -288,7 +315,7 @@ function render() {
   this.renderer.render(this.obj3d, this.camera);
 
   if (this.activeSketch) {
-    dims = this.activeSketch.obj3d.children[1].children
+    dims = this.activeSketch.dimGroup.children
     matrix = this.activeSketch.obj3d.matrix
 
     for (idx = 1; idx < dims.length; idx += 2) {
@@ -347,7 +374,7 @@ async function addSketch() {
 }
 
 window.sc = new Scene(store)
-// sc.loadState()
+sc.loadState()
 
 // sc.camera.layers.enable(1)
 // rc.layers.set(1)

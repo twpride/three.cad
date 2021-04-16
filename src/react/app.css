@@ -87,3 +87,21 @@ body {
   border-bottom-color: white;
   border-top: none;
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+  border:none;
+  background-color:transparent;
+  outline: none;
+  text-align:right;
+}
+
+/* input:focus[type=number] { */
+/* } */

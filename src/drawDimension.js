@@ -92,7 +92,7 @@ export async function drawDimension() {
   line.layers.enable(2)
   point.layers.enable(2)
 
-  this.obj3d.children[1].add(line).add(point)
+  this.dimGroup.add(line).add(point)
   const onMove = this._onMoveDimension(point, line)
   point.label = document.createElement('div');
   point.label.textContent = dimVal.toFixed(3);
@@ -138,7 +138,7 @@ export async function drawDimension() {
 
   } else {
 
-    this.obj3d.children[1].children.splice(this.obj3d.children[1].length - 2, 2).forEach(
+    this.dimGroup.children.splice(this.dimGroup.length - 2, 2).forEach(
       e => {
         e.geometry.dispose()
         e.material.dispose()
@@ -209,7 +209,7 @@ export function _onMoveDimension(point, line) {
 
 export function setDimLines() {
   const restoreLabels = this.labelContainer.childElementCount == 0;
-  const dims = this.obj3d.children[1].children
+  const dims = this.dimGroup.children
   let point, dist;
   for (let i = 0; i < dims.length; i += 2) {
     if (restoreLabels) {

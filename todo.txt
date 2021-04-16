@@ -25,30 +25,35 @@ constraint angle // done
 button panel cleanup // done
 3 pt arc // done
 tangent // done to the best of my ability
+-boolean highlights when hovering over parent why? because they share the same material
+- should unselect after boolean see above
+
+extrude dialogue / done 
+better default ent names / done
+
 
 
 -unable to delete arc
-hover not clearing sometimes
+hover not clearing sometimes in sketch
 dim tags are not clearing
-should unselect after boolean
-
 
 
 auto update extrude
-extrude dialogue 
 loopfind especially arc
 file save, stl export
 
 
 
-
-better default ent names
+add cancle soft button for line arc
 
 reattach sketch
 
 auto snap
 constraint labels,equal
 parallel
+
+
+tree relation tool tip
 tree ent renaming
 
 
@@ -59,6 +64,10 @@ set pieces
 hover state for sketch
 await selection
 3 point arc implementation
+
+saerch tree for loop finding // need dev effor
+
+dep tree for biuidling design treee
 
 
 

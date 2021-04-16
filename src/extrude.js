@@ -1,7 +1,7 @@
 import * as THREE from '../node_modules/three/src/Three';
-import { color} from './shared'
+import { color } from './shared'
 export function extrude(sketch, depth) {
-  console.log(sketch,'here')
+  console.log(sketch, 'here')
 
   let constraints = sketch.constraints;
   let linkedObjs = sketch.linkedObjs;
@@ -68,20 +68,43 @@ export function extrude(sketch, depth) {
   findPair(children[4]) //??? need fixing
 
   const shape = new THREE.Shape(v2s);
+  // const extrudeSettings = { depth: Math.abs(depth), bevelEnabled: false };
   const extrudeSettings = { depth, bevelEnabled: false };
 
 
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
 
   // const material = new THREE.MeshLambertMaterial({
-  const material = new THREE.MeshPhongMaterial({
-    color: color.mesh,
-    emissive: color.emissive,
-  });
+  // const material = new THREE.MeshPhongMaterial({
+  //   color: color.mesh,
+  //   emissive: color.emissive,
+  // });
 
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = 'm' + id++
+  // const mesh = new THREE.Mesh(geometry, material)
+
+  // const material = new THREE.MeshPhongMaterial({
+  //   color: color.mesh,
+  // });
+  // const wireframe = new THREE.EdgesGeometry( geometry );
+  // const mesh = new THREE.LineSegments( wireframe );
+  // // mesh.material.depthTest = false;
+  // // mesh.material.opacity = 0.25;
+  // // mesh.material.transparent = true;
+  // mesh.material.transparent = false;
+
+  const edges = new THREE.EdgesGeometry( geometry, 15 );
+  edges.type  = 'BufferGeometry'
+  edges.parameters = undefined
+
+  const mesh = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) );
+
+
+
+  mesh.name = 'e' + this.mid++
+  // mesh.name = 'm' + sketch.obj3d.name.slice(1)
+  // mesh.name = 'e' + sketch.obj3d.name.slice(1)
   mesh.userData.type = 'mesh'
+  mesh.userData.featureInfo = [sketch.obj3d.name, depth]
   mesh.layers.enable(1)
 
   const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial({ size: 0 }));
@@ -89,13 +112,27 @@ export function extrude(sketch, depth) {
   vertices.layers.enable(1)
 
   mesh.add(vertices)
+
+
+
+
+
+
+
   mesh.matrixAutoUpdate = false;
   mesh.matrix.multiply(sketch.obj3d.matrix)
+
+  if (depth < 0) {
+    flipBufferGeometryNormals(mesh.geometry)
+    mesh.userData.inverted = true
+  }
+
 
   this.obj3d.add(mesh)
 
   this.store.dispatch({ type: 'rx-extrusion', mesh, sketchId: sketch.obj3d.name })
 
+  // sketch.userData
   if (this.activeSketch == sketch) {
     this.activeSketch = null
     sketch.deactivate()
@@ -105,5 +142,77 @@ export function extrude(sketch, depth) {
   this.render()
 }
 
+
+
+
+
+
+export function flipBufferGeometryNormals(geometry) {
+  //https://stackoverflow.com/a/54496265
+  const tempXYZ = [0, 0, 0];
+
+  // flip normals
+  for (let i = 0; i < geometry.attributes.normal.array.length / 9; i++) {
+    // cache a coordinates
+    tempXYZ[0] = geometry.attributes.normal.array[i * 9];
+    tempXYZ[1] = geometry.attributes.normal.array[i * 9 + 1];
+    tempXYZ[2] = geometry.attributes.normal.array[i * 9 + 2];
+
+    // overwrite a with c
+    geometry.attributes.normal.array[i * 9] =
+      geometry.attributes.normal.array[i * 9 + 6];
+    geometry.attributes.normal.array[i * 9 + 1] =
+      geometry.attributes.normal.array[i * 9 + 7];
+    geometry.attributes.normal.array[i * 9 + 2] =
+      geometry.attributes.normal.array[i * 9 + 8];
+
+    // overwrite c with stored a values
+    geometry.attributes.normal.array[i * 9 + 6] = tempXYZ[0];
+    geometry.attributes.normal.array[i * 9 + 7] = tempXYZ[1];
+    geometry.attributes.normal.array[i * 9 + 8] = tempXYZ[2];
+  }
+
+  // change face winding order
+  for (let i = 0; i < geometry.attributes.position.array.length / 9; i++) {
+    // cache a coordinates
+    tempXYZ[0] = geometry.attributes.position.array[i * 9];
+    tempXYZ[1] = geometry.attributes.position.array[i * 9 + 1];
+    tempXYZ[2] = geometry.attributes.position.array[i * 9 + 2];
+
+    // overwrite a with c
+    geometry.attributes.position.array[i * 9] =
+      geometry.attributes.position.array[i * 9 + 6];
+    geometry.attributes.position.array[i * 9 + 1] =
+      geometry.attributes.position.array[i * 9 + 7];
+    geometry.attributes.position.array[i * 9 + 2] =
+      geometry.attributes.position.array[i * 9 + 8];
+
+    // overwrite c with stored a values
+    geometry.attributes.position.array[i * 9 + 6] = tempXYZ[0];
+    geometry.attributes.position.array[i * 9 + 7] = tempXYZ[1];
+    geometry.attributes.position.array[i * 9 + 8] = tempXYZ[2];
+  }
+
+  // flip UV coordinates
+  for (let i = 0; i < geometry.attributes.uv.array.length / 6; i++) {
+    // cache a coordinates
+    tempXYZ[0] = geometry.attributes.uv.array[i * 6];
+    tempXYZ[1] = geometry.attributes.uv.array[i * 6 + 1];
+
+    // overwrite a with c
+    geometry.attributes.uv.array[i * 6] =
+      geometry.attributes.uv.array[i * 6 + 4];
+    geometry.attributes.uv.array[i * 6 + 1] =
+      geometry.attributes.uv.array[i * 6 + 5];
+
+    // overwrite c with stored a values
+    geometry.attributes.uv.array[i * 6 + 4] = tempXYZ[0];
+    geometry.attributes.uv.array[i * 6 + 5] = tempXYZ[1];
+  }
+
+  geometry.attributes.normal.needsUpdate = true;
+  geometry.attributes.position.needsUpdate = true;
+  geometry.attributes.uv.needsUpdate = true;
+}
 
 

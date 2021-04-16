@@ -4,15 +4,13 @@ import React, { useEffect, useReducer } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import { FaCube, FaEdit } from 'react-icons/fa'
-import { BsBoxArrowUp } from 'react-icons/bs'
+import { FaEdit } from 'react-icons/fa'
 import { MdDone, MdSave, MdFolder } from 'react-icons/md'
 import * as Icon from "./icons";
 
 
-export const NavBar = ({setDialog}) => {
+export const NavBar = ({ setDialog }) => {
   const dispatch = useDispatch()
-  const treeEntriesById = useSelector(state => state.treeEntries.byId)
   const activeSketchId = useSelector(state => state.treeEntries.activeSketchId)
 
 
@@ -24,16 +22,7 @@ export const NavBar = ({setDialog}) => {
     sc.render()
     forceUpdate()
   }
-  const extrude = () => {
-    setDialog('dd')
-    // if (sc.activeSketch) {
-    //   sc.extrude(sc.activeSketch)
-    // } else if (sc.selected.length === 1 && sc.selected[0].userData.type == 'sketch') {
-    //   sc.extrude(treeEntriesById[sc.selected[0].name])
-    // } else {
-    //   console.log('invalid selection')
-    // }
-  }
+  const extrude = () => { setDialog(true) }
 
   const addSketch = () => {
     sc.addSketch()
@@ -59,12 +48,10 @@ export const NavBar = ({setDialog}) => {
 
   const btnz = [
     [MdDone, () => {
-      // treeEntriesById[activeSketchId].deactivate()
-      // dispatch({ type: 'update-descendents', sketch})
       sc.activeSketch.deactivate()
+      // dispatch({ type: 'update-descendents', sketch})
       sc.render()
       forceUpdate()
-      // sc.activeDim = this.activeSketch.obj3d.children[1].children
     }, 'Finish'],
     [Icon.Extrude, extrude, 'Extrude [e]'],
     [Icon.Dimension, () => sc.activeSketch.command('d'), 'Dimension [d]'],

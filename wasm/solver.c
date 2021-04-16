@@ -33,7 +33,7 @@ static void *CheckMalloc(size_t n)
  * entities and constraints.
  *---------------------------------------------------------------------------*/
 
-int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *l_ptr)
+int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *l_ptr, int geomStartIdx)
 {
   // printf("first %i \n", (int)*(l_ptr + 1));
   Slvs_hGroup g;
@@ -111,7 +111,9 @@ int solver(int nPts, float *p_ptr, int nConst, float *c_ptr, int nLinks, float *
       SLVS_C_POINTS_COINCIDENT,
       200,
       -1,
-      101, 3, -1, -1);
+      101, geomStartIdx, -1, -1);
+      
+  // it's 2 + nConst because c_id at this point is 2
   for (; c_id < 2 + nConst; c_id++, c_ptr += 6)
   {
     sys.constraint[sys.constraints++] = Slvs_MakeConstraint(
