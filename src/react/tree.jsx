@@ -6,8 +6,6 @@ import { MdVisibilityOff, MdVisibility, MdDelete, MdRefresh } from 'react-icons/
 
 import { FaCube, FaEdit } from 'react-icons/fa'
 
-import { DepTree } from './depTree.mjs'
-
 export const Tree = () => {
   const treeEntries = useSelector(state => state.treeEntries)
 
@@ -53,7 +51,9 @@ const TreeEntry = ({ entId }) => {
     onDoubleClick={() => {
       if (obj3d.userData.type == 'sketch') {
         sc.activeSketch && sc.activeSketch.deactivate()
+
         sketch.activate()
+        
         sc.clearSelection()
         sc.activeSketch = sketch;
         dispatch({ type: 'set-dialog', action: 'sketch' })

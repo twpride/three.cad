@@ -5,7 +5,9 @@ import React, { useEffect, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 
 import { FaEdit } from 'react-icons/fa'
-import { MdDone, MdSave, MdFolder } from 'react-icons/md'
+import { MdSave, MdFolder } from 'react-icons/md'
+import { FaFolderOpen } from 'react-icons/fa'
+
 import * as Icon from "./icons";
 import { Dialog } from './dialog'
 
@@ -77,7 +79,7 @@ export const NavBar = () => {
     [Icon.Subtract, () => boolOp('s'), 'Subtract'],
     [Icon.Intersect, () => boolOp('i'), 'Intersect'],
     [MdSave, () => boolOp('i'), 'Save [ctrl+s]'],
-    [MdFolder, () => boolOp('i'), 'Load'],
+    [FaFolderOpen, () => boolOp('i'), 'Load'],
     [Icon.Stl, () => boolOp('i'), 'Export STL'],
   ]
 
@@ -85,24 +87,26 @@ export const NavBar = () => {
 
   return <div className='topNav flex justify-center items-center bg-gray-700'>
 
-    <div className='w-40 h-full flex items-center mr-12'>
+    <div className='w-auto h-full flex-1 flex items-center justify-end'>
       <Dialog />
     </div>
-    {
-      activeSketchId ?
-        sketchModeButtons.map(([Icon, fcn, txt, shortcut], idx) => (
-          <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
-            onClick={fcn} key={idx}
-          />
-        ))
-        :
-        partModeButtons.map(([Icon, fcn, txt, shortcut], idx) => (
-          <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
-            onClick={fcn} key={idx}
-          />
-        ))
-    }
-    <div className='w-40 h-full flex items-center'>
+    <div className='w-auto h-full flex-none'>
+      {
+        activeSketchId ?
+          sketchModeButtons.map(([Icon, fcn, txt, shortcut], idx) => (
+            <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
+              onClick={fcn} key={idx}
+            />
+          ))
+          :
+          partModeButtons.map(([Icon, fcn, txt, shortcut], idx) => (
+            <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
+              onClick={fcn} key={idx}
+            />
+          ))
+      }
+    </div>
+    <div className='w-auto h-full flex-1 items-center'>
     </div>
 
   </div>

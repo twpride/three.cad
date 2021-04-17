@@ -188,7 +188,7 @@ export class Scene {
       if (k[0] == 's') {
         entries[k].obj3d = loader.parse(entries[k].obj3d)
         this.obj3d.add(entries[k].obj3d)
-        entries[k] = new Sketch(this, state.byId[k])
+        entries[k] = new Sketch(this, entries[k])
         entries[k].obj3d.addEventListener('change', this.render) // !! took 3 hours to realize
 
       } else if (k[0] == 'e') {
@@ -211,6 +211,18 @@ export class Scene {
 
     this.store.dispatch({ type: 'restore-state', state })
     return state
+  }
+
+  loadSketch(string) {
+    let entry = JSON.parse(string)
+    entry.obj3d = loader.parse(entry.obj3d)
+
+    this.obj3d.add(entry.obj3d)
+
+    entry = new Sketch(this, entry)
+    entry.obj3d.addEventListener('change', this.render)
+    
+    return entry
   }
 
   clearSelection() {

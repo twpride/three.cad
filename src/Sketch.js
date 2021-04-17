@@ -174,7 +174,7 @@ class Sketch {
     window.removeEventListener('keydown', this.onKeyPress)
     this.canvas.removeEventListener('pointerdown', this.onPick)
     this.canvas.removeEventListener('pointermove', this.onHover)
-    this.store.dispatch({ type: 'exit-sketch' })
+    this.store.dispatch({ type: 'finish-sketch' })
     this.labelContainer.innerHTML = ""
     this.obj3d.visible = false
     this.obj3d.traverse(e => e.layers.disable(2))

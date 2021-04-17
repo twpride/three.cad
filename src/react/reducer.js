@@ -1,6 +1,6 @@
 
 
-import { DepTree } from './depTree.mjs'
+import { DepTree } from './depTree'
 import update from 'immutability-helper'
 import { combineReducers } from 'redux';
 
@@ -12,6 +12,7 @@ const defaultState = {
   visible: {},
   activeSketchId: ""
 }
+
 
 export function treeEntries(state = defaultState, action) {
   switch (action.type) {
@@ -31,13 +32,33 @@ export function treeEntries(state = defaultState, action) {
     }
 
     case 'set-active-sketch':
+      window.cache = JSON.stringify(state.byId[action.activeSketchId])
       return update(state, {
         visible: { [action.activeSketchId]: { $set: true } },
         activeSketchId: { $set: action.activeSketchId },
       })
-    case 'exit-sketch':
+    case 'finish-sketch':
       return update(state, {
         activeSketchId: { $set: "" },
+        visible: { [state.activeSketchId]: { $set: false } },
+      })
+    case 'cancel-sketch':
+
+      const sketch = sc.loadSketch(cache)
+      console.log(cache, sketch)
+
+      const deletedObj = sc.obj3d.children.splice(state.order[state.activeSketchId] + 1, 1,
+        sketch.obj3d
+      )[0]
+
+      deletedObj.traverse((obj) => {
+        if (obj.geometry) obj.geometry.dispose()
+        if (obj.material) obj.material.dispose()
+      })
+
+      return update(state, {
+        activeSketchId: { $set: "" },
+        byId: { [state.activeSketchId]: { $set: sketch } },
         visible: { [state.activeSketchId]: { $set: false } },
       })
     case 'rx-extrusion':
@@ -82,7 +103,7 @@ export function treeEntries(state = defaultState, action) {
   }
 }
 
-export function ui(state = {dialog:{}}, action) {
+export function ui(state = { dialog: {} }, action) {
   switch (action.type) {
 
     case 'set-dialog':

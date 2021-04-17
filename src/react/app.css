@@ -99,7 +99,7 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
-  border:none;
+  /* border:none; */
   background-color:transparent;
   outline: none;
   text-align:right;
