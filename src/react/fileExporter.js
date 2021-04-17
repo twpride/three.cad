@@ -13,13 +13,15 @@ function save(blob, filename) {
 
 function saveArrayBuffer( buffer, filename ) {
 
-  save( new Blob( [ buffer ], { type: 'application/octet-stream' } ), filename );
+  // save( new Blob( [ buffer ], { type: 'application/octet-stream' } ), filename );
+  save( new Blob( [ buffer ], { type: 'model/stl' } ), filename );
 
 }
 
 function saveString( text, filename ) {
 
-  save( new Blob( [ text ], { type: 'text/plain' } ), filename );
+  // save( new Blob( [ text ], { type: 'text/plain' } ), filename );
+  save( new Blob( [ text ], { type: 'application/json' } ), filename );
 
 }
 
@@ -32,8 +34,7 @@ export function STLExport() {
 
 
 export function savePart() {
-  const string = sc.saveString()
-  
-  saveString( LZString.compress(string), 'test2.bin' );
+
+  saveString( sc.saveString(), 'uncomp.json' );
 
 }

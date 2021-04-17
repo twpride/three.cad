@@ -280,14 +280,7 @@ class Sketch {
         this.deleteSelected()
         break;
       case 'z':
-        var string = JSON.stringify(this.toJSON());
-        window.string = string;
-        alert("Size of sample is: " + string.length);
-        window.compressed = LZString.compress(string);
-        alert("Size of compressed sample is: " + compressed.length);
-        string = LZString.decompress(compressed);
-        alert("Sample is: " + string);
-
+        console.log('undo would be nice')
         break;
     }
   }

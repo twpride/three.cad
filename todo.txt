@@ -56,6 +56,7 @@ add cancle soft button for line arc
 auto snap
 constraint labels,equal
 
+add download button, different from save button
 parallel // need to add antoher button to feature ,or  empty placeholder
 
 
