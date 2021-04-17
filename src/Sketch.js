@@ -174,7 +174,9 @@ class Sketch {
     // overkill but good solution if this check was more costly
     this.hasChanged = false
     this.idOnActivate = id
+    // console.log(this,this.selected)
     const changeDetector = (e) => {
+      console.log(this.selected.length, e.buttons)
       if (this.selected.length && e.buttons) {
         this.canvas.removeEventListener('pointermove', changeDetector)
         this.hasChanged = true
@@ -193,6 +195,7 @@ class Sketch {
     this.obj3d.traverse(e => e.layers.disable(2))
     this.scene.axes.visible = false
     this.scene.activeSketch = null
+    this.selected = []
   }
 
 

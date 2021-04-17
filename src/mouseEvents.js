@@ -254,3 +254,23 @@ export function onRelease(e) {
   }
 }
 
+export function clearSelection() {
+  for (let x = 0, obj; x < this.selected.length; x++) {
+    obj = this.selected[x]
+    if (obj.userData.type == 'selpoint') {
+      obj.visible = false
+    } else {
+      setHover(obj, 0)
+    }
+  }
+  this.selected = []
+
+  for (let x = 0; x < this.hovered.length; x++) {
+
+    const obj = this.hovered[x]
+    setHover(obj, 0)
+
+
+  }
+
+}

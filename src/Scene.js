@@ -7,7 +7,7 @@ import { Sketch } from './Sketch'
 import Stats from '../lib/stats.module.js';
 
 import { extrude, flipBufferGeometryNormals } from './extrude'
-import { onHover, onPick } from './mouseEvents';
+import { onHover, onPick, clearSelection } from './mouseEvents';
 import { _vec2, _vec3, color, awaitSelection, ptObj, setHover } from './shared'
 
 import { AxesHelper } from './axes'
@@ -133,6 +133,7 @@ export class Scene {
     this.extrude = extrude.bind(this);
     this.onHover = onHover.bind(this);
     this.onPick = onPick.bind(this);
+    this.clearSelection = clearSelection.bind(this);
     this.setHover = setHover.bind(this);
     this.awaitSelection = awaitSelection.bind(this);
 
@@ -225,26 +226,26 @@ export class Scene {
     return entry
   }
 
-  clearSelection() {
-    for (let x = 0, obj; x < this.selected.length; x++) {
-      obj = this.selected[x]
-      if (obj.userData.type == 'selpoint') {
-        obj.visible = false
-      } else {
-        setHover(obj, 0)
-      }
-    }
-    this.selected = []
+  // clearSelection() {
+  //   for (let x = 0, obj; x < this.selected.length; x++) {
+  //     obj = this.selected[x]
+  //     if (obj.userData.type == 'selpoint') {
+  //       obj.visible = false
+  //     } else {
+  //       setHover(obj, 0)
+  //     }
+  //   }
+  //   this.selected = []
 
-    for (let x = 0; x < this.hovered.length; x++) {
+  //   for (let x = 0; x < this.hovered.length; x++) {
 
-      const obj = this.hovered[x]
-      setHover(obj, 0)
+  //     const obj = this.hovered[x]
+  //     setHover(obj, 0)
 
 
-    }
+  //   }
 
-  }
+  // }
 
 
   boolOp(m1, m2, op, refresh = false) {
@@ -315,17 +316,17 @@ export class Scene {
     const { byId, tree } = this.store.getState().treeEntries
     while (idx < que.length) {
       curId = que[idx++]
-      console.log(curId,byId,'cc')
 
-      const info = byId[curId].userData.featureInfo
-      let newNode
-      if (info.length == 2) {
-        newNode = this.extrude(byId[info[0]], info[1], true)
-      } else if (info.length == 3) {
-        newNode = this.boolOp(byId[info[0]], byId[info[1]], info[2], true)
+      if (byId[curId].userData) {
+        const info = byId[curId].userData.featureInfo
+        let newNode
+        if (info.length == 2) {
+          newNode = this.extrude(byId[info[0]], info[1], true)
+        } else if (info.length == 3) {
+          newNode = this.boolOp(byId[info[0]], byId[info[1]], info[2], true)
+        }
+        byId[curId].geometry.copy(newNode.geometry)
       }
-
-      byId[curId].geometry.copy(newNode.geometry)
 
       for (let k in tree[curId]) {
         que.push(k)
