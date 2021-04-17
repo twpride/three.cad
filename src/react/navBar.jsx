@@ -31,7 +31,16 @@ export const NavBar = () => {
     forceUpdate()
   }
 
-
+  useEffect(() => {  // hacky way to handle mounting and unmounting mouse listeners for feature mode
+    if (!activeSketchId) {
+      sc.canvas.addEventListener('pointermove', sc.onHover)
+      sc.canvas.addEventListener('pointerdown', sc.onPick)
+      return () => {
+        sc.canvas.removeEventListener('pointermove', sc.onHover)
+        sc.canvas.removeEventListener('pointerdown', sc.onPick)
+      }
+    }
+  }, [activeSketchId])
 
   const sketchModeButtons = [
     [Icon.Extrude, () => {

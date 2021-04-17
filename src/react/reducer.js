@@ -50,11 +50,14 @@ export function treeEntries(state = defaultState, action) {
       const deletedObj = sc.obj3d.children.splice(state.order[state.activeSketchId] + 1, 1,
         sketch.obj3d
       )[0]
+      console.log('spliced and starting to delete')
 
       deletedObj.traverse((obj) => {
         if (obj.geometry) obj.geometry.dispose()
         if (obj.material) obj.material.dispose()
       })
+
+      // sketch.deactivate()
 
       return update(state, {
         activeSketchId: { $set: "" },

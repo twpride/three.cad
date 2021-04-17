@@ -72,11 +72,14 @@ export const Dialog = () => {
             if (sc.activeSketch.hasChanged || sc.activeSketch.idOnActivate != id) {
               console.log('has changed')
               dispatch({ type: "cancel-sketch" })
+              sc.store.getState().treeEntries.byId[sc.activeSketch.obj3d.name].deactivate()
+            } else {
+
+              sc.activeSketch.deactivate()
             }
 
-            sc.activeSketch.deactivate()
-            sc.render()
 
+            sc.render()
             dispatch({ type: "clear-dialog" })
 
           }

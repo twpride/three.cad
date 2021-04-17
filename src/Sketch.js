@@ -5,7 +5,7 @@ import * as THREE from '../node_modules/three/src/Three';
 import { _vec2, _vec3, raycaster, awaitSelection, ptObj, setHover } from './shared'
 
 import { drawOnClick1, drawOnClick2, drawPreClick2, drawOnClick3, drawPreClick3, drawClear, drawPoint } from './drawEvents'
-import { onHover, onDrag, onPick, onRelease } from './mouseEvents'
+import { onHover, onDrag, onPick, onRelease, clearSelection} from './mouseEvents'
 import { setCoincident, setOrdinate, setTangent } from './constraintEvents'
 import { get3PtArc } from './drawArc'
 import { replacer, reviver } from './utils'
@@ -148,6 +148,7 @@ class Sketch {
     this.onKeyPress = this.onKeyPress.bind(this);
 
     this.setHover = setHover.bind(this);
+    this.clearSelection = clearSelection.bind(this)
 
   }
 
@@ -186,6 +187,7 @@ class Sketch {
   }
 
   deactivate() {
+    console.log('deactivateeeeeeee')
     window.removeEventListener('keydown', this.onKeyPress)
     this.canvas.removeEventListener('pointerdown', this.onPick)
     this.canvas.removeEventListener('pointermove', this.onHover)
@@ -195,7 +197,9 @@ class Sketch {
     this.obj3d.traverse(e => e.layers.disable(2))
     this.scene.axes.visible = false
     this.scene.activeSketch = null
-    this.selected = []
+
+    this.clearSelection()
+
   }
 
 
