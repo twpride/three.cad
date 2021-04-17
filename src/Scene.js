@@ -221,7 +221,7 @@ export class Scene {
 
     entry = new Sketch(this, entry)
     entry.obj3d.addEventListener('change', this.render)
-    
+
     return entry
   }
 
@@ -315,6 +315,7 @@ export class Scene {
     const { byId, tree } = this.store.getState().treeEntries
     while (idx < que.length) {
       curId = que[idx++]
+      console.log(curId,byId,'cc')
 
       const info = byId[curId].userData.featureInfo
       let newNode

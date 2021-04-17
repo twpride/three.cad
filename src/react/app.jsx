@@ -1,6 +1,6 @@
 
 import ReactDOM from 'react-dom'
-import React, { useState } from 'react'
+import React, { } from 'react'
 
 import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
@@ -32,16 +32,13 @@ const store = createStore(reducer, {}, applyMiddleware(logger))
 // const store = createStore(reducer, sc.loadState(), applyMiddleware(logger))
 
 
-const App = ({ store }) => {
-
-
-  return <Provider store={store}>
-
+const App = ({ store }) => (
+  <Provider store={store}>
     <NavBar />
     <Tree />
     <ToolTip />
   </Provider>
-};
+)
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(<App store={store} />, document.getElementById('react'));

@@ -153,10 +153,12 @@ class Sketch {
 
 
   activate() {
-    console.log('activatee')
+    console.log('activate sketch')
     window.addEventListener('keydown', this.onKeyPress)
     this.canvas.addEventListener('pointerdown', this.onPick)
     this.canvas.addEventListener('pointermove', this.onHover)
+
+
     this.store.dispatch({ type: 'set-active-sketch', activeSketchId: this.obj3d.name })
 
     this.setDimLines()
@@ -168,6 +170,17 @@ class Sketch {
     this.scene.activeSketch = this
 
     window.sketcher = this
+
+    // overkill but good solution if this check was more costly
+    this.hasChanged = false
+    this.idOnActivate = id
+    const changeDetector = (e) => {
+      if (this.selected.length && e.buttons) {
+        this.canvas.removeEventListener('pointermove', changeDetector)
+        this.hasChanged = true
+      }
+    }
+    this.canvas.addEventListener('pointermove', changeDetector)
   }
 
   deactivate() {
@@ -321,9 +334,9 @@ class Sketch {
 
       // collect all coincident constraints to be reconnected
       // after deleting this point
-      let arr = []  
+      let arr = []
       let cons
-      for (let c_id of obj.userData.constraints.slice()) { 
+      for (let c_id of obj.userData.constraints.slice()) {
         // i hate js, slice is important because deleteContraints mutates constraints array
         cons = this.constraints.get(c_id)
         if (cons[0] == 'points_coincident') {
@@ -335,9 +348,9 @@ class Sketch {
       }
 
       for (let i = 0; i < arr.length - 1; i++) {
-        setCoincident.call(this,[
+        setCoincident.call(this, [
           this.obj3d.children[this.objIdx.get(arr[i])],
-          this.obj3d.children[this.objIdx.get(arr[i+1])]
+          this.obj3d.children[this.objIdx.get(arr[i + 1])]
         ])
       }
 

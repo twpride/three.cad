@@ -31,30 +31,9 @@ export const NavBar = () => {
     forceUpdate()
   }
 
-  useEffect(() => {
-    if (!activeSketchId) {
-      sc.canvas.addEventListener('pointermove', sc.onHover)
-      sc.canvas.addEventListener('pointerdown', sc.onPick)
-      return () => {
-        sc.canvas.removeEventListener('pointermove', sc.onHover)
-        sc.canvas.removeEventListener('pointerdown', sc.onPick)
-      }
-    }
-  }, [activeSketchId])
-
-  // useEffect(() => {
-  //   console.log(treeEntriesById)
-  // }, [treeEntriesById])
 
 
   const sketchModeButtons = [
-    // [MdDone, () => {
-    //   // dispatch({ type: 'update-descendents', sketch})
-
-    //   sc.activeSketch.deactivate()
-    //   sc.render()
-    //   forceUpdate()
-    // }, 'Finish'],
     [Icon.Extrude, () => {
       sc.activeSketch.deactivate()
       dispatch({ type: 'set-dialog', action: 'extrude', target: sc.activeSketch })

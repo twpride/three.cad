@@ -190,9 +190,7 @@ export function onPick(e) {
       case 'point':
 
         this.canvas.addEventListener('pointermove', this.onDrag);
-        this.canvas.addEventListener('pointerup', () => {
-          this.onRelease()
-        })
+        this.canvas.addEventListener('pointerup', this.onRelease)
         break;
 
       default:
@@ -244,7 +242,7 @@ export function onDrag(e) {
 
 
 
-export function onRelease() {
+export function onRelease(e) {
   this.canvas.removeEventListener('pointermove', this.onDrag)
   this.canvas.removeEventListener('pointermove', this.onDragDim)
   this.canvas.removeEventListener('pointerup', this.onRelease)

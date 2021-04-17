@@ -49,18 +49,30 @@ export const Dialog = () => {
     case 'sketch':
       return <>
         <MdDone
-          // className="btn w-auto h-full p-3.5 mr-6"
           className="btn w-auto h-full p-3.5"
           onClick={() => {
+            if (sc.activeSketch.hasChanged || sc.activeSketch.idOnActivate != id) {
+              console.log(sc.activeSketch)
+              for (let k in sc.store.getState().treeEntries.tree[sc.activeSketch.obj3d.name]) {
+                console.log('circlllles',k)
+                sc.refreshNode(k)
+              }
+              sc.render()
+            }
             // dispatch({ type: 'update-descendents', sketch})
+
             sc.activeSketch.deactivate()
-            sc.render()
             dispatch({ type: "clear-dialog" })
           }}
         />
         <MdClose className="btn w-auto h-full p-3.5 mr-6"
           onClick={() => {
-            dispatch({ type: "cancel-sketch" })
+            if (sc.activeSketch.hasChanged || sc.activeSketch.idOnActivate != id) {
+              console.log('has changed')
+              dispatch({ type: "cancel-sketch" })
+              sc.render()
+            }
+
             sc.activeSketch.deactivate()
             dispatch({ type: "clear-dialog" })
           }

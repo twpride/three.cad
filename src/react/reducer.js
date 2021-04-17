@@ -13,6 +13,7 @@ const defaultState = {
   activeSketchId: ""
 }
 
+let cache
 
 export function treeEntries(state = defaultState, action) {
   switch (action.type) {
@@ -32,7 +33,7 @@ export function treeEntries(state = defaultState, action) {
     }
 
     case 'set-active-sketch':
-      window.cache = JSON.stringify(state.byId[action.activeSketchId])
+      cache = JSON.stringify(state.byId[action.activeSketchId])
       return update(state, {
         visible: { [action.activeSketchId]: { $set: true } },
         activeSketchId: { $set: action.activeSketchId },
@@ -45,7 +46,6 @@ export function treeEntries(state = defaultState, action) {
     case 'cancel-sketch':
 
       const sketch = sc.loadSketch(cache)
-      console.log(cache, sketch)
 
       const deletedObj = sc.obj3d.children.splice(state.order[state.activeSketchId] + 1, 1,
         sketch.obj3d
