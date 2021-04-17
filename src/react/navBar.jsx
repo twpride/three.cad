@@ -5,11 +5,35 @@ import React, { useEffect, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 
 import { FaEdit } from 'react-icons/fa'
-import { MdSave, MdFolder } from 'react-icons/md'
+import { MdSave } from 'react-icons/md'
 import { FaFolderOpen } from 'react-icons/fa'
 
 import * as Icon from "./icons";
 import { Dialog } from './dialog'
+import { STLExport, savePart } from './fileExporter'
+
+
+const link = document.createElement('a');
+link.style.display = 'none';
+document.body.appendChild(link);
+
+function save(blob, filename) {
+
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+
+}
+
+
+function saveArrayBuffer(buffer, filename) {
+
+  save(new Blob([buffer], { type: 'application/octet-stream' }), filename);
+
+}
+
+
+
 
 export const NavBar = () => {
   const dispatch = useDispatch()
@@ -44,8 +68,9 @@ export const NavBar = () => {
 
   const sketchModeButtons = [
     [Icon.Extrude, () => {
-      sc.activeSketch.deactivate()
+      dispatch({ type: 'finish-sketch' })
       dispatch({ type: 'set-dialog', action: 'extrude', target: sc.activeSketch })
+
     }, 'Extrude [e]'],
     [Icon.Dimension, () => sc.activeSketch.command('d'), 'Dimension [d]'],
     [Icon.Line, () => sc.activeSketch.command('l'), 'Line [l]'],
@@ -66,9 +91,9 @@ export const NavBar = () => {
     [Icon.Union, () => boolOp('u'), 'Union'],
     [Icon.Subtract, () => boolOp('s'), 'Subtract'],
     [Icon.Intersect, () => boolOp('i'), 'Intersect'],
-    [MdSave, () => boolOp('i'), 'Save [ctrl+s]'],
+    [MdSave, savePart, 'Save [ctrl+s]'],
     [FaFolderOpen, () => boolOp('i'), 'Load'],
-    [Icon.Stl, () => boolOp('i'), 'Export STL'],
+    [Icon.Stl, STLExport, 'Export STL'],
   ]
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);

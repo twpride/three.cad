@@ -116,6 +116,7 @@ export function extrude(sketch, depth, refresh=false) {
     this.store.dispatch({ type: 'rx-extrusion', mesh, sketchId: sketch.obj3d.name })
 
     if (this.activeSketch == sketch) {
+      this.store.dispatch({ type: 'finish-sketch' })
       sketch.deactivate()
     }
     this.render()

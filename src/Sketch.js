@@ -175,9 +175,9 @@ class Sketch {
     // overkill but good solution if this check was more costly
     this.hasChanged = false
     this.idOnActivate = id
+    this.c_idOnActivate = this.c_id
     // console.log(this,this.selected)
     const changeDetector = (e) => {
-      console.log(this.selected.length, e.buttons)
       if (this.selected.length && e.buttons) {
         this.canvas.removeEventListener('pointermove', changeDetector)
         this.hasChanged = true
@@ -187,11 +187,10 @@ class Sketch {
   }
 
   deactivate() {
-    console.log('deactivateeeeeeee')
     window.removeEventListener('keydown', this.onKeyPress)
     this.canvas.removeEventListener('pointerdown', this.onPick)
     this.canvas.removeEventListener('pointermove', this.onHover)
-    this.store.dispatch({ type: 'finish-sketch' })
+
     this.labelContainer.innerHTML = ""
     this.obj3d.visible = false
     this.obj3d.traverse(e => e.layers.disable(2))

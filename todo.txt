@@ -32,28 +32,36 @@ extrude dialogue / done
 better default ent names / done
 loopfind especially arc, // fixed for single looop, good enough, maybe stretch goal of selecting search start pt
 dim tag delete //resolved
+auto update extrude // done
+extrude edit dialog // done
 
 
-
+-sometimes unable to hit return and change dimensionk
 -unable to delete arc
 hover not clearing sometimes in sketch
+0.000 artifact
 
-auto update extrude
+
 file save, stl export
+
+reattach sketch
+
+highlight button to indicate active mode
 
 
 
 add cancle soft button for line arc
 
-reattach sketch
 
 auto snap
 constraint labels,equal
-parallel
+
+parallel // need to add antoher button to feature ,or  empty placeholder
 
 
 tree relation tool tip
 tree ent renaming
+vertical and horzontal baseline to dimension to
 
 
 

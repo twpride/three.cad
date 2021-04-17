@@ -11,7 +11,7 @@ export const Tree = () => {
 
   return <div className='sideNav flex flex-col bg-gray-800'>
     {treeEntries.allIds.map((entId, idx) => (
-      <TreeEntry key={idx} entId={entId}/>
+      <TreeEntry key={idx} entId={entId} />
     ))}
   </div>
 
@@ -28,19 +28,18 @@ const TreeEntry = ({ entId }) => {
 
 
 
-  const state = useSelector(state => state.treeEntries)
-  const treeEntries = useSelector(state => state.treeEntries.byId)
+  const treeEntriesById = useSelector(state => state.treeEntries.byId)
   const dispatch = useDispatch()
 
   const visible = useSelector(state => state.treeEntries.visible[entId])
 
   let obj3d, sketch;
 
-  if (treeEntries[entId].obj3d) {
-    obj3d = treeEntries[entId].obj3d
-    sketch = treeEntries[entId]
+  if (treeEntriesById[entId].obj3d) {
+    obj3d = treeEntriesById[entId].obj3d
+    sketch = treeEntriesById[entId]
   } else {
-    obj3d = treeEntries[entId]
+    obj3d = treeEntriesById[entId]
   }
   let Icon = treeIcons[obj3d.userData.type]
 
@@ -50,14 +49,17 @@ const TreeEntry = ({ entId }) => {
   return <div className='btn select-none flex justify-start w-full h-7 items-center text-sm'
     onDoubleClick={() => {
       if (obj3d.userData.type == 'sketch') {
-        sc.activeSketch && sc.activeSketch.deactivate()
-
+        if (sc.activeSketch) {
+          dispatch({ type: 'finish-sketch' })
+          sc.activeSketch.deactivate()
+        }
         sketch.activate()
-        
         sc.clearSelection()
         sc.activeSketch = sketch;
         dispatch({ type: 'set-dialog', action: 'sketch' })
         sc.render()
+      } else if (obj3d.userData.featureInfo.length == 2) {
+        dispatch({ type: 'set-dialog', action: 'extrude-edit', target: treeEntriesById[entId] })
       }
 
     }}
@@ -116,14 +118,14 @@ const TreeEntry = ({ entId }) => {
           e.stopPropagation()
         }}
       />
-      <MdRefresh className='btn-green h-full w-auto p-1.5'
+      {/* <MdRefresh className='btn-green h-full w-auto p-1.5'
         onClick={(e) => {
           e.stopPropagation()
 
           sc.refreshNode(entId)
           sc.render()
         }}
-      />
+      /> */}
 
       {
         visible ?

@@ -15,10 +15,14 @@ import { AxesHelper } from './axes'
 
 import CSG from "../lib/three-csg"
 
+import { STLExporter } from '../node_modules/three/examples/jsm/exporters/STLExporter'
+
 
 
 
 window.loader = new THREE.ObjectLoader();
+window.STLexp = new STLExporter();
+
 window.id = 0
 window.sid = 1
 window.mid = 1
@@ -173,6 +177,10 @@ export class Scene {
     )
 
   }
+  
+  saveString() {
+    return JSON.stringify([id, this.sid, this.mid, this.store.getState().treeEntries])
+  }
 
   loadState() {  //uglyyy
     const [curid, cursid, curmid, state] = JSON.parse(
@@ -218,7 +226,7 @@ export class Scene {
     let entry = JSON.parse(string)
     entry.obj3d = loader.parse(entry.obj3d)
 
-    this.obj3d.add(entry.obj3d)
+    // this.obj3d.add(entry.obj3d)
 
     entry = new Sketch(this, entry)
     entry.obj3d.addEventListener('change', this.render)
