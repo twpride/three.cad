@@ -13,7 +13,7 @@ export const Tree = () => {
 
   return <div className='sideNav flex flex-col bg-gray-800'>
     {treeEntries.allIds.map((entId, idx) => (
-      <TreeEntry key={idx} entId={entId} />
+      <TreeEntry key={idx} entId={entId}/>
     ))}
   </div>
 
@@ -27,6 +27,8 @@ const treeIcons = {
 
 
 const TreeEntry = ({ entId }) => {
+
+
 
   const state = useSelector(state => state.treeEntries)
   const treeEntries = useSelector(state => state.treeEntries.byId)
@@ -54,6 +56,7 @@ const TreeEntry = ({ entId }) => {
         sketch.activate()
         sc.clearSelection()
         sc.activeSketch = sketch;
+        dispatch({ type: 'set-dialog', action: 'sketch' })
         sc.render()
       }
 

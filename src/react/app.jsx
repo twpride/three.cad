@@ -2,15 +2,15 @@
 import ReactDOM from 'react-dom'
 import React, { useState } from 'react'
 
-import { createStore, applyMiddleware} from 'redux'
+import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
 import { reducer } from './reducer'
 import logger from 'redux-logger'
 
 import { Tree } from './tree'
 import { NavBar } from './navBar'
-import { ToolTip} from './toolTip'
-import { Dialog } from './dialog'
+import { ToolTip } from './toolTip'
+
 
 import './app.css'
 
@@ -31,14 +31,15 @@ const preloadedState = {
 const store = createStore(reducer, {}, applyMiddleware(logger))
 // const store = createStore(reducer, sc.loadState(), applyMiddleware(logger))
 
+
 const App = ({ store }) => {
-  const [dialog, setDialog] = useState()
+
 
   return <Provider store={store}>
-    <NavBar setDialog={setDialog}/>
+
+    <NavBar />
     <Tree />
-    <Dialog {...{dialog, setDialog}}/>
-    <ToolTip/>
+    <ToolTip />
   </Provider>
 };
 

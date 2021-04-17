@@ -153,6 +153,7 @@ class Sketch {
 
 
   activate() {
+    console.log('activatee')
     window.addEventListener('keydown', this.onKeyPress)
     this.canvas.addEventListener('pointerdown', this.onPick)
     this.canvas.addEventListener('pointermove', this.onHover)

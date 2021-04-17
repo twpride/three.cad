@@ -82,9 +82,25 @@ export function treeEntries(state = defaultState, action) {
   }
 }
 
+export function ui(state = {dialog:{}}, action) {
+  switch (action.type) {
+
+    case 'set-dialog':
+      return update(state, {
+        dialog: { $set: { target: action.target, action: action.action } },
+      })
+    case 'clear-dialog':
+      return update(state, {
+        dialog: { $set: {} },
+      })
+    default:
+      return state
+  }
+}
 
 
 
 export const reducer = combineReducers({
+  ui,
   treeEntries
 })

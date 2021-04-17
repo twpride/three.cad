@@ -10,8 +10,8 @@ body {
   height: 100%;
   font-family: sans-serif;
   overflow: hidden;
-  --topNavH: 48px;
-  --sideNavW: 240px;
+  --topNavH: 3rem;
+  --sideNavW: 15rem;
 }
 
 #c {
@@ -38,8 +38,10 @@ body {
 
 .dialog {
   position: absolute;
-  top: var(--topNavH);
-  left: var(--sideNavW);
+  height: var(--topNavH);
+  left:0;
+  right:0;
+  top:0;
 }
 
 
