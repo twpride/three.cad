@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import React, { } from 'react'
 
 import { createStore, applyMiddleware } from 'redux'
-import { Provider } from 'react-redux'
+import { Provider, useSelector } from 'react-redux'
 import { reducer } from './reducer'
 import logger from 'redux-logger'
 
@@ -32,13 +32,13 @@ const store = createStore(reducer, {}, applyMiddleware(logger))
 // const store = createStore(reducer, sc.loadState(), applyMiddleware(logger))
 
 
-const App = ({ store }) => (
-  <Provider store={store}>
+const App = ({ store }) => {
+  return <Provider store={store}>
     <NavBar />
     <Tree />
     <ToolTip />
   </Provider>
-)
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(<App store={store} />, document.getElementById('react'));

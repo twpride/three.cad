@@ -34,17 +34,19 @@ loopfind especially arc, // fixed for single looop, good enough, maybe stretch g
 dim tag delete //resolved
 auto update extrude // done
 extrude edit dialog // done
+file save, stl export// done
 
 
 -sometimes unable to hit return and change dimensionk
 -unable to delete arc
 hover not clearing sometimes in sketch
 0.000 artifact
+lighting messed up
 
-
-file save, stl export
+seperate scene from init logic only init cam and rendere
 
 reattach sketch
+auto snap
 
 highlight button to indicate active mode
 
@@ -53,7 +55,6 @@ highlight button to indicate active mode
 add cancle soft button for line arc
 
 
-auto snap
 constraint labels,equal
 
 add download button, different from save button

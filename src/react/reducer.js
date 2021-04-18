@@ -105,7 +105,7 @@ export function treeEntries(state = defaultState, action) {
   }
 }
 
-export function ui(state = { dialog: {} }, action) {
+export function ui(state = { dialog: {}, filePane: false }, action) {
   switch (action.type) {
 
     case 'set-dialog':
@@ -115,6 +115,11 @@ export function ui(state = { dialog: {} }, action) {
     case 'clear-dialog':
       return update(state, {
         dialog: { $set: {} },
+      })
+    case 'set-file-handle':
+      return update(state, {
+        fileHandle: { $set: action.fileHandle },
+        modified: { $set: false },
       })
     default:
       return state

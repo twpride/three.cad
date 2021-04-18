@@ -4,33 +4,13 @@ import React, { useEffect, useReducer } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import { FaEdit } from 'react-icons/fa'
-import { MdSave } from 'react-icons/md'
-import { FaFolderOpen } from 'react-icons/fa'
+import { FaEdit, FaFileDownload } from 'react-icons/fa'
+import { MdSave, MdFolder, MdFileUpload, MdInsertDriveFile } from 'react-icons/md'
+import { FaRegFolderOpen, FaFile } from 'react-icons/fa'
 
 import * as Icon from "./icons";
 import { Dialog } from './dialog'
-import { STLExport, savePart } from './fileExporter'
-
-
-const link = document.createElement('a');
-link.style.display = 'none';
-document.body.appendChild(link);
-
-function save(blob, filename) {
-
-  link.href = URL.createObjectURL(blob);
-  link.download = filename;
-  link.click();
-
-}
-
-
-function saveArrayBuffer(buffer, filename) {
-
-  save(new Blob([buffer], { type: 'application/octet-stream' }), filename);
-
-}
+import { STLExport, savePart, saveFile, openFile } from './fileExporter'
 
 
 
@@ -39,6 +19,7 @@ export const NavBar = () => {
   const dispatch = useDispatch()
   const activeSketchId = useSelector(state => state.treeEntries.activeSketchId)
   const treeEntriesById = useSelector(state => state.treeEntries.byId)
+  const fileHandle = useSelector(state => state.ui.fileHandle)
 
   const boolOp = (code) => {
     if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
@@ -54,6 +35,9 @@ export const NavBar = () => {
 
     forceUpdate()
   }
+
+
+
 
   useEffect(() => {  // hacky way to handle mounting and unmounting mouse listeners for feature mode
     if (!activeSketchId) {
@@ -79,6 +63,7 @@ export const NavBar = () => {
     [Icon.Vertical, () => sc.activeSketch.command('v'), 'Vertical [v]'],
     [Icon.Horizontal, () => sc.activeSketch.command('h'), 'Horizontal [h]'],
     [Icon.Tangent, () => sc.activeSketch.command('t'), 'Tangent [t]'],
+    [Icon.Tangent, () => sc.activeSketch.command('t'), 'Tangent [t]'],
   ]
 
 
@@ -91,8 +76,11 @@ export const NavBar = () => {
     [Icon.Union, () => boolOp('u'), 'Union'],
     [Icon.Subtract, () => boolOp('s'), 'Subtract'],
     [Icon.Intersect, () => boolOp('i'), 'Intersect'],
-    [MdSave, savePart, 'Save [ctrl+s]'],
-    [FaFolderOpen, () => boolOp('i'), 'Load'],
+    [MdInsertDriveFile, savePart, 'New [ctrl+n]'],
+    [MdSave, () => {
+      saveFile(fileHandle, sc.saveScene(), dispatch)
+    }, 'Save [ctrl+s]'],
+    [MdFolder, () => openFile(dispatch), 'Open'],
     [Icon.Stl, STLExport, 'Export STL'],
   ]
 
@@ -124,3 +112,25 @@ export const NavBar = () => {
 
   </div>
 }
+
+
+// app.saveFile = async () => {
+//   try {
+//     if (!app.file.handle) {
+//       return await app.saveFileAs();
+//     }
+//     gaEvent('FileAction', 'Save');
+//     await writeFile(app.file.handle, app.getText());
+//     app.setModified(false);
+//   } catch (ex) {
+//     gaEvent('Error', 'FileSave', ex.name);
+//     const msg = 'Unable to save file';
+//     console.error(msg, ex);
+//     alert(msg);
+//   }
+//   app.setFocus();
+// };
+
+
+
+

@@ -1,6 +1,6 @@
 
 
-import React, { useReducer, useState } from 'react';
+import React, { useReducer, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { MdVisibilityOff, MdVisibility, MdDelete, MdRefresh } from 'react-icons/md'
 
@@ -8,8 +8,10 @@ import { FaCube, FaEdit } from 'react-icons/fa'
 
 export const Tree = () => {
   const treeEntries = useSelector(state => state.treeEntries)
+  const ref = useRef()
 
   return <div className='sideNav flex flex-col bg-gray-800'>
+    <input className='w-16 text-gray-50 h-7 mx-1 border-0 focus:outline-none bg-transparent' type="text" defaultValue="untitled" step="0.1" ref={ref} />
     {treeEntries.allIds.map((entId, idx) => (
       <TreeEntry key={idx} entId={entId} />
     ))}

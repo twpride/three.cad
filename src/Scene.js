@@ -24,8 +24,8 @@ window.loader = new THREE.ObjectLoader();
 window.STLexp = new STLExporter();
 
 window.id = 0
-window.sid = 1
-window.mid = 1
+// window.sid = 1
+// window.mid = 1
 
 
 const pointMaterial = new THREE.PointsMaterial({
@@ -62,7 +62,14 @@ export class Scene {
     controls.target.set(0, 0, 0);
     controls.update();
 
-    this.obj3d = new THREE.Scene()
+
+
+
+
+
+
+
+    this.obj3d = new THREE.Scene()   ///////
 
     // this.obj3d.background = new THREE.Color(color.background);
     const helpersGroup = new THREE.Group();
@@ -170,21 +177,30 @@ export class Scene {
     return needResize;
   }
 
-  saveState() {
 
-    localStorage.setItem(
-      'sv2', JSON.stringify([id, this.sid, this.mid, this.store.getState().treeEntries])
-    )
-
-  }
-  
-  saveString() {
+  saveScene() {
     return JSON.stringify([id, this.sid, this.mid, this.store.getState().treeEntries])
   }
 
-  loadState() {  //uglyyy
+
+  clearScene() {
+    const deleted = this.obj3d.children.splice(1)
+    console.log(deleted)
+
+    for (let i = 0; i < deleted.length; i++) {
+      deleted[i].traverse((obj) => {
+        if (obj.geometry) obj.geometry.dispose()
+        if (obj.material) obj.material.dispose()
+      })
+    }
+  }
+
+  loadState(file) {  //uglyyy
+
+    this.clearScene()
+
     const [curid, cursid, curmid, state] = JSON.parse(
-      localStorage.getItem('sv2')
+      file
     )
 
     window.id = curid
@@ -233,27 +249,6 @@ export class Scene {
 
     return entry
   }
-
-  // clearSelection() {
-  //   for (let x = 0, obj; x < this.selected.length; x++) {
-  //     obj = this.selected[x]
-  //     if (obj.userData.type == 'selpoint') {
-  //       obj.visible = false
-  //     } else {
-  //       setHover(obj, 0)
-  //     }
-  //   }
-  //   this.selected = []
-
-  //   for (let x = 0; x < this.hovered.length; x++) {
-
-  //     const obj = this.hovered[x]
-  //     setHover(obj, 0)
-
-
-  //   }
-
-  // }
 
 
   boolOp(m1, m2, op, refresh = false) {
@@ -425,7 +420,7 @@ async function addSketch() {
 }
 
 window.sc = new Scene(store)
-sc.loadState()
+// sc.loadState()
 
 
 
