@@ -97,9 +97,10 @@ export function treeEntries(state = defaultState, action) {
       const depTree = new DepTree(state)
       const obj = depTree.deleteNode(action.id)
       return update(state, { $merge: obj })
-
     case 'restore-state':
       return action.state
+    case 'new-part':
+      return defaultState
     default:
       return state
   }
@@ -119,6 +120,11 @@ export function ui(state = { dialog: {}, filePane: false }, action) {
     case 'set-file-handle':
       return update(state, {
         fileHandle: { $set: action.fileHandle },
+        modified: { $set: false },
+      })
+    case 'new-part':
+      return update(state, {
+        fileHandle: { $set: null },
         modified: { $set: false },
       })
     default:

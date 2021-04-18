@@ -2,7 +2,7 @@ const link = document.createElement('a');
 link.style.display = 'none';
 document.body.appendChild(link);
 
-function save(blob, filename) {
+function saveLegacy(blob, filename) {
 
   link.href = URL.createObjectURL(blob);
   link.download = filename;
@@ -11,24 +11,17 @@ function save(blob, filename) {
 }
 
 
-function saveArrayBuffer(buffer, filename) {
+var tzoffset = (new Date()).getTimezoneOffset() * 60000;
 
-  // save( new Blob( [ buffer ], { type: 'application/octet-stream' } ), filename );
-  save(new Blob([buffer], { type: 'model/stl' }), filename);
 
-}
-
-function saveString(text, filename) {
-
-  // save( new Blob( [ text ], { type: 'text/plain' } ), filename );
-  save(new Blob([text], { type: 'application/json' }), filename);
-
-}
-
-export function STLExport() {
+export function STLExport(filename) {
   if (sc.selected[0] && sc.selected[0].userData.type == 'mesh') {
+    
     const result = STLexp.parse(sc.selected[0], { binary: true });
-    saveArrayBuffer(result, 'box.stl');
+
+    const time = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -5).replace(/:/g, '-');
+
+    saveLegacy(new Blob([result], { type: 'model/stl' }), `${filename}_${time}.stl`);
   }
 }
 
@@ -93,25 +86,6 @@ export async function saveFileAs(file, dispatch) {
 };
 
 
-async function verifyPermission(fileHandle, withWrite) {
-  const opts = {};
-  if (withWrite) {
-    opts.writable = true;
-    // For Chrome 86 and later...
-    opts.mode = 'readwrite';
-  }
-  // Check if we already have permission, if so, return true.
-  if (await fileHandle.queryPermission(opts) === 'granted') {
-    return true;
-  }
-  // Request permission to the file, if the user grants permission, return true.
-  if (await fileHandle.requestPermission(opts) === 'granted') {
-    return true;
-  }
-  // The user did nt grant permission, return false.
-  return false;
-}
-
 
 export async function openFile(dispatch) {
   // if (!app.confirmDiscard()) {
@@ -135,15 +109,13 @@ export async function openFile(dispatch) {
   if (!fileHandle) {
     return;
   }
-  const file = await fileHandle.getFile();
-
-  readFile(file, fileHandle, dispatch);
-
 
 
   try {
-    const text = await readFile(file);
+    const file = await fileHandle.getFile();
+    const text = await file.text();;
     sc.loadState(text)
+    
     dispatch({ type: 'set-file-handle', fileHandle })
     // app.setModified(false);
     // app.setFocus(true);

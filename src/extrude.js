@@ -1,6 +1,6 @@
 import * as THREE from '../node_modules/three/src/Three';
 import { color } from './shared'
-export function extrude(sketch, depth, refresh=false) {
+export function extrude(sketch, depth) {
 
   let constraints = sketch.constraints;
   let linkedObjs = sketch.linkedObjs;
@@ -90,7 +90,6 @@ export function extrude(sketch, depth, refresh=false) {
 
 
 
-  mesh.name = 'e' + this.mid++
   mesh.userData.type = 'mesh'
   mesh.userData.featureInfo = [sketch.obj3d.name, depth]
   mesh.layers.enable(1)
@@ -109,20 +108,8 @@ export function extrude(sketch, depth, refresh=false) {
     mesh.userData.inverted = true
   }
 
+  return mesh
 
-  if (!refresh) {
-    this.obj3d.add(mesh)
-
-    this.store.dispatch({ type: 'rx-extrusion', mesh, sketchId: sketch.obj3d.name })
-
-    if (this.activeSketch == sketch) {
-      this.store.dispatch({ type: 'finish-sketch' })
-      sketch.deactivate()
-    }
-    this.render()
-  } else {
-    return mesh
-  }
 
 }
 

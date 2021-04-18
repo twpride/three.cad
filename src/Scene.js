@@ -24,8 +24,6 @@ window.loader = new THREE.ObjectLoader();
 window.STLexp = new STLExporter();
 
 window.id = 0
-// window.sid = 1
-// window.mid = 1
 
 
 const pointMaterial = new THREE.PointsMaterial({
@@ -141,7 +139,7 @@ export class Scene {
 
     this.render = render.bind(this);
     this.addSketch = addSketch.bind(this);
-    this.extrude = extrude.bind(this);
+    this.extrude = this.extrude.bind(this);
     this.onHover = onHover.bind(this);
     this.onPick = onPick.bind(this);
     this.clearSelection = clearSelection.bind(this);
@@ -166,6 +164,8 @@ export class Scene {
     this.render();
   }
 
+
+
   resizeCanvas(renderer) {
     const canvas = renderer.domElement;
     const width = canvas.clientWidth;
@@ -185,7 +185,6 @@ export class Scene {
 
   clearScene() {
     const deleted = this.obj3d.children.splice(1)
-    console.log(deleted)
 
     for (let i = 0; i < deleted.length; i++) {
       deleted[i].traverse((obj) => {
@@ -193,6 +192,13 @@ export class Scene {
         if (obj.material) obj.material.dispose()
       })
     }
+  }
+
+  newPart() {
+    this.clearScene()
+    window.id = 0
+    this.sid = 1
+    this.mid = 1
   }
 
   loadState(file) {  //uglyyy
@@ -250,6 +256,21 @@ export class Scene {
     return entry
   }
 
+  extrude(sketch, depth) {
+    const mesh = extrude(sketch, depth)
+    mesh.name = 'e' + this.mid++
+
+    this.obj3d.add(mesh)
+
+    this.store.dispatch({ type: 'rx-extrusion', mesh, sketchId: sketch.obj3d.name })
+
+    if (this.activeSketch == sketch) {
+      this.store.dispatch({ type: 'finish-sketch' })
+      sketch.deactivate()
+    }
+    this.render()
+
+  }
 
   boolOp(m1, m2, op, refresh = false) {
     let bspA = CSG.fromMesh(m1)
@@ -315,26 +336,30 @@ export class Scene {
     let curId
     let que = [id]
     let idx = 0
+    // let newNodes = {}
 
     const { byId, tree } = this.store.getState().treeEntries
     while (idx < que.length) {
       curId = que[idx++]
 
-      if (byId[curId].userData) {
+      if (byId[curId].userData) { // if it is a mesh
         const info = byId[curId].userData.featureInfo
         let newNode
         if (info.length == 2) {
-          newNode = this.extrude(byId[info[0]], info[1], true)
+          newNode = extrude(byId[info[0]], info[1])
         } else if (info.length == 3) {
           newNode = this.boolOp(byId[info[0]], byId[info[1]], info[2], true)
         }
         byId[curId].geometry.copy(newNode.geometry)
+        byId[curId].geometry.parameters = newNode.geometry.parameters // took 2 hours to figure out
+
       }
 
       for (let k in tree[curId]) {
         que.push(k)
       }
     }
+
   }
 
 }

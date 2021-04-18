@@ -10,7 +10,7 @@ import { FaRegFolderOpen, FaFile } from 'react-icons/fa'
 
 import * as Icon from "./icons";
 import { Dialog } from './dialog'
-import { STLExport, savePart, saveFile, openFile } from './fileExporter'
+import { STLExport, saveFile, openFile } from './fileHelpers'
 
 
 
@@ -76,12 +76,25 @@ export const NavBar = () => {
     [Icon.Union, () => boolOp('u'), 'Union'],
     [Icon.Subtract, () => boolOp('s'), 'Subtract'],
     [Icon.Intersect, () => boolOp('i'), 'Intersect'],
-    [MdInsertDriveFile, savePart, 'New [ctrl+n]'],
-    [MdSave, () => {
-      saveFile(fileHandle, sc.saveScene(), dispatch)
-    }, 'Save [ctrl+s]'],
-    [MdFolder, () => openFile(dispatch), 'Open'],
-    [Icon.Stl, STLExport, 'Export STL'],
+    [MdInsertDriveFile, () => {
+      sc.newPart()
+      dispatch({ type: 'new-part' })
+      sc.render()
+    }, 'New [ctrl+n]'],
+    [MdSave,
+      () => {
+        saveFile(fileHandle, sc.saveScene(), dispatch)
+      }
+      , 'Save [ctrl+s]'],
+    [MdFolder, () => {
+      openFile(dispatch).then(
+        ()=>sc.render()
+      )
+    }, 'Open'],
+    [Icon.Stl, () => {
+      STLExport('box')
+    },
+      , 'Export STL'],
   ]
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
