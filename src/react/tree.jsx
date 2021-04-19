@@ -11,7 +11,7 @@ export const Tree = () => {
   const fileHandle = useSelector(state => state.ui.fileHandle)
 
   return <div className='sideNav flex flex-col bg-gray-800'>
-    <div className='w-16 text-gray-50 h-7 mx-1 border-0 focus:outline-none bg-transparent'>
+    <div className='w-16 text-gray-50 h-9 text-lg mx-1 border-0 flex items-center focus:outline-none bg-transparent'>
       {fileHandle ? fileHandle.name.replace(/\.[^/.]+$/, "") : 'untitled'}
     </div>
     {treeEntries.allIds.map((entId, idx) => (

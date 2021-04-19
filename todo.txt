@@ -35,48 +35,49 @@ dim tag delete //resolved
 auto update extrude // done
 extrude edit dialog // done
 file save, stl export// done
+seperate scene from init logic only init cam and rendere // not an issue , ended up just splicing (1)
+add download button, different from save button // done
 
 -unable cancel out of new sketches  //fixed seemingly
+-unable to delete arc // fixed seemingly
 
 -sometimes unable to hit return and change dimensionk
--unable to delete arc
 hover not clearing sometimes in sketch
 0.000 artifact
 lighting messed up
 
-seperate scene from init logic only init cam and rendere
+
+
+
+
+
+
+
 
 reattach sketch
 auto snap
-
+vertical and horzontal baseline to dimension to / or just smart ordinate dir dimenensing
 highlight button to indicate active mode
 
 
-
 add cancle soft button for line arc
-
-
 constraint labels,equal
-
-add download button, different from save button
 parallel // need to add antoher button to feature ,or  empty placeholder
-
-
 tree relation tool tip
 tree ent renaming
-vertical and horzontal baseline to dimension to
 
 
 
 
 set pieces
 
+wasm data structure
+
 hover state for sketch
 await selection
 3 point arc implementation
-
+local file save and mark dirty
 saerch tree for loop finding // need dev effor
-
 dep tree for biuidling design treee
 
 

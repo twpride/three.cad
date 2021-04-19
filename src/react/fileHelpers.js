@@ -15,16 +15,12 @@ var tzoffset = (new Date()).getTimezoneOffset() * 60000;
 
 
 export function STLExport(filename) {
-  if (sc.selected[0] && sc.selected[0].userData.type == 'mesh') {
 
-    const result = STLexp.parse(sc.selected[0], { binary: true });
+  const result = STLexp.parse(sc.selected[0], { binary: true });
 
-    const time = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -5).replace(/:/g, '-');
+  const time = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -5).replace(/:/g, '-');
 
-    saveLegacy(new Blob([result], { type: 'model/stl' }), `${filename}_${time}.stl`);
-  } else {
-    alert('please select one body to export')
-  }
+  saveLegacy(new Blob([result], { type: 'model/stl' }), `${filename}_${time}.stl`);
 }
 
 
@@ -41,7 +37,6 @@ export async function saveFile(fileHandle, file, dispatch) {
     console.error(msg, ex);
     alert(msg);
   }
-  // app.setFocus();
 };
 
 export async function saveFileAs(file, dispatch) {
@@ -83,16 +78,11 @@ export async function saveFileAs(file, dispatch) {
     alert(msg);
     return;
   }
-
-  // app.setFocus();
 };
 
 
 
 export async function openFile(dispatch) {
-  // if (!app.confirmDiscard()) {
-  //   return;
-  // }
   let fileHandle
 
   // If a fileHandle is provided, verify we have permission to read/write it,
@@ -143,7 +133,7 @@ export function confirmDiscard(modified) {
 
 export async function verifyPermission(fileHandle) {
   const opts = {
-    mode:'readwrite'
+    mode: 'readwrite'
   };
 
   // Check if we already have permission, if so, return true.

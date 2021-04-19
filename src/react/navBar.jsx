@@ -4,15 +4,12 @@ import React, { useEffect, useReducer } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import { FaEdit } from 'react-icons/fa'
+import { FaEdit, FaLinkedin, FaGithub } from 'react-icons/fa'
 import { MdSave, MdFolder, MdInsertDriveFile } from 'react-icons/md'
 
 import * as Icon from "./icons";
 import { Dialog } from './dialog'
 import { STLExport, saveFile, openFile, verifyPermission } from './fileHelpers'
-
-
-
 
 export const NavBar = () => {
   const dispatch = useDispatch()
@@ -22,7 +19,10 @@ export const NavBar = () => {
   const modified = useSelector(state => state.ui.modified)
 
   const boolOp = (code) => {
-    if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) return
+    if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) {
+      alert('please first select two bodies for boolean operation')
+      return
+    }
     const [m1, m2] = sc.selected
 
     const mesh = sc.boolOp(m1, m2, code)
@@ -46,8 +46,12 @@ export const NavBar = () => {
     forceUpdate()
   }
 
-  const addSketch = async () => {
-    const sketch = await sc.addSketch()
+  const addSketch = () => {
+    const sketch = sc.addSketch()
+    if (!sketch) {
+      alert('please select a plane or 3 points to define sketch plane')
+      return
+    }
 
     dispatch({ type: 'rx-sketch', obj: sketch })
 
@@ -100,16 +104,16 @@ export const NavBar = () => {
       dispatch({ type: 'set-dialog', action: 'extrude', target: sc.activeSketch })
 
     }, 'Extrude [e]'],
-    [Icon.Dimension, () => sc.activeSketch.command('d'), 'Dimension [d]'],
-    [Icon.Line, () => sc.activeSketch.command('l'), 'Line [l]'],
-    [Icon.Arc, () => sc.activeSketch.command('a'), 'Arc [a]'],
-    [Icon.Coincident, () => sc.activeSketch.command('c'), 'Coincident [c]'],
-    [Icon.Vertical, () => sc.activeSketch.command('v'), 'Vertical [v]'],
-    [Icon.Horizontal, () => sc.activeSketch.command('h'), 'Horizontal [h]'],
-    [Icon.Tangent, () => sc.activeSketch.command('t'), 'Tangent [t]'],
+    [Icon.Dimension, () => sc.activeSketch.command('d'), 'Dimension [D]'],
+    [Icon.Line, () => sc.activeSketch.command('l'), 'Line [L]'],
+    [Icon.Arc, () => sc.activeSketch.command('a'), 'Arc [A]'],
+    [Icon.Coincident, () => sc.activeSketch.command('c'), 'Coincident [C]'],
+    [Icon.Vertical, () => sc.activeSketch.command('v'), 'Vertical [V]'],
+    [Icon.Horizontal, () => sc.activeSketch.command('h'), 'Horizontal [H]'],
+    [Icon.Tangent, () => sc.activeSketch.command('t'), 'Tangent [T]'],
     [MdSave,
       async () => {
-        if(await verifyPermission(fileHandle) === false) return
+        if (await verifyPermission(fileHandle) === false) return
         sc.refreshNode(sc.activeSketch.obj3d.name, treeEntries)
         sc.activeSketch.clearSelection()
         saveFile(fileHandle, JSON.stringify([id, sc.sid, sc.mid, treeEntries]), dispatch)
@@ -121,9 +125,14 @@ export const NavBar = () => {
 
 
   const partModeButtons = [
-    [FaEdit, addSketch, 'Sketch [s]'],
+    [FaEdit, addSketch, 'Sketch'],
     [Icon.Extrude, () => {
-      dispatch({ type: 'set-dialog', action: 'extrude', target: treeEntries.byId[sc.selected[0].name] })
+      if (sc.selected[0] && treeEntries.byId[sc.selected[0].name].userData.type == 'sketch') {
+        dispatch({ type: 'set-dialog', action: 'extrude', target: treeEntries.byId[sc.selected[0].name] })
+      } else {
+        alert('please select a sketch from the left pane extrude')
+      }
+
     }, 'Extrude'],
 
     [Icon.Union, () => boolOp('u'), 'Union'],
@@ -147,9 +156,12 @@ export const NavBar = () => {
       )
     }, 'Open'],
     [Icon.Stl, () => {
-      STLExport('box')
-    },
-      , 'Export STL'],
+      if (sc.selected[0] && sc.selected[0].userData.type == 'mesh') {
+        STLExport(fileHandle ? fileHandle.name.replace(/\.[^/.]+$/, "") : 'untitled')
+      } else {
+        alert('please first select one body to export')
+      }
+    }, 'Export to STL'],
   ]
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
@@ -175,30 +187,16 @@ export const NavBar = () => {
           ))
       }
     </div>
-    <div className='w-auto h-full flex-1 items-center'>
+    <div className='w-auto h-full flex-1 items-center flex justify-end'>
+      <a href='https://github.com/twpride/threeCAD' className='h-full w=auto'>
+        <FaGithub className="btn-green w-auto h-full p-3.5"></FaGithub>
+      </a>
+      <a href='https://www.linkedin.com/in/howard-hwang-b3000335' className='h-full w=auto'>
+        <FaLinkedin className="btn-green w-auto h-full p-3.5"></FaLinkedin>
+      </a>
     </div>
 
   </div>
 }
-
-
-// app.saveFile = async () => {
-//   try {
-//     if (!app.file.handle) {
-//       return await app.saveFileAs();
-//     }
-//     gaEvent('FileAction', 'Save');
-//     await writeFile(app.file.handle, app.getText());
-//     app.setModified(false);
-//   } catch (ex) {
-//     gaEvent('Error', 'FileSave', ex.name);
-//     const msg = 'Unable to save file';
-//     console.error(msg, ex);
-//     alert(msg);
-//   }
-//   app.setFocus();
-// };
-
-
 
 

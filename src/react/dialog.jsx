@@ -111,10 +111,14 @@ export const Dialog = () => {
               || sc.activeSketch.idOnActivate != id
               || sc.activeSketch.c_idOnActivate != sc.activeSketch.c_id
             ) {
-              dispatch({ type: "restore-sketch" })
-              // dispatch({ type: 'set-modified', status: false })
+              if (sc.newSketch) {
+                dispatch({ type: 'delete-node', id: sc.activeSketch.obj3d.name  })
+                sc.sid -= 1
+              } else {
+                dispatch({ type: "restore-sketch" })
+              }
             }
-            
+
             dispatch({ type: 'finish-sketch' })
 
             sc.activeSketch.deactivate()

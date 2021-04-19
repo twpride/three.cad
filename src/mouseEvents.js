@@ -5,7 +5,7 @@ import { onDimMoveEnd } from './drawDimension'
 let ptLoc
 
 export function onHover(e) {
-  if (this.mode || e.buttons) return
+  if (( this.mode && this.mode!='dimension') || e.buttons) return
 
   raycaster.setFromCamera(
     new THREE.Vector2(
@@ -114,7 +114,7 @@ export function onHover(e) {
 
 let draggedLabel;
 export function onPick(e) {
-  if (this.mode || e.buttons != 1) return
+  if (( this.mode && this.mode!='dimension') || e.buttons != 1) return
   // if (this.mode || e.buttons != 1 || e.ctrlKey || e.metaKey) return
 
   if (this.hovered.length) {

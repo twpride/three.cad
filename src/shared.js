@@ -128,6 +128,7 @@ async function awaitSelection(...criteria) {
 
       references.push(pt)
       const type = pt.userData.type
+
       if (counter[type]) {
         counter[type] += 1;
       } else {
@@ -144,7 +145,7 @@ async function awaitSelection(...criteria) {
     window.removeEventListener('keydown', onKey)
   }
 
-  console.log('fail')
+  // console.log('fail')
   return null
 }
 

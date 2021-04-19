@@ -1,6 +1,8 @@
 
 
-import { Vector2 } from 'three';
+import {
+	Vector2
+} from '../node_modules/three/src/Three';
 import { ptObj, lineObj } from './shared'
 
 const n = 30

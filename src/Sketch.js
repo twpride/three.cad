@@ -5,7 +5,7 @@ import * as THREE from '../node_modules/three/src/Three';
 import { _vec2, _vec3, raycaster, awaitSelection, ptObj, setHover } from './shared'
 
 import { drawOnClick1, drawOnClick2, drawPreClick2, drawOnClick3, drawPreClick3, drawClear, drawPoint } from './drawEvents'
-import { onHover, onDrag, onPick, onRelease, clearSelection} from './mouseEvents'
+import { onHover, onDrag, onPick, onRelease, clearSelection } from './mouseEvents'
 import { setCoincident, setOrdinate, setTangent } from './constraintEvents'
 import { get3PtArc } from './drawArc'
 import { replacer, reviver } from './utils'
@@ -197,6 +197,9 @@ class Sketch {
     this.obj3d.traverse(e => e.layers.disable(2))
     this.scene.axes.visible = false
     this.scene.activeSketch = null
+    if (this.scene.newSketch) {
+      this.scene.newSketch = false
+    }
 
     this.clearSelection()
 
@@ -255,8 +258,11 @@ class Sketch {
         this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
         break;
       case 'd':
-        drawClear.call(this)
-        this.drawDimension()
+        if (this.mode != 'dimension') {
+          drawClear.call(this)
+          this.mode = "dimension"
+          this.drawDimension()
+        }
         break;
       case 'c':
         drawClear.call(this)
@@ -284,6 +290,7 @@ class Sketch {
         console.log('undo would be nice')
         break;
     }
+    // console.log('this mode:', this.mode)
   }
 
   deleteSelected() {

@@ -138,7 +138,7 @@ export async function drawDimension() {
 
   } else {
 
-    this.dimGroup.children.splice(this.dimGroup.length - 2, 2).forEach(
+    this.dimGroup.children.splice(this.dimGroup.children.length - 2, 2).forEach(
       e => {
         e.geometry.dispose()
         e.material.dispose()
@@ -147,6 +147,10 @@ export async function drawDimension() {
     this.labelContainer.removeChild(this.labelContainer.lastChild);
     sc.render()
   }
+  if (this.mode=="dimension") {
+    this.drawDimension()
+  }
+
   return
 }
 

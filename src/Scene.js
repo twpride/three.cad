@@ -1,22 +1,16 @@
-
-
-
 import * as THREE from '../node_modules/three/src/Three';
-import { TrackballControls } from '../lib/trackball'
-import { Sketch } from './Sketch'
-import Stats from '../lib/stats.module.js';
 
+import { Sketch } from './Sketch'
 import { extrude, flipBufferGeometryNormals } from './extrude'
 import { onHover, onPick, clearSelection } from './mouseEvents';
 import { _vec2, _vec3, color, awaitSelection, ptObj, setHover } from './shared'
-
 import { AxesHelper } from './axes'
 
 
+import { TrackballControls } from '../lib/trackball'
 import CSG from "../lib/three-csg"
-
-import { STLExporter } from '../node_modules/three/examples/jsm/exporters/STLExporter'
-
+import { STLExporter } from '../lib/stl'
+import Stats from '../lib/stats.module.js';
 
 
 
@@ -376,37 +370,34 @@ function render() {
 }
 
 
-async function addSketch() {
+function addSketch() {
 
   let sketch;
 
-  const references = await this.awaitSelection({ selpoint: 3 }, { plane: 1 });
-
-  if (!references) return;
-
-  if (references[0].userData.type == 'plane') {
-    sketch = new Sketch(this)
-    sketch.obj3d.matrix = references[0].matrix
-    sketch.plane.applyMatrix4(sketch.obj3d.matrix)
-    sketch.obj3d.inverse = sketch.obj3d.matrix.clone().invert()
-    this.obj3d.add(sketch.obj3d)
-  } else {
+  if (this.selected.length == 3 && this.selected.every(e=>e.userData.type == 'selpoint')) {
     sketch = new Sketch(this)
     this.obj3d.add(sketch.obj3d)
     sketch.align(
-      ...references.map(
+      ...this.selected.map(
         el => new THREE.Vector3(...el.geometry.attributes.position.array).applyMatrix4(el.matrixWorld)
       )
     )
+  } else if (this.selected.length && this.selected[0].userData.type == 'plane') {
+    sketch = new Sketch(this)
+    sketch.obj3d.matrix = this.selected[0].matrix
+    sketch.plane.applyMatrix4(sketch.obj3d.matrix)
+    sketch.obj3d.inverse = sketch.obj3d.matrix.clone().invert()
+    this.obj3d.add(sketch.obj3d)
+
+  } else {
+    return
   }
 
+  this.newSketch = true
 
   this.clearSelection()
-
   sketch.obj3d.addEventListener('change', this.render);
-  
   return sketch
-
 }
 
 window.sc = new Scene(store)

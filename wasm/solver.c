@@ -174,8 +174,7 @@ int main(int argc, char *argv[])
   sys.failed = CheckMalloc(500 * sizeof(sys.failed[0]));
   sys.faileds = 500;
 
-  // Example2d(150.0);
 
-  printf("hello\n");
+  // printf("hello\n");
   return 0;
 }
