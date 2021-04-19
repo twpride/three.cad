@@ -4,7 +4,7 @@ import React from 'react'
 import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
 import { reducer } from './reducer'
-import logger from 'redux-logger'
+// import logger from 'redux-logger'
 
 import { Tree } from './tree'
 import { NavBar } from './navBar'
