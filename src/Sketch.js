@@ -9,7 +9,6 @@ import { onHover, onDrag, onPick, onRelease, clearSelection} from './mouseEvents
 import { setCoincident, setOrdinate, setTangent } from './constraintEvents'
 import { get3PtArc } from './drawArc'
 import { replacer, reviver } from './utils'
-import { AxesHelper } from './sketchAxes'
 import { drawDimension, _onMoveDimension, setDimLines, updateDim } from './drawDimension';
 
 
@@ -18,7 +17,6 @@ class Sketch {
 
 
   constructor(scene, preload) {
-
 
     // [0]:x, [1]:y, [2]:z
     this.ptsBuf = new Float32Array(this.max_pts * 3).fill(NaN)
@@ -96,7 +94,6 @@ class Sketch {
     this.camera = scene.camera
     this.canvas = scene.canvas
     this.rect = scene.rect
-    this.store = scene.store;
 
 
 
@@ -153,14 +150,27 @@ class Sketch {
   }
 
 
+  setClean() {
+    this.hasChanged = false
+    this.idOnActivate = id
+    this.c_idOnActivate = this.c_id
+
+    const changeDetector = (e) => {
+      if (this.selected.length && e.buttons) {
+        this.canvas.removeEventListener('pointermove', changeDetector)
+        this.hasChanged = true
+      }
+    }
+
+    this.canvas.addEventListener('pointermove', changeDetector)
+  }
+
+
   activate() {
-    console.log('activate sketch')
     window.addEventListener('keydown', this.onKeyPress)
     this.canvas.addEventListener('pointerdown', this.onPick)
     this.canvas.addEventListener('pointermove', this.onHover)
 
-
-    this.store.dispatch({ type: 'set-active-sketch', activeSketchId: this.obj3d.name })
 
     this.setDimLines()
 
@@ -172,21 +182,12 @@ class Sketch {
 
     window.sketcher = this
 
-    // overkill but good solution if this check was more costly
-    this.hasChanged = false
-    this.idOnActivate = id
-    this.c_idOnActivate = this.c_id
-    // console.log(this,this.selected)
-    const changeDetector = (e) => {
-      if (this.selected.length && e.buttons) {
-        this.canvas.removeEventListener('pointermove', changeDetector)
-        this.hasChanged = true
-      }
-    }
-    this.canvas.addEventListener('pointermove', changeDetector)
+    this.setClean()
+
   }
 
   deactivate() {
+    console.log('deactivate')
     window.removeEventListener('keydown', this.onKeyPress)
     this.canvas.removeEventListener('pointerdown', this.onPick)
     this.canvas.removeEventListener('pointermove', this.onHover)

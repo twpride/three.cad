@@ -36,6 +36,7 @@ auto update extrude // done
 extrude edit dialog // done
 file save, stl export// done
 
+-unable cancel out of new sketches  //fixed seemingly
 
 -sometimes unable to hit return and change dimensionk
 -unable to delete arc

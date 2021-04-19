@@ -10,34 +10,42 @@ import * as Icon from "./icons";
 export const Dialog = () => {
 
   const dialog = useSelector(state => state.ui.dialog)
+  const treeEntries = useSelector(state => state.treeEntries)
   const dispatch = useDispatch()
 
   const ref = useRef()
 
   useEffect(() => {
-    console.log(dialog)
     if (!ref.current) return
     ref.current.focus()
   }, [dialog])
 
   const extrude = () => {
-    sc.extrude(dialog.target, ref.current.value)
-    sc.render()
+    const mesh = sc.extrude(dialog.target, ref.current.value)
+
+    dispatch({ type: 'rx-extrusion', mesh, sketchId: dialog.target.obj3d.name })
+
+    if (sc.activeSketch == dialog.target) {
+      dispatch({ type: 'finish-sketch' })
+      dialog.target.deactivate()
+    }
 
     dispatch({ type: "clear-dialog" })
 
+    sc.render()
   }
 
   const extrudeEdit = () => {
-    
+
 
     dialog.target.userData.featureInfo[1] = ref.current.value
 
-    sc.refreshNode(dialog.target.name)
+    sc.refreshNode(dialog.target.name, treeEntries)
+    dispatch({ type: 'set-modified', status: true })
 
-    sc.render()
     dispatch({ type: "clear-dialog" })
 
+    sc.render()
   }
 
 
@@ -53,7 +61,13 @@ export const Dialog = () => {
           onClick={extrude}
         />
         <MdClose className="btn w-auto h-full p-3.5 mr-6"
-          onClick={() => dispatch({ type: "clear-dialog" })}
+          onClick={() => {
+            if (sc.activeSketch == dialog.target) { // if extrude dialog launched from sketch mode we set dialog back to the sketch dialog
+              dispatch({ type: 'set-dialog', action: 'sketch' })
+            } else {
+              dispatch({ type: "clear-dialog" })
+            }
+          }}
         />
       </>
     case 'extrude-edit':
@@ -79,7 +93,9 @@ export const Dialog = () => {
               || sc.activeSketch.idOnActivate != id
               || sc.activeSketch.c_idOnActivate != sc.activeSketch.c_id
             ) {
-              sc.refreshNode(sc.activeSketch.obj3d.name)
+              sc.refreshNode(sc.activeSketch.obj3d.name, treeEntries)
+
+              dispatch({ type: 'set-modified', status: true })
             }
 
             dispatch({ type: 'finish-sketch' })
@@ -96,9 +112,10 @@ export const Dialog = () => {
               || sc.activeSketch.c_idOnActivate != sc.activeSketch.c_id
             ) {
               dispatch({ type: "restore-sketch" })
-            } else {
-              dispatch({ type: 'finish-sketch' })
+              // dispatch({ type: 'set-modified', status: false })
             }
+            
+            dispatch({ type: 'finish-sketch' })
 
             sc.activeSketch.deactivate()
             sc.render()

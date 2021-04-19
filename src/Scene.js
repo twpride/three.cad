@@ -36,12 +36,12 @@ export class Scene {
     this.sid = 1
     this.mid = 1
 
-    this.store = store;
     this.canvas = document.querySelector('#c');
 
     this.rect = this.canvas.getBoundingClientRect().toJSON()
 
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+    this.store = store
 
     const size = 1;
     const near = 0;
@@ -178,11 +178,6 @@ export class Scene {
   }
 
 
-  saveScene() {
-    return JSON.stringify([id, this.sid, this.mid, this.store.getState().treeEntries])
-  }
-
-
   clearScene() {
     const deleted = this.obj3d.children.splice(1)
 
@@ -240,7 +235,6 @@ export class Scene {
       }
     }
 
-    this.store.dispatch({ type: 'restore-state', state })
     return state
   }
 
@@ -262,17 +256,10 @@ export class Scene {
 
     this.obj3d.add(mesh)
 
-    this.store.dispatch({ type: 'rx-extrusion', mesh, sketchId: sketch.obj3d.name })
-
-    if (this.activeSketch == sketch) {
-      this.store.dispatch({ type: 'finish-sketch' })
-      sketch.deactivate()
-    }
-    this.render()
-
+    return mesh
   }
 
-  boolOp(m1, m2, op, refresh = false) {
+  boolOp(m1, m2, op) {
     let bspA = CSG.fromMesh(m1)
     let bspB = CSG.fromMesh(m2)
     m1.visible = false
@@ -312,33 +299,16 @@ export class Scene {
 
     mesh.add(vertices)
 
-    if (!refresh) {
-      sc.obj3d.add(mesh)
-
-      this.store.dispatch({
-        type: 'set-entry-visibility', obj: {
-          [m1.name]: false,
-          [m2.name]: false,
-          [mesh.name]: true,
-        }
-      })
-
-      this.store.dispatch({
-        type: 'rx-boolean', mesh, deps: [m1.name, m2.name]
-      })
-    } else {
-      return mesh
-    }
+    return mesh
 
   }
 
-  refreshNode(id) {
+  refreshNode(id, { byId, tree }) {
     let curId
     let que = [id]
     let idx = 0
     // let newNodes = {}
 
-    const { byId, tree } = this.store.getState().treeEntries
     while (idx < que.length) {
       curId = que[idx++]
 
@@ -348,7 +318,7 @@ export class Scene {
         if (info.length == 2) {
           newNode = extrude(byId[info[0]], info[1])
         } else if (info.length == 3) {
-          newNode = this.boolOp(byId[info[0]], byId[info[1]], info[2], true)
+          newNode = this.boolOp(byId[info[0]], byId[info[1]], info[2])
         }
         byId[curId].geometry.copy(newNode.geometry)
         byId[curId].geometry.parameters = newNode.geometry.parameters // took 2 hours to figure out
@@ -433,14 +403,9 @@ async function addSketch() {
 
   this.clearSelection()
 
-
   sketch.obj3d.addEventListener('change', this.render);
-  this.store.dispatch({ type: 'rx-sketch', obj: sketch })
-
-  sketch.activate()
-
-  this.render()
-
+  
+  return sketch
 
 }
 

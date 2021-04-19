@@ -10,7 +10,6 @@ const defaultState = {
   tree: {},
   order: {},
   visible: {},
-  activeSketchId: ""
 }
 
 let cache
@@ -33,21 +32,19 @@ export function treeEntries(state = defaultState, action) {
     }
 
     case 'set-active-sketch':
-      cache = JSON.stringify(state.byId[action.activeSketchId])
+      cache = JSON.stringify(action.sketch)
       return update(state, {
-        visible: { [action.activeSketchId]: { $set: true } },
-        activeSketchId: { $set: action.activeSketchId },
+        visible: { [action.sketch.obj3d.name]: { $set: true } },
       })
     case 'finish-sketch':
       return update(state, {
-        activeSketchId: { $set: "" },
-        visible: { [state.activeSketchId]: { $set: false } },
+        visible: { [sc.activeSketch.obj3d.name]: { $set: false } },
       })
     case 'restore-sketch':
 
       const sketch = sc.loadSketch(cache)
 
-      const deletedObj = sc.obj3d.children.splice(state.order[state.activeSketchId] + 1, 1,
+      const deletedObj = sc.obj3d.children.splice(state.order[sc.activeSketch.obj3d.name] + 1, 1,
         sketch.obj3d
       )[0]
 
@@ -59,9 +56,7 @@ export function treeEntries(state = defaultState, action) {
       sc.activeSketch = sketch
 
       return update(state, {
-        activeSketchId: { $set: "" },
-        byId: { [state.activeSketchId]: { $set: sketch } },
-        visible: { [state.activeSketchId]: { $set: false } },
+        byId: { [sc.activeSketch.obj3d.name]: { $set: sketch } },
       })
     case 'rx-extrusion':
 
@@ -108,7 +103,18 @@ export function treeEntries(state = defaultState, action) {
 
 export function ui(state = { dialog: {}, filePane: false }, action) {
   switch (action.type) {
-
+    case 'set-active-sketch':
+      return update(state, {
+        sketchActive: { $set: true },
+      })
+    case 'rx-sketch':
+      return update(state, {
+        sketchActive: { $set: true },
+      })
+    case 'finish-sketch':
+      return update(state, {
+        sketchActive: { $set: false },
+      })
     case 'set-dialog':
       return update(state, {
         dialog: { $set: { target: action.target, action: action.action } },
@@ -126,6 +132,18 @@ export function ui(state = { dialog: {}, filePane: false }, action) {
       return update(state, {
         fileHandle: { $set: null },
         modified: { $set: false },
+      })
+    case 'set-modified':
+      return update(state, {
+        modified: { $set: action.status },
+      })
+    case 'delete-node':
+      return update(state, {
+        modified: { $set: true },
+      })
+    case 'rx-extrusion':
+      return update(state, {
+        modified: { $set: true },
       })
     default:
       return state

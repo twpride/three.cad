@@ -16,12 +16,14 @@ var tzoffset = (new Date()).getTimezoneOffset() * 60000;
 
 export function STLExport(filename) {
   if (sc.selected[0] && sc.selected[0].userData.type == 'mesh') {
-    
+
     const result = STLexp.parse(sc.selected[0], { binary: true });
 
     const time = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -5).replace(/:/g, '-');
 
     saveLegacy(new Blob([result], { type: 'model/stl' }), `${filename}_${time}.stl`);
+  } else {
+    alert('please select one body to export')
   }
 }
 
@@ -48,7 +50,7 @@ export async function saveFileAs(file, dispatch) {
 
     const opts = {
       types: [{
-        // description: 'Text file',
+        description: 'Text file',
         accept: { 'application/json': ['.json'] },
       }],
     };
@@ -114,11 +116,12 @@ export async function openFile(dispatch) {
   try {
     const file = await fileHandle.getFile();
     const text = await file.text();;
-    sc.loadState(text)
-    
+
+    dispatch({ type: 'restore-state', state: sc.loadState(text) })
     dispatch({ type: 'set-file-handle', fileHandle })
-    // app.setModified(false);
+
     // app.setFocus(true);
+
   } catch (ex) {
     const msg = `An error occured reading ${fileHandle}`;
     console.error(msg, ex);
@@ -127,3 +130,30 @@ export async function openFile(dispatch) {
 
 
 };
+
+
+export function confirmDiscard(modified) {
+  if (!modified) {
+    return true;
+  }
+  const confirmMsg = 'Discard changes? All changes will be lost.';
+  return confirm(confirmMsg);
+};
+
+
+export async function verifyPermission(fileHandle) {
+  const opts = {
+    mode:'readwrite'
+  };
+
+  // Check if we already have permission, if so, return true.
+  if (await fileHandle.queryPermission(opts) === 'granted') {
+    return true;
+  }
+  // Request permission to the file, if the user grants permission, return true.
+  if (await fileHandle.requestPermission(opts) === 'granted') {
+    return true;
+  }
+  // The user did nt grant permission, return false.
+  return false;
+}

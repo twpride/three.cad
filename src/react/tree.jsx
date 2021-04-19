@@ -8,10 +8,12 @@ import { FaCube, FaEdit } from 'react-icons/fa'
 
 export const Tree = () => {
   const treeEntries = useSelector(state => state.treeEntries)
-  const ref = useRef()
+  const fileHandle = useSelector(state => state.ui.fileHandle)
 
   return <div className='sideNav flex flex-col bg-gray-800'>
-    <input className='w-16 text-gray-50 h-7 mx-1 border-0 focus:outline-none bg-transparent' type="text" defaultValue="untitled" step="0.1" ref={ref} />
+    <div className='w-16 text-gray-50 h-7 mx-1 border-0 focus:outline-none bg-transparent'>
+      {fileHandle ? fileHandle.name.replace(/\.[^/.]+$/, "") : 'untitled'}
+    </div>
     {treeEntries.allIds.map((entId, idx) => (
       <TreeEntry key={idx} entId={entId} />
     ))}
@@ -55,7 +57,11 @@ const TreeEntry = ({ entId }) => {
           dispatch({ type: 'finish-sketch' })
           sc.activeSketch.deactivate()
         }
+
+
         sketch.activate()
+        dispatch({ type: 'set-active-sketch', sketch })
+
         sc.clearSelection()
         sc.activeSketch = sketch;
         dispatch({ type: 'set-dialog', action: 'sketch' })
@@ -120,14 +126,6 @@ const TreeEntry = ({ entId }) => {
           e.stopPropagation()
         }}
       />
-      {/* <MdRefresh className='btn-green h-full w-auto p-1.5'
-        onClick={(e) => {
-          e.stopPropagation()
-
-          sc.refreshNode(entId)
-          sc.render()
-        }}
-      /> */}
 
       {
         visible ?
