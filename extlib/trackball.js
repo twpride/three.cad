@@ -4,7 +4,7 @@ import {
 	Quaternion,
 	Vector2,
 	Vector3
-} from '../node_modules/three/src/Three';
+} from 'three/src/Three';
 
 var TrackballControls = function ( object, domElement ) {
 

@@ -1,3 +1,5 @@
+// https://web.dev/file-system-access/
+
 const link = document.createElement('a');
 link.style.display = 'none';
 document.body.appendChild(link);

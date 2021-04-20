@@ -3,18 +3,18 @@ import * as THREE from '../node_modules/three/src/Three';
 import { Sketch } from './Sketch'
 import { extrude, flipBufferGeometryNormals } from './extrude'
 import { onHover, onPick, clearSelection } from './mouseEvents';
-import { _vec2, _vec3, color, awaitSelection, ptObj, setHover } from './shared'
+import { _vec2, _vec3, color, awaitSelection, setHover } from './shared'
 import { AxesHelper } from './axes'
 
 
-import { TrackballControls } from '../lib/trackball'
-import CSG from "../lib/three-csg"
-import { STLExporter } from '../lib/stl'
+import { TrackballControls } from '../extlib/trackball'
+import CSG from "../extlib/three-csg"
+import { STLExporter } from '../extlib/stl'
 
 
 let stats
 if (process.env.NODE_ENV !== 'production') {
-  const { default: d } = require('../lib/stats.module.js')
+  const { default: d } = require('../extlib/stats.module.js')
   stats = new d();
   document.getElementById('stats').appendChild(stats.dom);
 }
