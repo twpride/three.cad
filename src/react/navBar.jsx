@@ -1,6 +1,6 @@
 
 
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -9,6 +9,7 @@ import { MdSave, MdFolder, MdInsertDriveFile } from 'react-icons/md'
 
 import * as Icon from "./icons";
 import { Dialog } from './dialog'
+import { DropDown } from './dropDown'
 import { STLExport, saveFile, openFile, verifyPermission } from './fileHelpers'
 
 export const NavBar = () => {
@@ -103,14 +104,14 @@ export const NavBar = () => {
     [Icon.Extrude, () => {
       dispatch({ type: 'set-dialog', action: 'extrude', target: sc.activeSketch })
 
-    }, 'Extrude [e]'],
-    [Icon.Dimension, () => sc.activeSketch.command('d'), 'Dimension [D]'],
-    [Icon.Line, () => sc.activeSketch.command('l'), 'Line [L]'],
-    [Icon.Arc, () => sc.activeSketch.command('a'), 'Arc [A]'],
-    [Icon.Coincident, () => sc.activeSketch.command('c'), 'Coincident [C]'],
-    [Icon.Vertical, () => sc.activeSketch.command('v'), 'Vertical [V]'],
-    [Icon.Horizontal, () => sc.activeSketch.command('h'), 'Horizontal [H]'],
-    [Icon.Tangent, () => sc.activeSketch.command('t'), 'Tangent [T]'],
+    }, 'Extrude'],
+    [Icon.Dimension, () => sc.activeSketch.command('d'), 'Dimension (D)'],
+    [Icon.Line, () => sc.activeSketch.command('l'), 'Line (L)'],
+    [Icon.Arc, () => sc.activeSketch.command('a'), 'Arc (A)'],
+    [Icon.Coincident, () => sc.activeSketch.command('c'), 'Coincident (C)'],
+    [Icon.Vertical, () => sc.activeSketch.command('v'), 'Vertical (V)'],
+    [Icon.Horizontal, () => sc.activeSketch.command('h'), 'Horizontal (H)'],
+    [Icon.Tangent, () => sc.activeSketch.command('t'), 'Tangent (T)'],
     [MdSave,
       async () => {
         if (await verifyPermission(fileHandle) === false) return
@@ -166,28 +167,35 @@ export const NavBar = () => {
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
-  return <div className='topNav flex justify-center items-center bg-gray-700'>
+  return <div className='topNav flex justify-center items-center bg-gray-800'>
 
-    <div className='w-auto h-full flex-1 flex items-center justify-end'>
-      <Dialog />
+    {/* <div className='w-auto h-full flex-1 flex items-center justify-end'> */}
+    <div className='w-auto h-full flex-1 flex items-center justify-end md:justify-between'>
+      <div className='w-100 h-full items-center font-mono text-lg text-gray-200 select-none hidden md:flex mr-8'>
+        <Icon.Logo className='w-auto h-6 mx-1' />
+          three.cad
+      </div>
+      <div className='h-full w-48 flex items-center justify-end'>
+        <Dialog />
+      </div>
     </div>
-    <div className='w-auto h-full flex-none'>
-      {
-        sketchActive ?
-          sketchModeButtons.map(([Icon, fcn, txt, shortcut], idx) => (
-            <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
-              onClick={fcn} key={idx}
-            />
-          ))
-          :
-          partModeButtons.map(([Icon, fcn, txt, shortcut], idx) => (
-            <Icon className="btn w-auto h-full p-3.5" tooltip={txt}
-              onClick={fcn} key={idx}
-            />
-          ))
+    <div className='w-auto h-full flex'>
+      {sketchActive ?
+        sketchModeButtons.map(([Icon, fcn, txt], idx) => (
+          <Icon className="btn text-gray-200 w-auto h-full p-3.5" tooltip={txt}
+            onClick={fcn} key={idx}
+          />
+        ))
+        :
+        partModeButtons.map(([Icon, fcn, txt], idx) => (
+          <Icon className="btn text-gray-200 w-auto h-full p-3.5" tooltip={txt}
+            onClick={fcn} key={idx}
+          />
+        ))
       }
     </div>
-    <div className='w-auto h-full flex-1 items-center flex justify-end'>
+    <div className='w-auto h-full flex-1 items-center justify-end flex-shrink-1 hidden lg:flex'>
+      <DropDown />
       <a href='https://github.com/twpride/threeCAD' className='h-full w=auto'>
         <FaGithub className="btn-green w-auto h-full p-3.5"></FaGithub>
       </a>
@@ -198,5 +206,8 @@ export const NavBar = () => {
 
   </div>
 }
+
+
+
 
 

@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-svg=icon
+svg=icon2
 
 size=(16 24 32 64)
 out=""
 for i in ${size[@]}; do
-  inkscape --export-filename="./$svg-$i.png" $svg.svg -w $i -h $i 
-  out+="$svg-$i.png "
+  inkscape --export-filename="./icon-$i.png" $svg.svg -w $i -h $i 
+  out+="icon-$i.png "
 done
 
 size=(192 512)
 for i in ${size[@]}; do
-  inkscape --export-filename="./$svg-$i.png" $svg.svg -w $i -h $i 
+  inkscape --export-filename="./icon-$i.png" $svg.svg -w $i -h $i 
 done
 
 convert $out favicon.ico

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="452.45901"
+   height="96"
+   viewBox="0 0 452.45901 96.000008"
+   version="1.1"
+   id="svg2112"
+   inkscape:version="1.0.2 (1.0.2+r75+1)"
+   sodipodi:docname="icon-text.svg">
+  <defs
+     id="defs2106">
+    <rect
+       x="645.90955"
+       y="45.977581"
+       width="248.2307"
+       height="71.300766"
+       id="rect943" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.5149474"
+     inkscape:cx="218.61618"
+     inkscape:cy="175.47211"
+     inkscape:document-units="px"
+     inkscape:current-layer="g2625"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1747"
+     inkscape:window-height="1199"
+     inkscape:window-x="729"
+     inkscape:window-y="154"
+     inkscape:window-maximized="0"
+     units="px" />
+  <metadata
+     id="metadata2109">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g2625"
+       transform="translate(46.477595,53.03882)">
+      <g
+         id="g842"
+         transform="matrix(0.17281172,0,0,0.17281172,-21.424361,-37.007371)">
+        <g
+           id="g921"
+           transform="translate(-36.094691,-12.655916)">
+          <path
+             style="fill:#34d399;fill-opacity:0.698039;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 51.316614,84.370759 164.499996,-95.000008 164.5,95.000008 -164.5,95.000041 z"
+             id="path2578"
+             sodipodi:nodetypes="ccccc" />
+          <path
+             style="fill:#34d399;fill-opacity:0.698039;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 401.16781,121 0.0224,189.96118 -164.52241,94.96118 -0.0224,-189.96118 z"
+             id="path2578-3"
+             sodipodi:nodetypes="ccccc" />
+          <path
+             style="fill:#34d399;fill-opacity:0.698039;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="M 194.52241,405.92236 30,310.96118 30.022413,121 194.54483,215.96118 Z"
+             id="path2578-6"
+             sodipodi:nodetypes="ccccc" />
+        </g>
+      </g>
+      <text
+         xml:space="preserve"
+         id="text941"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect943);fill:#000000;fill-opacity:1;stroke:none;"
+         transform="matrix(1.8120726,0,0,1.8120726,-1109.4801,-131.27905)"><tspan
+           x="645.91016"
+           y="83.286208"><tspan
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono'">three.cad</tspan></tspan></text>
+    </g>
+  </g>
+</svg>

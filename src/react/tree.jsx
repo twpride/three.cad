@@ -50,7 +50,7 @@ const TreeEntry = ({ entId }) => {
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
   const [mouseOn, setMouseOn] = useState(false)
 
-  return <div className='btn select-none flex justify-start w-full h-7 items-center text-sm'
+  return <div className='btn text-gray-200 select-none flex justify-start w-full h-7 items-center text-sm'
     onDoubleClick={() => {
       if (obj3d.userData.type == 'sketch') {
         if (sc.activeSketch) {
@@ -71,7 +71,6 @@ const TreeEntry = ({ entId }) => {
       }
 
     }}
-
     onPointerEnter={() => {
       if (mouseOn) return
       setMouseOn(true)
@@ -112,9 +111,13 @@ const TreeEntry = ({ entId }) => {
       }
       sc.render()
     }}
+
+    tooltip= {obj3d.name[0] !='(' && "double click to edit"}
+    // tooltip= {obj3d.userData.name}
+
   >
     <Icon className='h-full w-auto p-1.5' />
-    <div className="btn pl-1">
+    <div className="pl-1">
       {entId}
     </div>
     <div className='flex h-full ml-auto'>

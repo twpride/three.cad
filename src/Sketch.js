@@ -187,7 +187,6 @@ class Sketch {
   }
 
   deactivate() {
-    console.log('deactivate')
     window.removeEventListener('keydown', this.onKeyPress)
     this.canvas.removeEventListener('pointerdown', this.onPick)
     this.canvas.removeEventListener('pointermove', this.onHover)

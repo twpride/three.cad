@@ -10,8 +10,14 @@ import { AxesHelper } from './axes'
 import { TrackballControls } from '../lib/trackball'
 import CSG from "../lib/three-csg"
 import { STLExporter } from '../lib/stl'
-import Stats from '../lib/stats.module.js';
 
+
+let stats
+if (process.env.NODE_ENV !== 'production') {
+  const { default: d } = require('../lib/stats.module.js')
+  stats = new d();
+  document.getElementById('stats').appendChild(stats.dom);
+}
 
 
 window.loader = new THREE.ObjectLoader();
@@ -145,10 +151,13 @@ export class Scene {
     controls.addEventListener('start', this.render);
     window.addEventListener('resize', this.render);
 
+    if (process.env.NODE_ENV !== 'production') {
+      this.stats = stats
+      this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+      document.getElementById('stats').appendChild(this.stats.dom);
+    }
 
-    this.stats = new Stats();
-    this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-    document.getElementById('stats').appendChild(this.stats.dom);
+
 
 
     this.hovered = [];
@@ -331,7 +340,11 @@ export class Scene {
 
 let idx, x, y, ele, pos, dims, matrix;
 function render() {
-  this.stats.begin();
+  if (process.env.NODE_ENV !== 'production') {
+    this.stats.begin();
+  }
+
+
   if (this.resizeCanvas(this.renderer)) {
     const canvas = this.renderer.domElement;
     this.camera.left = -canvas.clientWidth / canvas.clientHeight;
@@ -366,7 +379,9 @@ function render() {
   }
 
 
-  this.stats.end();
+  if (process.env.NODE_ENV !== 'production') {
+    this.stats.end();
+  }
 }
 
 
@@ -374,7 +389,7 @@ function addSketch() {
 
   let sketch;
 
-  if (this.selected.length == 3 && this.selected.every(e=>e.userData.type == 'selpoint')) {
+  if (this.selected.length == 3 && this.selected.every(e => e.userData.type == 'selpoint')) {
     sketch = new Sketch(this)
     this.obj3d.add(sketch.obj3d)
     sketch.align(
@@ -401,9 +416,3 @@ function addSketch() {
 }
 
 window.sc = new Scene(store)
-// sc.loadState()
-
-
-
-// sc.camera.layers.enable(1)
-// rc.layers.set(1)

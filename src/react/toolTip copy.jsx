@@ -19,7 +19,7 @@ export const ToolTip = () => {
   const activated = useRef(false)
   const timeout = useRef(null)
 
-  // const prevTooltip = useRef(null)                        // svg workaround
+  const prevTooltip = useRef(null)                        // svg workaround
 
   useEffect(() => {
 
@@ -34,9 +34,8 @@ export const ToolTip = () => {
 
       const tooltip = node.getAttribute("tooltip")
 
-      // console.log(tooltip, prevTooltip.current)
-      // if (tooltip == prevTooltip.current) return          // svg workaround
-      // prevTooltip.current = tooltip                       // svg workaround
+      if (tooltip == prevTooltip.current) return          // svg workaround
+      prevTooltip.current = tooltip                       // svg workaround
 
       clearTimeout(timeout.current)
       if (tooltip) {
@@ -50,7 +49,7 @@ export const ToolTip = () => {
           timeout.current = setTimeout(() => {
             ref.current.setAttribute('style', `left:${left}px; top:${top}px; visibility:visible`)
             activated.current = true
-          }, 700);
+          }, 1000);
         }
       } else {
         ref.current.setAttribute('style', `visibility:hidden`)

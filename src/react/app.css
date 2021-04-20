@@ -53,49 +53,18 @@ body {
 .btn {
   cursor: pointer;
   @apply fill-current
-        bg-transparent       text-gray-200
-  hover:bg-gray-500 hover:text-gray-200;
+  bg-transparent hover:bg-gray-600;
 }
-
-.active-btn {
-  cursor: pointer;
-  @apply fill-current
-        bg-green-400       text-gray-200
-}
-
 
 
 .btn-green {
   cursor: pointer;
   @apply fill-current
-        bg-transparent       text-gray-200
-  hover:bg-transparent hover:text-green-400;
+  bg-transparent text-gray-200
+  hover:text-green-400;
 }
 
 
-
-.tooltip {
-  position: fixed;
-  display: block;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 4px;
-  padding: 4px;
-  visibility: hidden;
-  border: solid 1px white;
-
-}
-
-.arrow {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -6px;
-  border: solid 6px transparent;
-  border-bottom-color: white;
-  border-top: none;
-}
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -112,5 +81,17 @@ input[type=number] {
   text-align:right;
 }
 
-/* input:focus[type=number] { */
-/* } */
+.arrow {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border: solid 6px transparent;
+  border-bottom-color: #3F3F46;
+  border-top: none;
+
+}
+
+.drop-down-top {
+  top: calc(var(--topNavH) + 6px);
+}

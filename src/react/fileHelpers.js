@@ -110,8 +110,6 @@ export async function openFile(dispatch) {
     dispatch({ type: 'restore-state', state: sc.loadState(text) })
     dispatch({ type: 'set-file-handle', fileHandle })
 
-    // app.setFocus(true);
-
   } catch (ex) {
     const msg = `An error occured reading ${fileHandle}`;
     console.error(msg, ex);
