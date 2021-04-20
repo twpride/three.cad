@@ -12,9 +12,18 @@
   background-color: rgba(38, 38, 38, var(--tw-bg-opacity));
 }
 
+.hover\:bg-gray-500:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgba(115, 115, 115, var(--tw-bg-opacity));
+}
+
 .border-gray-50 {
   --tw-border-opacity: 1;
   border-color: rgba(250, 250, 250, var(--tw-border-opacity));
+}
+
+.rounded {
+  border-radius: 0.25rem;
 }
 
 .border-0 {
@@ -37,12 +46,20 @@
   border-bottom-width: 1px;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .flex {
   display: flex;
 }
 
 .table {
   display: table;
+}
+
+.hidden {
+  display: none;
 }
 
 .flex-col {
@@ -69,12 +86,20 @@
   flex: 1 1 0%;
 }
 
-.flex-none {
-  flex: none;
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.h-6 {
+  height: 1.5rem;
 }
 
 .h-7 {
   height: 1.75rem;
+}
+
+.h-8 {
+  height: 2rem;
 }
 
 .h-9 {
@@ -100,12 +125,8 @@
   margin-right: 0.25rem;
 }
 
-.mr-2 {
-  margin-right: 0.5rem;
-}
-
-.mr-6 {
-  margin-right: 1.5rem;
+.mr-8 {
+  margin-right: 2rem;
 }
 
 .ml-auto {
@@ -117,12 +138,24 @@
   outline-offset: 2px;
 }
 
+.overflow-visible {
+  overflow: visible;
+}
+
+.p-0 {
+  padding: 0px;
+}
+
 .p-1 {
   padding: 0.25rem;
 }
 
 .p-3 {
   padding: 0.75rem;
+}
+
+.p-0\.5 {
+  padding: 0.125rem;
 }
 
 .p-1\.5 {
@@ -135,6 +168,14 @@
 
 .pl-1 {
   padding-left: 0.25rem;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.relative {
+  position: relative;
 }
 
 * {
@@ -155,6 +196,21 @@
   color: rgba(250, 250, 250, var(--tw-text-opacity));
 }
 
+.text-gray-200 {
+  --tw-text-opacity: 1;
+  color: rgba(229, 229, 229, var(--tw-text-opacity));
+}
+
+.text-green-500 {
+  --tw-text-opacity: 1;
+  color: rgba(16, 185, 129, var(--tw-text-opacity));
+}
+
+.text-red-500 {
+  --tw-text-opacity: 1;
+  color: rgba(239, 68, 68, var(--tw-text-opacity));
+}
+
 .select-none {
   user-select: none;
 }
@@ -163,8 +219,24 @@
   visibility: visible;
 }
 
+.invisible {
+  visibility: hidden;
+}
+
+.w-10 {
+  width: 2.5rem;
+}
+
 .w-16 {
   width: 4rem;
+}
+
+.w-28 {
+  width: 7rem;
+}
+
+.w-48 {
+  width: 12rem;
 }
 
 .w-auto {
@@ -274,39 +346,16 @@ body {
 
 .btn:hover {
   --tw-bg-opacity: 1;
-  background-color: rgba(115, 115, 115, var(--tw-bg-opacity));
+  background-color: rgba(82, 82, 82, var(--tw-bg-opacity));
 }
 
 .btn {
   fill: currentColor;
-  --tw-text-opacity: 1;
-  color: rgba(229, 229, 229, var(--tw-text-opacity));
-}
-
-.btn:hover {
-  --tw-text-opacity: 1;
-  color: rgba(229, 229, 229, var(--tw-text-opacity));
-}
-
-.active-btn {
-  cursor: pointer;
-  --tw-bg-opacity: 1;
-  background-color: rgba(52, 211, 153, var(--tw-bg-opacity));
-  fill: currentColor;
-  --tw-text-opacity: 1;
-  color: rgba(229, 229, 229, var(--tw-text-opacity))
 }
 
 .btn-green {
   cursor: pointer;
   background-color: transparent;
-}
-
-.btn-green:hover {
-  background-color: transparent;
-}
-
-.btn-green {
   fill: currentColor;
   --tw-text-opacity: 1;
   color: rgba(229, 229, 229, var(--tw-text-opacity));
@@ -315,28 +364,6 @@ body {
 .btn-green:hover {
   --tw-text-opacity: 1;
   color: rgba(52, 211, 153, var(--tw-text-opacity));
-}
-
-.tooltip {
-  position: fixed;
-  display: block;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 4px;
-  padding: 4px;
-  visibility: hidden;
-  border: solid 1px white;
-}
-
-.arrow {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -6px;
-  border: solid 6px transparent;
-  border-bottom-color: white;
-  border-top: none;
 }
 
 input::-webkit-outer-spin-button,
@@ -355,17 +382,37 @@ input[type=number] {
   text-align:right;
 }
 
-/* input:focus[type=number] { */
+.arrow {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border: solid 6px transparent;
+  border-bottom-color: #3F3F46;
+  border-top: none;
+}
 
-/* } */
+.drop-down-top {
+  top: calc(var(--topNavH) + 6px);
+}
 
 @media (min-width: 640px) {
 }
 
 @media (min-width: 768px) {
+  .md\:flex {
+    display: flex;
+  }
+
+  .md\:justify-between {
+    justify-content: space-between;
+  }
 }
 
 @media (min-width: 1024px) {
+  .lg\:flex {
+    display: flex;
+  }
 }
 
 @media (min-width: 1280px) {
