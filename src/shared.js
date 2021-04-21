@@ -7,8 +7,8 @@ const _vec3 = new THREE.Vector3()
 
 
 const raycaster = new THREE.Raycaster();
-raycaster.params.Line.threshold = 0.1;
-raycaster.params.Points.threshold = 0.1;
+raycaster.params.Line.threshold = 1;
+raycaster.params.Points.threshold = 1;
 
 
 const color = {

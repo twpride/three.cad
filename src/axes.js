@@ -9,9 +9,9 @@ class AxesHelper extends THREE.Object3D {
     super()
     this.matrixAutoUpdate = false
     this.initialZoom = initialZoom
-    this.length = [0.55, 1]
-    this.headLength = 0.25
-    this.headWidth = 0.12
+    this.length = [5.5, 10]
+    this.headLength = 2.5
+    this.headWidth = 1.2
 
     this.dirs = [
       [1, 0, 0],

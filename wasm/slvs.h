@@ -397,6 +397,35 @@ static inline Slvs_Constraint Slvs_MakeConstraint(Slvs_hConstraint h,
     return r;
 }
 
+
+static inline Slvs_Constraint Slvs_MakeConstraint_Alt(Slvs_hConstraint h,
+                                                  Slvs_hGroup group,
+                                                  int type,
+                                                  Slvs_hEntity wrkpl,
+                                                  double valA,
+                                                  Slvs_hEntity ptA,
+                                                  Slvs_hEntity ptB,
+                                                  Slvs_hEntity entityA,
+                                                  Slvs_hEntity entityB,
+                                                  int other, int other2
+                                                  )
+{
+    Slvs_Constraint r;
+    memset(&r, 0, sizeof(r));
+    r.h = h;
+    r.group = group;
+    r.type = type;
+    r.wrkpl = wrkpl;
+    r.valA = valA;
+    r.ptA = ptA;
+    r.ptB = ptB;
+    r.entityA = entityA;
+    r.entityB = entityB;
+    r.other = other;
+    r.other2 = other2;
+    return r;
+}
+
 #ifdef __cplusplus
 }
 #endif

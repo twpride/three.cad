@@ -47,6 +47,35 @@ export const NavBar = () => {
     forceUpdate()
   }
 
+  // const mirror = (plane) => {
+  //   if (sc.selected.length != 2 || ) {
+  //     alert('please first select two bodies for boolean operation')
+  //     return
+  //   }
+  //   const [m1, m2] = sc.selected
+
+  //   const mesh = sc.boolOp(m1, m2, code)
+
+  //   sc.obj3d.add(mesh)
+
+  //   dispatch({
+  //     type: 'set-entry-visibility', obj: {
+  //       [m1.name]: false,
+  //       [m2.name]: false,
+  //       [mesh.name]: true,
+  //     }
+  //   })
+
+  //   dispatch({
+  //     type: 'rx-boolean', mesh, deps: [m1.name, m2.name]
+  //   })
+
+
+  //   sc.render()
+  //   forceUpdate()
+
+  // }
+
   const addSketch = () => {
     const sketch = sc.addSketch()
     if (!sketch) {

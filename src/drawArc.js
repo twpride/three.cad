@@ -106,12 +106,16 @@ export function drawArc4(mouseLoc, toPush) {
       p2.geometry.attributes.position.array,
       p3.geometry.attributes.position.array
     )
+    p1.userData.start = true
+    p2.userData.start = false
   } else {
     points = get3PtArc(
       p2.geometry.attributes.position.array,
       p1.geometry.attributes.position.array,
       p3.geometry.attributes.position.array
     )
+    p2.userData.start = true
+    p1.userData.start = false
   }
 
   arc.geometry.attributes.position.set(

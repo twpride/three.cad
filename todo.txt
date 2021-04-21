@@ -38,6 +38,10 @@ file save, stl export// done
 seperate scene from init logic only init cam and rendere // not an issue , ended up just splicing (1)
 add download button, different from save button // done
 
+- dimension to origin vs ordinate dimensioninging
+- increased design payload handling
+
+
 -unable cancel out of new sketches  //fixed seemingly
 -unable to delete arc // fixed seemingly
 

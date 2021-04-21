@@ -24,8 +24,8 @@ class Sketch {
     // [0]:type, [1]:pt1, [2]:pt2, [3]:pt3, [4]:pt4
     this.linksBuf = new Float32Array(this.max_links * 5).fill(NaN)
 
-    // [0]:type, [1]:val, [2]:pt1, [3]:pt2, [4]:lk1, [5]:lk2
-    this.constraintsBuf = new Float32Array(this.max_constraints * 6).fill(NaN)
+    // [0]:type, [1]:val, [2]:pt1, [3]:pt2, [4]:lk1, [5]:lk2, [6]: other, [7]: other
+    this.constraintsBuf = new Float32Array(this.max_constraints * 8).fill(NaN)
 
 
     this.plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
@@ -401,9 +401,9 @@ class Sketch {
       this.constraintsBuf.set(
         [
           this.constraintNum[obj[0]], obj[1],
-          ...obj[2].map(ele => this.objIdx.get(ele) ?? 0),
+          ...obj[2].map(ele => this.objIdx.get(ele) ?? 0), obj[3], obj[4]
         ],
-        (i) * 6
+        (i) * 8
       )
       i++
     }
@@ -587,6 +587,8 @@ Object.assign(Sketch.prototype,
       where_dragged: 31,
       curve_curve_tangent: 32,
       length_difference: 33,
+      h_dist: 34,
+      v_dist: 35,
     },
     max_pts: 1000,
     max_links: 1000,

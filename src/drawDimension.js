@@ -12,12 +12,12 @@ const pointMaterial = new THREE.PointsMaterial({
   size: 4,
 })
 
-
+let dimVal
 export async function drawDimension() {
   let selection = await this.awaitSelection({ point: 2 }, { point: 1, line: 1 }, { line: 2 })
   if (selection == null) return;
 
-  let line, dimVal, constraint, dimType
+  let line, constraint, dimType
   if (selection.every(e => e.userData.type == 'line')) {
     line = new THREE.LineSegments(
       new THREE.BufferGeometry().setAttribute('position',
@@ -49,6 +49,13 @@ export async function drawDimension() {
         dimVal += (selection[0].geometry.attributes.position.array[i] - selection[1].geometry.attributes.position.array[i]) ** 2
       }
       dimVal = Math.sqrt(dimVal)
+
+      constraint = [
+        'pt_pt_distance', dimVal,
+        // 'smart_dist', dimVal,
+        [selection[0].name, selection[1].name, -1, -1]
+      ]
+
     } else {
       ptLineOrder = selection[0].userData.type == 'point' ? [0, 1] : [1, 0]
       const ptArr = selection[ptLineOrder[0]].geometry.attributes.position.array
@@ -61,18 +68,13 @@ export async function drawDimension() {
       proj = dir.multiplyScalar(disp.dot(dir))
       perpOffset = disp.clone().sub(proj)
       dimVal = Math.sqrt(perpOffset.x ** 2 + perpOffset.y ** 2)
-    }
-    if (ptLineOrder) {
+
       constraint = [
         'pt_line_distance', dimVal,
         [selection[ptLineOrder[0]].name, -1, selection[ptLineOrder[1]].name, -1]
       ]
-    } else {
-      constraint = [
-        'pt_pt_distance', dimVal,
-        [selection[0].name, selection[1].name, -1, -1]
-      ]
     }
+
 
     dimType = 'd'
   }
@@ -93,7 +95,7 @@ export async function drawDimension() {
   point.layers.enable(2)
 
   this.dimGroup.add(line).add(point)
-  const onMove = this._onMoveDimension(point, line)
+  const onMove = this._onMoveDimension(point, line, true)
   point.label = document.createElement('div');
   point.label.textContent = dimVal.toFixed(3);
   point.label.contentEditable = true;
@@ -102,10 +104,10 @@ export async function drawDimension() {
   let onEnd, onKey;
   let add = await new Promise((res) => {
     onEnd = () => {
-      if (point.userData.dimType == 'd') {
-        point.userData.offset = hyp2.toArray() // save offset vector from hyp2
-      } else {
+      if (point.userData.dimType == 'a') {
         point.userData.offset = vecArr[5].toArray()
+      } else {
+        point.userData.offset = hyp2.toArray() // save offset vector from hyp2
       }
       res(true)
     }
@@ -123,6 +125,17 @@ export async function drawDimension() {
   line.geometry.computeBoundingSphere()
 
   if (add) {
+
+
+
+    if (line.userData.dimType == 'h') {
+      constraint[0] = 'h_dist'
+      constraint[1] = p2.x - p1.x
+    } else if (line.userData.dimType == 'v') {
+      constraint[0] = 'v_dist'
+      constraint[1] = p2.y - p1.y
+    }
+
 
     this.constraints.set(++this.c_id, constraint)
 
@@ -147,7 +160,7 @@ export async function drawDimension() {
     this.labelContainer.removeChild(this.labelContainer.lastChild);
     sc.render()
   }
-  if (this.mode=="dimension") {
+  if (this.mode == "dimension") {
     this.drawDimension()
   }
 
@@ -181,7 +194,7 @@ export function updateDim(c_id) {
 
 const tagPos = new THREE.Vector2()
 let ids
-export function _onMoveDimension(point, line) {
+export function _onMoveDimension(point, line, initial) {
 
   ids = line.userData.ids
 
@@ -191,10 +204,10 @@ export function _onMoveDimension(point, line) {
   let loc;
 
   let update;
-  if (line.userData.dimType == 'd') {
-    update = updateDistance
-  } else {
+  if (line.userData.dimType == 'a') {
     update = updateAngle
+  } else {
+    update = updateDistance
   }
 
   return (e) => {
@@ -203,9 +216,9 @@ export function _onMoveDimension(point, line) {
     tagPos.set(loc.x, loc.y)
 
     update(
-      line.geometry.attributes.position,
-      point.geometry.attributes.position,
-      _p1, _p2
+      line,
+      point,
+      _p1, _p2, null, initial
     )
     sc.render()
   }
@@ -214,7 +227,7 @@ export function _onMoveDimension(point, line) {
 export function setDimLines() {
   const restoreLabels = this.labelContainer.childElementCount == 0;
   const dims = this.dimGroup.children
-  let point, dist;
+  let point, dist
   for (let i = 0; i < dims.length; i += 2) {
     if (restoreLabels) {
       point = dims[i + 1]  // point node is at i+1
@@ -232,15 +245,17 @@ export function setDimLines() {
     let _p2 = this.obj3d.children[this.objIdx.get(ids[1])].geometry.attributes.position.array
 
     let update;
-    if (dims[i].userData.dimType == 'd') {
-      update = updateDistance
-    } else {
+    if (dims[i].userData.dimType == 'a') {
       update = updateAngle
+    } else {
+      update = updateDistance
     }
 
     update(
-      dims[i].geometry.attributes.position,
-      dims[i + 1].geometry.attributes.position,
+      // dims[i].geometry.attributes.position,
+      // dims[i + 1].geometry.attributes.position,
+      dims[i],
+      dims[i + 1],
       _p1,
       _p2,
       dims[i + 1].userData.offset
@@ -262,7 +277,11 @@ let p1eArr, p2eArr, tagPosArr
 let dir, linedir, perpOffset
 let dp1e, dp2e, dp12
 
-function updateDistance(linegeom, pointgeom, _p1, _p2, offset) {
+function updateDistance(line, point, _p1, _p2, offset, initial) {
+
+  const linegeom = line.geometry.attributes.position
+  const pointgeom = point.geometry.attributes.position
+
   if (offset) {
     if (_p1.length < _p2.length) { // corner case when p1 is pt and p2 is line
       tagPos.set(_p1[0] + offset[0], _p1[1] + offset[1])
@@ -271,29 +290,72 @@ function updateDistance(linegeom, pointgeom, _p1, _p2, offset) {
     }
   }
 
+  let phantom = null
   if (_p1.length == _p2.length) {
     p1.set(_p1[0], _p1[1])
     p2.set(_p2[0], _p2[1])
 
-    dir = p2.clone().sub(p1).normalize()
-    hyp2 = tagPos.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
-    proj = dir.multiplyScalar(hyp2.dot(dir))
-    perpOffset = hyp2.clone().sub(proj)
+    if (initial) {
+      if (
+        (tagPos.x - p1.x) * (tagPos.x - p2.x) > 0 &&
+        (tagPos.y - p1.y) * (tagPos.y - p2.y) < 0
+      ) {
+        line.userData.dimType = 'v'
+        point.userData.dimType = 'v'
+        // point.label.textContent = Math.abs(p1.y - p2.y).toFixed(3);
+        point.label.textContent = (p2.y - p1.y).toFixed(3);
+      } else if (
+        (tagPos.x - p1.x) * (tagPos.x - p2.x) < 0 &&
+        (tagPos.y - p1.y) * (tagPos.y - p2.y) > 0
+      ) {
+        line.userData.dimType = 'h'
+        point.userData.dimType = 'h'
+        // point.label.textContent = Math.abs(p1.x - p2.x).toFixed(3);
+        point.label.textContent = (p2.x - p1.x).toFixed(3);
+      } else {
+        line.userData.dimType = 'd'
+        point.userData.dimType = 'd'
+        point.label.textContent = dimVal.toFixed(3);
+      }
+    }
 
-    p1e = p1.clone().add(perpOffset)
-    p1eArr = p1e.toArray()
-    p2e = p2.clone().add(perpOffset)
-    p2eArr = p2e.toArray()
-    tagPosArr = tagPos.toArray()
 
-    dp1e = p1e.distanceToSquared(tagPos)
-    dp2e = p2e.distanceToSquared(tagPos)
-    dp12 = p1e.distanceToSquared(p2e)
+    switch (line.userData.dimType) {
+      case 'v':
+        phantom = [_p1[0] + 1, _p1[1]]
+        break;
+      case 'h':
+        phantom = [_p1[0], _p1[1] + 1]
+        break;
+      default:
+        dir = p2.clone().sub(p1).normalize()
+        hyp2 = tagPos.clone().sub(p2) // note that this value is used to calculate tag-p2 offset
+        proj = dir.multiplyScalar(hyp2.dot(dir))
+        perpOffset = hyp2.clone().sub(proj)
 
-    linegeom.array.set(p1.toArray(), 0)
+        p1e = p1.clone().add(perpOffset)
+        p1eArr = p1e.toArray()
+        p2e = p2.clone().add(perpOffset)
+        p2eArr = p2e.toArray()
+        tagPosArr = tagPos.toArray()
 
-  } else {
-    if (_p1.length > _p2.length) { // when p1 is line, p2 is point
+        dp1e = p1e.distanceToSquared(tagPos)
+        dp2e = p2e.distanceToSquared(tagPos)
+        dp12 = p1e.distanceToSquared(p2e)
+        linegeom.array.set(p1.toArray(), 0)
+
+        break;
+    }
+
+  }
+
+
+  if (_p1.length != _p2.length || phantom) {
+    if (phantom) {
+      p1.set(_p1[0], _p1[1])
+      p1x.set(...phantom)
+      p2.set(_p2[0], _p2[1])
+    } else if (_p1.length > _p2.length) { // when p1 is line, p2 is point
       p1.set(_p1[0], _p1[1])
       p1x.set(_p1[3], _p1[4])
       p2.set(_p2[0], _p2[1])
@@ -431,7 +493,7 @@ function updateAngle(linegeom, pointgeom, _l1, _l2, offset) {
   tA1 = unreflex(a[2] - (a[0] + shift))
   tA2 = unreflex(a[2] - (a[0] + dA + shift))
 
-  if (dA * tA1 < 0) {
+  if (dA * tA1 < 0) { // if dA and tA1 are not the same sign
     a1 = a[0] + tA1 + shift
     deltaAngle = dA - tA1
   } else if (dA * tA2 > 0) {
@@ -506,9 +568,9 @@ const getAngle = (Obj3dLines) => {
 
 
 export function onDimMoveEnd(point) {
-  if (point.userData.dimType == 'd') {
-    point.userData.offset = hyp2.toArray() // save offset vector from hyp2
-  } else {
+  if (point.userData.dimType == 'a') {
     point.userData.offset = vecArr[5].toArray()
+  } else {
+    point.userData.offset = hyp2.toArray() // save offset vector from hyp2
   }
 }

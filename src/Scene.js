@@ -44,11 +44,11 @@ export class Scene {
     this.store = store
 
     const size = 1;
-    const near = 0;
-    const far = 100;
+    const near = -1;
+    const far = 1000;
     this.camera = new THREE.OrthographicCamera(-size, size, size, -size, near, far);
-    this.camera.zoom = 0.1;
-    const cameraDist = 50
+    this.camera.zoom = 0.008;
+    const cameraDist = 500
     const xzAngle = 30 * Math.PI / 180
     this.camera.position.set(
       cameraDist * Math.sin(xzAngle),
@@ -94,7 +94,7 @@ export class Scene {
     this.fptObj = {}
 
 
-    const planeGeom = new THREE.PlaneGeometry(5, 5)
+    const planeGeom = new THREE.PlaneGeometry(50, 50)
     const pxy = new THREE.Mesh(
       planeGeom,
       new THREE.MeshBasicMaterial({
@@ -128,7 +128,7 @@ export class Scene {
     helpersGroup.add(this.axes);
 
 
-    const dist = 15
+    const dist = 500
     const light1 = new THREE.PointLight(color.lighting, 0.7);
     light1.position.set(dist, dist, dist);
     helpersGroup.add(light1);
