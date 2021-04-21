@@ -6,10 +6,8 @@ import { useDispatch, useSelector } from 'react-redux'
 
 export const DropDown = () => {
   const arr = [
-    ['https://raw.githubusercontent.com/twpride/threeCAD/master/example_parts/test2.json', 'test2'],
-    ['https://raw.githubusercontent.com/twpride/threeCAD/master/example_parts/test2.json', 'test2'],
-    ['https://raw.githubusercontent.com/twpride/threeCAD/master/example_parts/test2.json', 'test2'],
-    ['https://raw.githubusercontent.com/twpride/threeCAD/master/example_parts/test2.json', 'test2'],
+    ['https://raw.githubusercontent.com/twpride/threeCAD/master/demo_parts/test2.json', 'test2'],
+    ['https://raw.githubusercontent.com/twpride/threeCAD/master/demo_parts/headphone-stand.json', 'headphone-stand'],
   ]
 
   const dispatch = useDispatch()

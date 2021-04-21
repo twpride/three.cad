@@ -423,7 +423,7 @@ const _vec2 = new THREE.Vector2()
 let arr, i, j, centerScalar, r_cross_s, center, tagRadius
 let dA, tagtoMidline, shift, tA1, tA2, a1, deltaAngle;
 
-function updateAngle(linegeom, pointgeom, _l1, _l2, offset) {
+function updateAngle(line, point, _l1, _l2, offset) {
   /*
                           l2:[x0,y0,z0,x1,y1,z1]
                           /
@@ -441,6 +441,9 @@ function updateAngle(linegeom, pointgeom, _l1, _l2, offset) {
       5: tag offset from center
     ]
   */
+
+ const linegeom = line.geometry.attributes.position
+ const pointgeom = point.geometry.attributes.position
 
   for (i = 0; i < 4;) {
     arr = i == 0 ? _l1 : _l2

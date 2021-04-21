@@ -5,8 +5,7 @@ import { onDimMoveEnd } from './drawDimension'
 let ptLoc
 
 export function onHover(e) {
-  // if (( this.mode && this.mode!='dimension') || e.buttons) return
-  if (e.buttons) return
+  if (( this.mode && this.mode!='dimension') || e.buttons) return
 
   raycaster.setFromCamera(
     new THREE.Vector2(
@@ -32,7 +31,6 @@ export function onHover(e) {
   let idx = []
   if (hoverPts.length) {
 
-    // console.log(hoverPts)
     let minDist = Infinity;
     for (let i = 0; i < hoverPts.length; i++) {
       if (!hoverPts[i].distanceToRay) continue;
@@ -49,10 +47,6 @@ export function onHover(e) {
 
     if (!idx.length) {
       idx.push(0)
-      // if (idx.length >=2) {
-      //   idx.push(1)
-
-      // }
     }
 
   }
@@ -91,7 +85,6 @@ export function onHover(e) {
 
         this.hovered.push(obj)
       }
-      console.log(this.hovered)
 
       // console.log('render1')
       this.obj3d.dispatchEvent({ type: 'change' })
