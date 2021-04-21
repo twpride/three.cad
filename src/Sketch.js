@@ -246,11 +246,14 @@ class Sketch {
           drawClear.call(this)
         }
         this.mode = "line"
+        this.snap = true
         this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
         break;
       case 'a':
         this.mode = "arc"
+        this.snap = true
         this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
+        // this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
         break;
       case 'p':
         this.mode = "point"

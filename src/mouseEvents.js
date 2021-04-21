@@ -7,7 +7,6 @@ let ptLoc
 export function onHover(e) {
   if ((this.mode && this.mode != 'dimension' && !this.snap) || e.buttons) return
   // if (( this.mode && this.mode!='dimension') || e.buttons) return
-  // console.log('here')
 
   raycaster.setFromCamera(
     new THREE.Vector2(
@@ -35,6 +34,7 @@ export function onHover(e) {
 
   const thresh = this.snap ? 1 : 0.0001
   if (hoverPts.length) {
+    console.log('here', hoverPts)
     let minDist = Infinity;
     for (let i = 0; i < hoverPts.length; i++) {
       if (!hoverPts[i].distanceToRay) continue;
@@ -47,7 +47,7 @@ export function onHover(e) {
       }
     }
 
-    if (!idx.length) {
+    if (!idx.length && !this.snap) {
       idx.push(0)
     }
 
@@ -70,9 +70,9 @@ export function onHover(e) {
       for (let x = 0; x < idx.length; x++) {
         let obj = hoverPts[idx[x]].object
 
-        if (!this.snap || (this.snap && x < idx.length-1) ) {
+        // if (!this.snap || (this.snap && x < idx.length-1) ) {
           setHover(obj, 1, false)
-        }
+        // }
 
         if (this.obj3d.userData.type != 'sketch' && obj.userData.type == 'point') {
           ptLoc = obj.geometry.attributes.position.array

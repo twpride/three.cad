@@ -31,11 +31,41 @@ export function drawOnClick1(e) {
       p1.userData.constraints.push(this.c_id)
       this.obj3d.children[this.obj3d.children.length - 2].userData.constraints.push(this.c_id)
 
+    } else {
+
+      if (this.hovered.length) {
+
+        this.constraints.set(++this.c_id,  //??? why incremennt before not after
+          [
+            'points_coincident', -1,
+            [this.hovered[this.hovered.length - 1].name, this.toPush[0].name, -1, -1]
+          ]
+        )
+        this.updateOtherBuffers()
+  
+      }
+
+
     }
 
 
   } else if (this.mode == "arc") {
     this.toPush = drawArc(mouseLoc)
+
+    if (this.hovered.length) {
+      this.constraints.set(++this.c_id,  //??? why incremennt before not after
+        [
+          'points_coincident', -1,
+          [this.hovered[this.hovered.length - 1].name, this.toPush[0].name, -1, -1]
+        ]
+      )
+      this.updateOtherBuffers()
+
+    }
+
+
+
+
   } else if (this.mode == 'point') {
     this.toPush = drawPoint(mouseLoc)
   }
