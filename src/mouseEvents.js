@@ -1,6 +1,7 @@
 import * as THREE from '../node_modules/three/src/Three';
 import { raycaster, setHover } from './shared';
 import { onDimMoveEnd } from './drawDimension'
+import { connectAdvanced } from 'react-redux';
 
 let ptLoc
 
@@ -18,7 +19,7 @@ export function onHover(e) {
 
   let hoverPts;
 
-  
+
   if (this.obj3d.userData.type != 'sketch') {
     this.selpoints[0].visible = false // hide selpoint[0] before each redraw
     raycaster.layers.set(1)
@@ -34,7 +35,7 @@ export function onHover(e) {
 
   const thresh = this.snap ? 1 : 0.0001
   if (hoverPts.length) {
-    console.log('here', hoverPts)
+    // console.log('here', hoverPts)
     let minDist = Infinity;
     for (let i = 0; i < hoverPts.length; i++) {
       if (!hoverPts[i].distanceToRay) continue;
@@ -70,9 +71,14 @@ export function onHover(e) {
       for (let x = 0; x < idx.length; x++) {
         let obj = hoverPts[idx[x]].object
 
-        // if (!this.snap || (this.snap && x < idx.length-1) ) {
+        if (this.snap) {
+          if (idx.length==1 || x != idx.length - 1) {
+            setHover(obj, 1, false)
+          }
+        } else {
           setHover(obj, 1, false)
-        // }
+        }
+
 
         if (this.obj3d.userData.type != 'sketch' && obj.userData.type == 'point') {
           ptLoc = obj.geometry.attributes.position.array

@@ -122,6 +122,7 @@ export function drawArc4(mouseLoc, toPush) {
     points
   );
   arc.geometry.attributes.position.needsUpdate = true;
+  arc.geometry.computeBoundingSphere()
   arc.userData.ccw = ccw;
 
   return ccw

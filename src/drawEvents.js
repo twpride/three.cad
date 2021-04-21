@@ -33,6 +33,7 @@ export function drawOnClick1(e) {
 
     } else {
 
+      console.log(this.hovered)
       if (this.hovered.length) {
 
         this.constraints.set(++this.c_id,  //??? why incremennt before not after
@@ -41,6 +42,8 @@ export function drawOnClick1(e) {
             [this.hovered[this.hovered.length - 1].name, this.toPush[0].name, -1, -1]
           ]
         )
+        this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
+        this.toPush[0].userData.constraints.push(this.c_id)
         this.updateOtherBuffers()
   
       }
@@ -59,6 +62,8 @@ export function drawOnClick1(e) {
           [this.hovered[this.hovered.length - 1].name, this.toPush[0].name, -1, -1]
         ]
       )
+      this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
+      this.toPush[0].userData.constraints.push(this.c_id)
       this.updateOtherBuffers()
 
     }
@@ -110,11 +115,11 @@ export function drawOnClick2(e) {
   // a this.mode == "" will prevent event chain from persisisting
   if (this.mode == "line") {
 
-    if (this.hovered.length >= 2) {
+    if (this.hovered.length>=2) {
       this.constraints.set(++this.c_id,  //??? why incremennt before not after
         [
           'points_coincident', -1,
-          [this.hovered[this.hovered.length - 2].name, this.hovered[this.hovered.length - 1].name, -1, -1]
+          [this.hovered[this.hovered.length - 2].name, this.toPush[1].name, -1, -1]
         ]
       )
       this.updateOtherBuffers()
@@ -127,13 +132,12 @@ export function drawOnClick2(e) {
   } else if (this.mode == "point") {
     this.drawOnClick1(e)
   } else if (this.mode == "arc") {
-    this.snap = false
 
-    if (this.hovered.length >= 2) {
+    if (this.hovered.length>=2) {
       this.constraints.set(++this.c_id,  //??? why incremennt before not after
         [
           'points_coincident', -1,
-          [this.hovered[this.hovered.length - 2].name, this.hovered[this.hovered.length - 1].name, -1, -1]
+          [this.hovered[this.hovered.length - 2].name, this.toPush[1].name, -1, -1]
         ]
       )
       this.updateOtherBuffers()
