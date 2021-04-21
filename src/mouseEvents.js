@@ -59,6 +59,7 @@ export function onHover(e) {
     if (hoverPts[idx[0]].object != this.hovered[0]) { // if the previous hovered obj is not the same as current
 
       for (let x = 0; x < this.hovered.length; x++) { // first clear old hovers that are not selected
+
         const obj = this.hovered[x]
         if (typeof obj == 'object' && !this.selected.includes(obj)) {
           setHover(obj, 0)
@@ -69,7 +70,9 @@ export function onHover(e) {
       for (let x = 0; x < idx.length; x++) {
         let obj = hoverPts[idx[x]].object
 
-        setHover(obj, 1, false)
+        if (!this.snap || (this.snap && x < idx.length-1) ) {
+          setHover(obj, 1, false)
+        }
 
         if (this.obj3d.userData.type != 'sketch' && obj.userData.type == 'point') {
           ptLoc = obj.geometry.attributes.position.array

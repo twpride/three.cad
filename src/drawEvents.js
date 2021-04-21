@@ -19,8 +19,9 @@ export function drawOnClick1(e) {
 
     if (this.subsequent) {
       const p1 = this.toPush[0]
-
-      this.constraints.set(++this.c_id,  //??? why incremennt before not after
+      // we pre-increment because we need to push the same c_id to the constraints
+      // map. we push into constraints map second because it makes more semantic sense
+      this.constraints.set(++this.c_id,  
         [
           'points_coincident', -1,
           [this.obj3d.children[this.obj3d.children.length - 2].name, p1.name, -1, -1]
@@ -61,6 +62,7 @@ export function drawPreClick2(e) {
     this.snap = true
     drawLine2(mouseLoc, this.toPush)
   } else if (this.mode == 'arc') {
+    this.snap = true
     drawArc2(mouseLoc, this.toPush)
   }
 
@@ -77,8 +79,6 @@ export function drawOnClick2(e) {
 
   // a this.mode == "" will prevent event chain from persisisting
   if (this.mode == "line") {
-    console.log(this.hovered)
-
 
     if (this.hovered.length >= 2) {
       this.constraints.set(++this.c_id,  //??? why incremennt before not after
@@ -91,18 +91,24 @@ export function drawOnClick2(e) {
 
     }
 
-
-
-
-
-
-    this.snap = false
     this.subsequent = true
     this.drawOnClick1(e)
 
   } else if (this.mode == "point") {
     this.drawOnClick1(e)
   } else if (this.mode == "arc") {
+    this.snap = false
+
+    if (this.hovered.length >= 2) {
+      this.constraints.set(++this.c_id,  //??? why incremennt before not after
+        [
+          'points_coincident', -1,
+          [this.hovered[this.hovered.length - 2].name, this.hovered[this.hovered.length - 1].name, -1, -1]
+        ]
+      )
+      this.updateOtherBuffers()
+
+    }
 
     drawArc3(this.toPush[0], this.toPush[1])
 
