@@ -5,7 +5,9 @@ import { onDimMoveEnd } from './drawDimension'
 let ptLoc
 
 export function onHover(e) {
-  if (( this.mode && this.mode!='dimension') || e.buttons) return
+  if ((this.mode && this.mode != 'dimension' && !this.snap) || e.buttons) return
+  // if (( this.mode && this.mode!='dimension') || e.buttons) return
+  // console.log('here')
 
   raycaster.setFromCamera(
     new THREE.Vector2(
@@ -17,30 +19,30 @@ export function onHover(e) {
 
   let hoverPts;
 
+  
   if (this.obj3d.userData.type != 'sketch') {
     this.selpoints[0].visible = false // hide selpoint[0] before each redraw
     raycaster.layers.set(1)
-    hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
+    hoverPts = raycaster.intersectObjects(this.obj3d.children, true) // has side effect of updating bounding spheres
   } else {
-    // raycaster.layers.set(0)
     raycaster.layers.set(2)
+    // if (this.snap) return
     hoverPts = raycaster.intersectObjects([...this.dimGroup.children, ...this.obj3d.children])
   }
 
 
   let idx = []
-  if (hoverPts.length) {
 
+  const thresh = this.snap ? 1 : 0.0001
+  if (hoverPts.length) {
     let minDist = Infinity;
     for (let i = 0; i < hoverPts.length; i++) {
       if (!hoverPts[i].distanceToRay) continue;
-      if (hoverPts[i].distanceToRay < minDist - 0.0001) {
+      if (hoverPts[i].distanceToRay < minDist - thresh) {
         idx = [i]
-
         if (this.obj3d.userData.type != 'sketch') break
-
         minDist = hoverPts[i].distanceToRay
-      } else if (Math.abs(hoverPts[i].distanceToRay - minDist) < 0.0001) {
+      } else if (hoverPts[i].distanceToRay < minDist + thresh) {
         idx.push(i)
       }
     }
@@ -114,8 +116,7 @@ export function onHover(e) {
 
 let draggedLabel;
 export function onPick(e) {
-  if (( this.mode && this.mode!='dimension') || e.buttons != 1) return
-  // if (this.mode || e.buttons != 1 || e.ctrlKey || e.metaKey) return
+  if ((this.mode && this.mode != 'dimension') || e.buttons != 1) return
 
   if (this.hovered.length) {
     let obj = this.hovered[this.hovered.length - 1]
@@ -154,7 +155,7 @@ export function onPick(e) {
         this.setHover(obj, 1)
 
       } else {
-        
+
         this.setHover(this.selected[idx], 0)
 
         this.selected.splice(idx, 1)

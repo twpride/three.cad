@@ -33,4 +33,5 @@ export function drawLine2(mouseLoc, toPush) {
 
   line.geometry.attributes.position.set(mouseLoc, 3)
   line.geometry.attributes.position.needsUpdate = true;
+  line.geometry.computeBoundingSphere();
 }

@@ -58,6 +58,7 @@ export function drawPreClick2(e) {
   const mouseLoc = this.getLocation(e).toArray();
 
   if (this.mode == "line") {
+    this.snap = true
     drawLine2(mouseLoc, this.toPush)
   } else if (this.mode == 'arc') {
     drawArc2(mouseLoc, this.toPush)
@@ -76,6 +77,26 @@ export function drawOnClick2(e) {
 
   // a this.mode == "" will prevent event chain from persisisting
   if (this.mode == "line") {
+    console.log(this.hovered)
+
+
+    if (this.hovered.length >= 2) {
+      this.constraints.set(++this.c_id,  //??? why incremennt before not after
+        [
+          'points_coincident', -1,
+          [this.hovered[this.hovered.length - 2].name, this.hovered[this.hovered.length - 1].name, -1, -1]
+        ]
+      )
+      this.updateOtherBuffers()
+
+    }
+
+
+
+
+
+
+    this.snap = false
     this.subsequent = true
     this.drawOnClick1(e)
 
@@ -139,6 +160,7 @@ export function drawClear() {
   this.scene.render()
   this.subsequent = false
   this.toPush = []
+  this.snap = false
 
   this.mode = ""
 }

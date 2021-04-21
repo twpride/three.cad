@@ -10,7 +10,6 @@ export function extrude(sketch, depth) {
   let v2s = []
 
   function findPair(node) {
-    // console.log(node.name, 'xx')
     if (node.userData.construction) return;
     visited.add(node)
     let linkedObj = linkedObjs.get(node.userData.l_id)
