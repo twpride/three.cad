@@ -24,7 +24,7 @@ constraint angle // done
 
 button panel cleanup // done
 3 pt arc // done
-tangent // done to the best of my ability
+tangent // done
 -boolean highlights when hovering over parent why? because they share the same material
 - should unselect after boolean see above
 
@@ -37,30 +37,23 @@ extrude edit dialog // done
 file save, stl export// done
 seperate scene from init logic only init cam and rendere // not an issue , ended up just splicing (1)
 add download button, different from save button // done
+- vertical and horzontal baseline to dimension to / or just smart ordinate dir dimenensing // done
 
-- dimension to origin vs ordinate dimensioninging
-- increased design payload handling
 
 
 -unable cancel out of new sketches  //fixed seemingly
 -unable to delete arc // fixed seemingly
 
+
+- increased design payload handling
 -sometimes unable to hit return and change dimensionk
 hover not clearing sometimes in sketch
 0.000 artifact
 lighting messed up
 
 
-
-
-
-
-
-
-
 reattach sketch
 auto snap
-vertical and horzontal baseline to dimension to / or just smart ordinate dir dimenensing
 highlight button to indicate active mode
 
 

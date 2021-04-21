@@ -126,8 +126,6 @@ export async function drawDimension() {
 
   if (add) {
 
-
-
     if (line.userData.dimType == 'h') {
       constraint[0] = 'h_dist'
       constraint[1] = p2.x - p1.x
@@ -135,7 +133,6 @@ export async function drawDimension() {
       constraint[0] = 'v_dist'
       constraint[1] = p2.y - p1.y
     }
-
 
     this.constraints.set(++this.c_id, constraint)
 
