@@ -678,7 +678,7 @@ var TrackballControls = function ( object, domElement ) {
 				break;
 
 		}
-
+    scope.update()
 	}
 
 	function touchend( event ) {

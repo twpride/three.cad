@@ -16,7 +16,6 @@ export function drawOnClick1(e) {
   // this.mode allow alow following modes to create new obj3ds
   if (this.mode == "line") {
     this.toPush = drawLine(mouseLoc)
-
     if (this.subsequent) {
       // we pre-increment because we need to push the same c_id to the constraints
       // map. we push into constraints map second because it makes more semantic sense
@@ -30,42 +29,22 @@ export function drawOnClick1(e) {
       this.obj3d.children[this.obj3d.children.length - 2].userData.constraints.push(this.c_id)
       this.toPush[0].userData.constraints.push(this.c_id)
 
-    } else if (this.hovered.length) {
-
-      this.constraints.set(++this.c_id,
-        [
-          'points_coincident', -1,
-          [this.hovered[this.hovered.length - 1].name, this.toPush[0].name, -1, -1]
-        ]
-      )
-      this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
-      this.toPush[0].userData.constraints.push(this.c_id)
-      this.updateOtherBuffers()
-
     }
-
-
-
-
   } else if (this.mode == "arc") {
     this.toPush = drawArc(mouseLoc)
-
-    if (this.hovered.length) {
-      this.constraints.set(++this.c_id,
-        [
-          'points_coincident', -1,
-          [this.hovered[this.hovered.length - 1].name, this.toPush[0].name, -1, -1]
-        ]
-      )
-      this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
-      this.toPush[0].userData.constraints.push(this.c_id)
-      this.updateOtherBuffers()
-
-    }
-
-
   }
 
+  if (this.hovered.length && !this.subsequent) {
+    this.constraints.set(++this.c_id,
+      [
+        'points_coincident', -1,
+        [this.hovered[this.hovered.length - 1].name, this.toPush[0].name, -1, -1]
+      ]
+    )
+    this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
+    this.toPush[0].userData.constraints.push(this.c_id)
+    this.updateOtherBuffers()
+  }
 
   this.updatePoint = this.obj3d.children.length
   this.obj3d.add(...this.toPush)
@@ -98,43 +77,31 @@ export function drawOnClick2(e) {
   this.updatePointsBuffer(this.updatePoint)
   this.updateOtherBuffers()
 
-  // a this.mode == "" here will prevent event chain from persisisting
+  // a this.mode == "" (set with esc) here will prevent event chain from persisisting
 
-  this.toPush.forEach(element => {
+  this.toPush.forEach(element => { // make sure elements are selectable by sketch raycaster
     element.layers.enable(2)
   });
 
-  if (this.mode == "line") {
-    if (this.hovered.length) {
-      this.constraints.set(++this.c_id,
-        [
-          'points_coincident', -1,
-          [this.hovered[this.hovered.length - 1].name, this.toPush[1].name, -1, -1]
-        ]
-      )
-      this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
-      this.toPush[1].userData.constraints.push(this.c_id)
-      this.updateOtherBuffers()
+  if (this.hovered.length) {
+    this.constraints.set(++this.c_id,
+      [
+        'points_coincident', -1,
+        [this.hovered[this.hovered.length - 1].name, this.toPush[1].name, -1, -1]
+      ]
+    )
+    this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
+    this.toPush[1].userData.constraints.push(this.c_id)
+    this.updateOtherBuffers()
 
-    }
+  }
+
+  if (this.mode == "line") {
 
     this.subsequent = true
     this.drawOnClick1(e)
 
   } else if (this.mode == "arc") {
-
-    if (this.hovered.length) {
-      this.constraints.set(++this.c_id,
-        [
-          'points_coincident', -1,
-          [this.hovered[this.hovered.length - 1].name, this.toPush[1].name, -1, -1]
-        ]
-      )
-      this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
-      this.toPush[1].userData.constraints.push(this.c_id)
-      this.updateOtherBuffers()
-
-    }
 
     drawArc3(this.toPush[0], this.toPush[1])
 
