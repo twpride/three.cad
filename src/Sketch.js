@@ -257,6 +257,7 @@ class Sketch {
         break;
       case 'p':
         this.mode = "point"
+        this.snap = true
         this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
         break;
       case 'd':

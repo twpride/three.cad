@@ -56,6 +56,8 @@ export class Scene {
       cameraDist * Math.cos(xzAngle)
     );
 
+    this.camera.layers.enable(3)
+
     const controls = new TrackballControls(this.camera, this.canvas);
     controls.target.set(0, 0, 0);
     controls.update();

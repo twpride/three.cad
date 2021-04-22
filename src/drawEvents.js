@@ -71,13 +71,13 @@ export function drawOnClick1(e) {
 
 
 
-  } else if (this.mode == 'point') {
+  } else if (this.mode == "point") {
     this.toPush = drawPoint(mouseLoc)
   }
 
-  this.toPush.forEach(element => {
-    element.layers.enable(2)
-  });
+  // this.toPush.forEach(element => {
+  //   element.layers.enable(2)
+  // });
 
   this.updatePoint = this.obj3d.children.length
   this.obj3d.add(...this.toPush)
@@ -94,10 +94,8 @@ export function drawPreClick2(e) {
   const mouseLoc = this.getLocation(e).toArray();
 
   if (this.mode == "line") {
-    this.snap = true
     drawLine2(mouseLoc, this.toPush)
   } else if (this.mode == 'arc') {
-    this.snap = true
     drawArc2(mouseLoc, this.toPush)
   }
 
@@ -112,14 +110,18 @@ export function drawOnClick2(e) {
   this.updatePointsBuffer(this.updatePoint)
   this.updateOtherBuffers()
 
-  // a this.mode == "" will prevent event chain from persisisting
-  if (this.mode == "line") {
+  // a this.mode == "" here will prevent event chain from persisisting
 
-    if (this.hovered.length>=2) {
+  this.toPush.forEach(element => {
+    element.layers.enable(2)
+  });
+
+  if (this.mode == "line") {
+    if (this.hovered.length) {
       this.constraints.set(++this.c_id,  //??? why incremennt before not after
         [
           'points_coincident', -1,
-          [this.hovered[this.hovered.length - 2].name, this.toPush[1].name, -1, -1]
+          [this.hovered[this.hovered.length - 1].name, this.toPush[1].name, -1, -1]
         ]
       )
       this.updateOtherBuffers()
@@ -133,11 +135,11 @@ export function drawOnClick2(e) {
     this.drawOnClick1(e)
   } else if (this.mode == "arc") {
 
-    if (this.hovered.length>=2) {
+    if (this.hovered.length) {
       this.constraints.set(++this.c_id,  //??? why incremennt before not after
         [
           'points_coincident', -1,
-          [this.hovered[this.hovered.length - 2].name, this.toPush[1].name, -1, -1]
+          [this.hovered[this.hovered.length - 1].name, this.toPush[1].name, -1, -1]
         ]
       )
       this.updateOtherBuffers()
@@ -207,9 +209,10 @@ export function drawClear() {
 
 
 export function drawPoint(mouseLoc) {
+  console.log('heeeeeeeeer')
   const p1 = ptObj()
   p1.matrixAutoUpdate = false;
   p1.userData.constraints = []
-  p1.geometry.attributes.position.set(mouseLoc)
+  p1.geometry.attributes.position.set(mouseLoc.slice())
   return [p1]
 }

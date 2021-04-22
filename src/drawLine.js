@@ -17,6 +17,7 @@ export function drawLine(mouseLoc) {
   line.userData.constraints = []
 
 
+
   line.geometry.attributes.position.set(mouseLoc)
   p1.geometry.attributes.position.set(mouseLoc)
 
@@ -34,4 +35,5 @@ export function drawLine2(mouseLoc, toPush) {
   line.geometry.attributes.position.set(mouseLoc, 3)
   line.geometry.attributes.position.needsUpdate = true;
   line.geometry.computeBoundingSphere();
+
 }

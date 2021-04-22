@@ -1,13 +1,12 @@
 import * as THREE from '../node_modules/three/src/Three';
 import { raycaster, setHover } from './shared';
 import { onDimMoveEnd } from './drawDimension'
-import { connectAdvanced } from 'react-redux';
 
 let ptLoc
 
 export function onHover(e) {
-  if ((this.mode && this.mode != 'dimension' && !this.snap) || e.buttons) return
-  // if (( this.mode && this.mode!='dimension') || e.buttons) return
+  // if ((this.mode && this.mode != 'dimension' && !this.snap) || e.buttons) return
+  if (e.buttons) return
 
   raycaster.setFromCamera(
     new THREE.Vector2(
@@ -23,10 +22,11 @@ export function onHover(e) {
   if (this.obj3d.userData.type != 'sketch') {
     this.selpoints[0].visible = false // hide selpoint[0] before each redraw
     raycaster.layers.set(1)
-    hoverPts = raycaster.intersectObjects(this.obj3d.children, true) // has side effect of updating bounding spheres
+    hoverPts = raycaster.intersectObjects(this.obj3d.children, true) 
   } else {
     raycaster.layers.set(2)
-    // if (this.snap) return
+    // intersectObjects has side effect of updating bounding spheres
+    // which may lead to unexpected results if you leave boundspheres un-updated
     hoverPts = raycaster.intersectObjects([...this.dimGroup.children, ...this.obj3d.children])
   }
 
@@ -56,6 +56,7 @@ export function onHover(e) {
 
 
   if (idx.length) { // after filtering, if hovered objs still exists
+    // console.log(idx)
 
     if (hoverPts[idx[0]].object != this.hovered[0]) { // if the previous hovered obj is not the same as current
 
@@ -71,13 +72,7 @@ export function onHover(e) {
       for (let x = 0; x < idx.length; x++) {
         let obj = hoverPts[idx[x]].object
 
-        if (this.snap) {
-          if (idx.length==1 || x != idx.length - 1) {
-            setHover(obj, 1, false)
-          }
-        } else {
-          setHover(obj, 1, false)
-        }
+        setHover(obj, 1, false)
 
 
         if (this.obj3d.userData.type != 'sketch' && obj.userData.type == 'point') {
