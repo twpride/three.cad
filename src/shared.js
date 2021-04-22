@@ -222,7 +222,8 @@ const custPtMat = new THREE.ShaderMaterial({
   },
   vertexShader,
   fragmentShader,
-  // depthTest:false
+  depthTest:false
+  // depthWrite:false
 });
 
 

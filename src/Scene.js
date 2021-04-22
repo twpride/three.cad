@@ -88,7 +88,8 @@ export class Scene {
 
       freePt.matrixAutoUpdate = false
       freePt.visible = false
-      freePt.depthTest = false
+      freePt.renderOrder=1
+      // freePt.depthTest = false
       freePt.userData.type = 'selpoint'
       helpersGroup.add(freePt);
     }
