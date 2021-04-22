@@ -179,8 +179,61 @@ function setHover(obj, state, meshHover = true) {
 }
 
 
+const vertexShader = `
+  uniform float edgeSize;
+  uniform float pointWidth;
+  void main() {
+    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+    gl_PointSize = (pointWidth + edgeSize);
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`
+
+const fragmentShader = `
+  uniform vec3 color;
+  uniform vec3 edgeColor;
+  uniform float edgeSize;
+  uniform float pointWidth;
+  void main() {
+    gl_FragColor = vec4(color, 1.0);
+    // distance = len(x: [-1, 1], y: [-1, 1])
+    float distance = length(2.0 * gl_PointCoord - 1.0);
+    // pixels [0, ~15/20]
+    float totalWidth = pointWidth + edgeSize;
+    float edgeStart = pointWidth;
+    float edgeEnd = pointWidth + 2.0;
+    // [edgeStart, edgeEnd] -> [0, 1]
+    float sEdge = smoothstep(edgeStart, edgeEnd, distance * totalWidth);
+    // transition from edgeColor to color along the edge
+    gl_FragColor = ( vec4(edgeColor, 1.0) * sEdge) + ((1.0 - sEdge) * gl_FragColor);
+
+    if (distance > 1.0) {
+      discard;
+    }
+  }
+`
+const pixelRatio = 2
+const custPtMat = new THREE.ShaderMaterial({
+  uniforms: {
+    color: { value: new THREE.Color(0xff0000) },
+    edgeColor: { value: new THREE.Color(0x990000) },
+    pointWidth: { value: 4 * pixelRatio },
+    edgeSize: { value: 4 * pixelRatio },
+  },
+  vertexShader,
+  fragmentShader,
+  // depthTest:false
+});
+
+
+
+
+
+
+
+
 
 window.rc = raycaster
 
 
-export { lineMaterial, pointMaterial, _vec2, _vec3, raycaster, color, hoverColor, ptObj, lineObj, awaitSelection, setHover }
+export { lineMaterial, pointMaterial, custPtMat, _vec2, _vec3, raycaster, color, hoverColor, ptObj, lineObj, awaitSelection, setHover }

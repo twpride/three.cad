@@ -22,8 +22,10 @@ export function onHover(e) {
   if (this.obj3d.userData.type != 'sketch') {
     this.selpoints[0].visible = false // hide selpoint[0] before each redraw
     raycaster.layers.set(1)
-    hoverPts = raycaster.intersectObjects(this.obj3d.children, true) 
+    hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
   } else {
+    // this.freePt.visible = false // hide freept before each redraw
+    this.scene.selpoints[0].visible = false // hide selpoint[0] before each redraw
     raycaster.layers.set(2)
     // intersectObjects has side effect of updating bounding spheres
     // which may lead to unexpected results if you leave boundspheres un-updated
@@ -77,7 +79,7 @@ export function onHover(e) {
         if (this.obj3d.userData.type != 'sketch' && obj.userData.type == 'point') {
           ptLoc = obj.geometry.attributes.position.array
             .slice(
-              3 * hoverts[idx[x]].index,
+              3 * hoverPts[idx[x]].index,
               3 * hoverPts[idx[x]].index + 3
             )
           this.selpoints[0].geometry.attributes.position.array.set(ptLoc)
@@ -87,6 +89,28 @@ export function onHover(e) {
 
           obj = hoverPts[idx[x]].index
         }
+
+        if (this.obj3d.userData.type == 'sketch' && obj.userData.type == 'point') {
+          // ptLoc = obj.geometry.attributes.position.array
+          //   .slice(
+          //     3 * hoverPts[idx[x]].index,
+          //     3 * hoverPts[idx[x]].index + 3
+          //   )
+          // this.freePt.geometry.attributes.position.array.set(ptLoc)
+          // this.freePt.matrix = obj.parent.matrix
+          // this.freePt.geometry.attributes.position.needsUpdate = true
+          // this.freePt.visible = true
+          ptLoc = obj.geometry.attributes.position.array
+            .slice(
+              3 * hoverPts[idx[x]].index,
+              3 * hoverPts[idx[x]].index + 3
+            )
+          this.scene.selpoints[0].geometry.attributes.position.array.set(ptLoc)
+          this.scene.selpoints[0].matrix = obj.parent.matrix
+          this.scene.selpoints[0].geometry.attributes.position.needsUpdate = true
+          this.scene.selpoints[0].visible = true
+        }
+
 
         this.hovered.push(obj)
       }
@@ -125,6 +149,7 @@ export function onPick(e) {
     let obj = this.hovered[this.hovered.length - 1]
     // if (sc.selected.includes(obj3d)) continue
 
+    console.log(obj, 'heere')
     if (typeof obj != 'object') { // special sketchplace define pts in feature mode
 
       const pp = this.selpoints[this.fptIdx % 3 + 1]
@@ -205,10 +230,12 @@ export function onPick(e) {
     for (let x = 0; x < this.selected.length; x++) {
       const obj = this.selected[x]
 
-      setHover(obj, 0)
 
       if (obj.userData.type == 'selpoint') {
         obj.visible = false
+      } else {
+        setHover(obj, 0)
+
       }
 
       // dont think this would have been possible without redux

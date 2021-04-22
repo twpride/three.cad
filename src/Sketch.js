@@ -2,7 +2,7 @@
 
 import * as THREE from '../node_modules/three/src/Three';
 
-import { _vec2, _vec3, raycaster, awaitSelection, ptObj, setHover } from './shared'
+import { _vec2, _vec3, raycaster, awaitSelection, ptObj, setHover,custPtMat } from './shared'
 
 import { drawOnClick1, drawOnClick2, drawPreClick2, drawOnClick3, drawPreClick3, drawClear, drawPoint } from './drawEvents'
 import { onHover, onDrag, onPick, onRelease, clearSelection } from './mouseEvents'
@@ -47,8 +47,20 @@ class Sketch {
       this.constraints = new Map()
       this.c_id = 1;
 
-      this.obj3d.add(new THREE.Group());
+      this.helpersGroup = new THREE.Group()
+      this.obj3d.add(this.helpersGroup);
+      // this.freePt = new THREE.Points(
+      //   new THREE.BufferGeometry().setAttribute('position',
+      //     new THREE.Float32BufferAttribute(3, 3)
+      //   ),
+      //   custPtMat.clone()
+      // )
+      // this.freePt.matrixAutoUpdate = false
+      // this.freePt.visible = false
+      // this.freePt.userData.type = 'selpoint'
+      // this.helpersGroup.add(this.freePt);
 
+      this.obj3d.add(new THREE.Group());
       this.geomStartIdx = this.obj3d.children.length
       this.obj3d.userData.geomStartIdx = this.geomStartIdx
       this.dimGroup = this.obj3d.children[this.geomStartIdx - 1]
@@ -258,7 +270,7 @@ class Sketch {
       case 'p':
         this.mode = "point"
         this.snap = true
-        this.canvas.addEventListener('pointerdown', (e)=> {
+        this.canvas.addEventListener('pointerdown', (e) => {
           if (this.mode !== 'point') return
           const pt = ptObj()
 
@@ -271,7 +283,7 @@ class Sketch {
           pt.layers.enable(2)
 
           this.obj3d.add(pt)
-          this.updatePointsBuffer(this.obj3d.children.length-1)
+          this.updatePointsBuffer(this.obj3d.children.length - 1)
           this.scene.render()
         })
         break;

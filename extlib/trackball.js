@@ -271,7 +271,8 @@ var TrackballControls = function ( object, domElement ) {
 
 				}
 
-				mouseChange.multiplyScalar( _eye.length() * scope.panSpeed );
+				// mouseChange.multiplyScalar( _eye.length() * scope.panSpeed );
+				mouseChange.multiplyScalar( _eye.length() * 1/577*scope.domElement.clientWidth);
 
 				pan.copy( _eye ).cross( scope.object.up ).setLength( mouseChange.x );
 				pan.add( objectUp.copy( scope.object.up ).setLength( mouseChange.y ) );

@@ -3,15 +3,26 @@ import { drawArc, drawArc2, drawArc3, drawArc4 } from './drawArc'
 import { drawLine, drawLine2 } from './drawLine'
 import { ptObj } from './shared'
 
-export function drawOnClick1(e) {
-  if (e.buttons !== 1) return
+export function drawOnClick1(e, loc) {
+  if (!loc && e.buttons !== 1) return
 
   // this.canvas.removeEventListener('pointerdown', this.drawOnClick1)
 
   this.canvas.addEventListener('pointermove', this.drawPreClick2)
   this.canvas.addEventListener('pointerdown', this.drawOnClick2, { once: true })
 
-  const mouseLoc = this.getLocation(e).toArray();
+
+  let mouseLoc
+
+  if (loc) {
+    mouseLoc = loc
+  } else if (this.hovered.length && !this.subsequent) {
+    mouseLoc = this.hovered[this.hovered.length - 1].geometry.attributes.position.array
+  } else {
+    mouseLoc = this.getLocation(e).toArray();
+  }
+
+
 
   // this.mode allow alow following modes to create new obj3ds
   if (this.mode == "line") {
@@ -83,6 +94,7 @@ export function drawOnClick2(e) {
     element.layers.enable(2)
   });
 
+  let modLoc
   if (this.hovered.length) {
     this.constraints.set(++this.c_id,
       [
@@ -94,14 +106,22 @@ export function drawOnClick2(e) {
     this.toPush[1].userData.constraints.push(this.c_id)
     this.updateOtherBuffers()
 
+    modLoc = this.hovered[this.hovered.length - 1].geometry.attributes.position.array
   }
 
   if (this.mode == "line") {
-
     this.subsequent = true
-    this.drawOnClick1(e)
+    if (modLoc) {
+      drawLine2(modLoc, this.toPush)
+      this.drawOnClick1(null, modLoc)
+    } else {
+      this.drawOnClick1(e)
+    }
 
   } else if (this.mode == "arc") {
+    if (modLoc) {
+      drawArc2(modLoc, this.toPush)
+    }
 
     drawArc3(this.toPush[0], this.toPush[1])
 

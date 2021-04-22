@@ -3,7 +3,7 @@ import * as THREE from '../node_modules/three/src/Three';
 import { Sketch } from './Sketch'
 import { extrude, flipBufferGeometryNormals } from './extrude'
 import { onHover, onPick, clearSelection } from './mouseEvents';
-import { _vec2, _vec3, color, awaitSelection, setHover } from './shared'
+import { _vec2, _vec3, color, awaitSelection, setHover, custPtMat } from './shared'
 import { AxesHelper } from './axes'
 
 
@@ -58,9 +58,9 @@ export class Scene {
 
     this.camera.layers.enable(3)
 
-    const controls = new TrackballControls(this.camera, this.canvas);
-    controls.target.set(0, 0, 0);
-    controls.update();
+    this.controls = new TrackballControls(this.camera, this.canvas);
+    this.controls.target.set(0, 0, 0);
+    this.controls.update();
 
 
 
@@ -82,7 +82,8 @@ export class Scene {
         new THREE.BufferGeometry().setAttribute('position',
           new THREE.Float32BufferAttribute(3, 3)
         ),
-        pointMaterial.clone()
+        // pointMaterial.clone()
+        custPtMat.clone()
       )
 
       freePt.matrixAutoUpdate = false
@@ -149,8 +150,8 @@ export class Scene {
     this.awaitSelection = awaitSelection.bind(this);
 
     this.obj3d.addEventListener('change', this.render);
-    controls.addEventListener('change', this.render);
-    controls.addEventListener('start', this.render);
+    this.controls.addEventListener('change', this.render);
+    this.controls.addEventListener('start', this.render);
     window.addEventListener('resize', this.render);
 
     if (process.env.NODE_ENV !== 'production') {
@@ -353,6 +354,7 @@ function render() {
     this.camera.right = canvas.clientWidth / canvas.clientHeight;
     this.camera.updateProjectionMatrix();
 
+    this.controls.handleResize()
     Object.assign(this.rect, this.canvas.getBoundingClientRect().toJSON())
 
   }

@@ -41,7 +41,7 @@ export function extrude(sketch, depth) {
         linkedObj[1][nextIdx]
       )
     ]
-    if (d == children[2]) {
+    if (d == children[sketch.geomStartIdx + 1]) {
       // console.log('pair found')
     };
     findTouching(d)
@@ -58,7 +58,7 @@ export function extrude(sketch, depth) {
         if (c == -1) continue;
         const d = children[objIdx.get(c)]
         if (d == node) continue;
-        if (d == children[2]) {
+        if (d == children[sketch.geomStartIdx + 1]) {
           // console.log('loop found')
         } else {
           // if (!visited.has(d)) {
