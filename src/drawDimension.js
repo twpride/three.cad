@@ -67,7 +67,7 @@ export async function drawDimension() {
       disp = tagPos.clone().sub(p1)
       proj = dir.multiplyScalar(disp.dot(dir))
       perpOffset = disp.clone().sub(proj)
-      dimVal = Math.sqrt(perpOffset.x ** 2 + perpOffset.y ** 2)
+      dimVal = Math.sign(perpOffset.y)*Math.sqrt(perpOffset.x ** 2 + perpOffset.y ** 2)
 
       constraint = [
         'pt_line_distance', dimVal,

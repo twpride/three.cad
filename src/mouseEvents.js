@@ -56,7 +56,6 @@ export function onHover(e) {
 
 
   if (idx.length) { // after filtering, if hovered objs still exists
-    // console.log(idx)
 
     if (hoverPts[idx[0]].object != this.hovered[0]) { // if the previous hovered obj is not the same as current
 
@@ -78,7 +77,7 @@ export function onHover(e) {
         if (this.obj3d.userData.type != 'sketch' && obj.userData.type == 'point') {
           ptLoc = obj.geometry.attributes.position.array
             .slice(
-              3 * hoverPts[idx[x]].index,
+              3 * hoverts[idx[x]].index,
               3 * hoverPts[idx[x]].index + 3
             )
           this.selpoints[0].geometry.attributes.position.array.set(ptLoc)

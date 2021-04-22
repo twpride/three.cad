@@ -258,7 +258,22 @@ class Sketch {
       case 'p':
         this.mode = "point"
         this.snap = true
-        this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
+        this.canvas.addEventListener('pointerdown', (e)=> {
+          if (this.mode !== 'point') return
+          const pt = ptObj()
+
+          pt.matrixAutoUpdate = false;
+          pt.userData.constraints = []
+
+          pt.geometry.attributes.position.set(
+            this.getLocation(e).toArray()
+          )
+          pt.layers.enable(2)
+
+          this.obj3d.add(pt)
+          this.updatePointsBuffer(this.obj3d.children.length-1)
+          this.scene.render()
+        })
         break;
       case 'd':
         if (this.mode != 'dimension') {

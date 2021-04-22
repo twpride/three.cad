@@ -18,45 +18,21 @@ export function drawOnClick1(e) {
     this.toPush = drawLine(mouseLoc)
 
     if (this.subsequent) {
-      const p1 = this.toPush[0]
       // we pre-increment because we need to push the same c_id to the constraints
       // map. we push into constraints map second because it makes more semantic sense
-      this.constraints.set(++this.c_id,  
+      this.constraints.set(++this.c_id,
         [
           'points_coincident', -1,
-          [this.obj3d.children[this.obj3d.children.length - 2].name, p1.name, -1, -1]
+          [this.obj3d.children[this.obj3d.children.length - 2].name, this.toPush[0].name, -1, -1]
         ]
       )
 
-      p1.userData.constraints.push(this.c_id)
       this.obj3d.children[this.obj3d.children.length - 2].userData.constraints.push(this.c_id)
+      this.toPush[0].userData.constraints.push(this.c_id)
 
-    } else {
+    } else if (this.hovered.length) {
 
-      console.log(this.hovered)
-      if (this.hovered.length) {
-
-        this.constraints.set(++this.c_id,  //??? why incremennt before not after
-          [
-            'points_coincident', -1,
-            [this.hovered[this.hovered.length - 1].name, this.toPush[0].name, -1, -1]
-          ]
-        )
-        this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
-        this.toPush[0].userData.constraints.push(this.c_id)
-        this.updateOtherBuffers()
-  
-      }
-
-
-    }
-
-
-  } else if (this.mode == "arc") {
-    this.toPush = drawArc(mouseLoc)
-
-    if (this.hovered.length) {
-      this.constraints.set(++this.c_id,  //??? why incremennt before not after
+      this.constraints.set(++this.c_id,
         [
           'points_coincident', -1,
           [this.hovered[this.hovered.length - 1].name, this.toPush[0].name, -1, -1]
@@ -71,13 +47,25 @@ export function drawOnClick1(e) {
 
 
 
-  } else if (this.mode == "point") {
-    this.toPush = drawPoint(mouseLoc)
+  } else if (this.mode == "arc") {
+    this.toPush = drawArc(mouseLoc)
+
+    if (this.hovered.length) {
+      this.constraints.set(++this.c_id,
+        [
+          'points_coincident', -1,
+          [this.hovered[this.hovered.length - 1].name, this.toPush[0].name, -1, -1]
+        ]
+      )
+      this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
+      this.toPush[0].userData.constraints.push(this.c_id)
+      this.updateOtherBuffers()
+
+    }
+
+
   }
 
-  // this.toPush.forEach(element => {
-  //   element.layers.enable(2)
-  // });
 
   this.updatePoint = this.obj3d.children.length
   this.obj3d.add(...this.toPush)
@@ -118,12 +106,14 @@ export function drawOnClick2(e) {
 
   if (this.mode == "line") {
     if (this.hovered.length) {
-      this.constraints.set(++this.c_id,  //??? why incremennt before not after
+      this.constraints.set(++this.c_id,
         [
           'points_coincident', -1,
           [this.hovered[this.hovered.length - 1].name, this.toPush[1].name, -1, -1]
         ]
       )
+      this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
+      this.toPush[1].userData.constraints.push(this.c_id)
       this.updateOtherBuffers()
 
     }
@@ -131,17 +121,17 @@ export function drawOnClick2(e) {
     this.subsequent = true
     this.drawOnClick1(e)
 
-  } else if (this.mode == "point") {
-    this.drawOnClick1(e)
   } else if (this.mode == "arc") {
 
     if (this.hovered.length) {
-      this.constraints.set(++this.c_id,  //??? why incremennt before not after
+      this.constraints.set(++this.c_id,
         [
           'points_coincident', -1,
           [this.hovered[this.hovered.length - 1].name, this.toPush[1].name, -1, -1]
         ]
       )
+      this.hovered[this.hovered.length - 1].userData.constraints.push(this.c_id)
+      this.toPush[1].userData.constraints.push(this.c_id)
       this.updateOtherBuffers()
 
     }
@@ -208,11 +198,3 @@ export function drawClear() {
 }
 
 
-export function drawPoint(mouseLoc) {
-  console.log('heeeeeeeeer')
-  const p1 = ptObj()
-  p1.matrixAutoUpdate = false;
-  p1.userData.constraints = []
-  p1.geometry.attributes.position.set(mouseLoc.slice())
-  return [p1]
-}
