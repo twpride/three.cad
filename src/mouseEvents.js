@@ -20,12 +20,9 @@ export function onHover(e) {
 
 
   if (this.obj3d.userData.type != 'sketch') {
-    this.selpoints[0].visible = false // hide selpoint[0] before each redraw
     raycaster.layers.set(1)
     hoverPts = raycaster.intersectObjects(this.obj3d.children, true)
   } else {
-    // this.freePt.visible = false // hide freept before each redraw
-    this.scene.selpoints[0].visible = false // hide selpoint[0] before each redraw
     raycaster.layers.set(2)
     // intersectObjects has side effect of updating bounding spheres
     // which may lead to unexpected results if you leave boundspheres un-updated
@@ -37,7 +34,6 @@ export function onHover(e) {
 
   const thresh = this.snap ? 1 : 0.0001
   if (hoverPts.length) {
-    // console.log('here', hoverPts)
     let minDist = Infinity;
     for (let i = 0; i < hoverPts.length; i++) {
       if (!hoverPts[i].distanceToRay) continue;
@@ -58,8 +54,11 @@ export function onHover(e) {
 
 
   if (idx.length) { // after filtering, if hovered objs still exists
-
-    if (hoverPts[idx[0]].object != this.hovered[0]) { // if the previous hovered obj is not the same as current
+    if (
+      !this.hovered.length
+      || (typeof this.hovered[0] == 'number' && this.hovered[0] != hoverPts[idx[0]].index)
+      || (typeof this.hovered[0] == 'object' && this.hovered[0] != hoverPts[idx[0]].object)
+    ) { // if the previous hovered obj is not the same as current
 
       for (let x = 0; x < this.hovered.length; x++) { // first clear old hovers that are not selected
 
@@ -72,43 +71,25 @@ export function onHover(e) {
 
       for (let x = 0; x < idx.length; x++) {
         let obj = hoverPts[idx[x]].object
-
         setHover(obj, 1, false)
 
+        if (this.obj3d.userData.type != 'sketch') {
+          if (obj.userData.type == 'point') {
+            ptLoc = obj.geometry.attributes.position.array
+              .slice(
+                3 * hoverPts[idx[x]].index,
+                3 * hoverPts[idx[x]].index + 3
+              )
+            this.selpoints[0].geometry.attributes.position.array.set(ptLoc)
+            this.selpoints[0].matrix = obj.parent.matrix
+            this.selpoints[0].geometry.attributes.position.needsUpdate = true
+            this.selpoints[0].visible = true
 
-        if (this.obj3d.userData.type != 'sketch' && obj.userData.type == 'point') {
-          ptLoc = obj.geometry.attributes.position.array
-            .slice(
-              3 * hoverPts[idx[x]].index,
-              3 * hoverPts[idx[x]].index + 3
-            )
-          this.selpoints[0].geometry.attributes.position.array.set(ptLoc)
-          this.selpoints[0].matrix = obj.parent.matrix
-          this.selpoints[0].geometry.attributes.position.needsUpdate = true
-          this.selpoints[0].visible = true
-
-          obj = hoverPts[idx[x]].index
-        }
-
-        if (this.obj3d.userData.type == 'sketch' && obj.userData.type == 'point') {
-          // ptLoc = obj.geometry.attributes.position.array
-          //   .slice(
-          //     3 * hoverPts[idx[x]].index,
-          //     3 * hoverPts[idx[x]].index + 3
-          //   )
-          // this.freePt.geometry.attributes.position.array.set(ptLoc)
-          // this.freePt.matrix = obj.parent.matrix
-          // this.freePt.geometry.attributes.position.needsUpdate = true
-          // this.freePt.visible = true
-          ptLoc = obj.geometry.attributes.position.array
-            .slice(
-              3 * hoverPts[idx[x]].index,
-              3 * hoverPts[idx[x]].index + 3
-            )
-          this.scene.selpoints[0].geometry.attributes.position.array.set(ptLoc)
-          this.scene.selpoints[0].matrix = obj.parent.matrix
-          this.scene.selpoints[0].geometry.attributes.position.needsUpdate = true
-          this.scene.selpoints[0].visible = true
+            obj = hoverPts[idx[x]].index
+            this.selpoints[0].idx = obj
+          } else {
+            this.selpoints[0].visible = false
+          }
         }
 
 
@@ -121,14 +102,14 @@ export function onHover(e) {
   } else { // no hovered object after filtering
     if (this.hovered.length) { // if previously something was hovered, then we need to clear it
 
-
       for (let x = 0; x < this.hovered.length; x++) {
         const obj = this.hovered[x]
 
-        if (typeof obj == 'object' && !this.selected.includes(obj)) {
+        if (typeof obj == 'number') {
+          this.selpoints[0].visible = false
+        } else if (!this.selected.includes(obj)) {
           setHover(obj, 0)
         }
-
 
       }
       this.hovered = []
@@ -149,7 +130,6 @@ export function onPick(e) {
     let obj = this.hovered[this.hovered.length - 1]
     // if (sc.selected.includes(obj3d)) continue
 
-    console.log(obj, 'heere')
     if (typeof obj != 'object') { // special sketchplace define pts in feature mode
 
       const pp = this.selpoints[this.fptIdx % 3 + 1]

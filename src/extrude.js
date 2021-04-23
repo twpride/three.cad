@@ -93,8 +93,10 @@ export function extrude(sketch, depth) {
   mesh.userData.featureInfo = [sketch.obj3d.name, depth]
   mesh.layers.enable(1)
 
-  const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial({ size: 0 }));
+  // const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial({ size: 0 }));
+  const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial());
   vertices.userData.type = 'point'
+  vertices.visible = false
   vertices.layers.enable(1)
 
   mesh.add(vertices)

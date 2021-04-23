@@ -45,12 +45,14 @@ const hoverColor = {
 const lineMaterial = new THREE.LineBasicMaterial({
   linewidth: 1,
   color: color.line,
+  depthTest: false
 })
 
 
 const pointMaterial = new THREE.PointsMaterial({
   color: color.point,
   size: 4,
+  depthTest: false
 })
 
 
@@ -64,6 +66,7 @@ const ptObj = (n, visibility = true) => {
   ret.name = "p" + id++
   ret.userData.type = 'point'
   ret.visible = visibility
+  ret.renderOrder = 1
   return ret
 }
 
@@ -76,6 +79,7 @@ const lineObj = (n = 1) => {
   );
   ret.name = 'l' + id++
   ret.userData.type = 'line'
+  ret.renderOrder = 1
   return ret
 }
 
@@ -171,6 +175,9 @@ function setHover(obj, state, meshHover = true) {
       } else {
         break
       }
+    case 'point':
+      obj.material.color.set(colObj[obj.userData.type])
+      obj.material.size = state ? 8 : 4
     default:
       obj.material.color.set(colObj[obj.userData.type])
       break;
@@ -196,13 +203,10 @@ const fragmentShader = `
   uniform float pointWidth;
   void main() {
     gl_FragColor = vec4(color, 1.0);
-    // distance = len(x: [-1, 1], y: [-1, 1])
     float distance = length(2.0 * gl_PointCoord - 1.0);
-    // pixels [0, ~15/20]
     float totalWidth = pointWidth + edgeSize;
     float edgeStart = pointWidth;
     float edgeEnd = pointWidth + 2.0;
-    // [edgeStart, edgeEnd] -> [0, 1]
     float sEdge = smoothstep(edgeStart, edgeEnd, distance * totalWidth);
     // transition from edgeColor to color along the edge
     gl_FragColor = ( vec4(edgeColor, 1.0) * sEdge) + ((1.0 - sEdge) * gl_FragColor);
@@ -222,7 +226,7 @@ const custPtMat = new THREE.ShaderMaterial({
   },
   vertexShader,
   fragmentShader,
-  depthTest:false
+  depthTest: false
   // depthWrite:false
 });
 

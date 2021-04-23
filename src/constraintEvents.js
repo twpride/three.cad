@@ -1,4 +1,4 @@
-import { color } from './shared'
+import { color, setHover } from './shared'
 
 export async function setCoincident(sel) {
   let selection
@@ -39,7 +39,7 @@ export async function setCoincident(sel) {
 
   for (let x = 0; x < this.selected.length; x++) {
     const obj = this.selected[x]
-    obj.material.color.set(color[obj.userData.type])
+    setHover(obj, 0)
   }
 
   this.selected = []
@@ -72,7 +72,11 @@ export async function setOrdinate(dir = 0) {
   this.updateOtherBuffers()
   this.solve()
   this.updateBoundingSpheres()
-
+  for (let x = 0; x < this.selected.length; x++) {
+    const obj = this.selected[x]
+    setHover(obj, 0)
+  }
+  
   this.selected = []
   this.scene.render()
 }
@@ -151,6 +155,11 @@ export async function setTangent() {
   this.updateOtherBuffers()
   this.solve()
   this.updateBoundingSpheres()
+
+  for (let x = 0; x < this.selected.length; x++) {
+    const obj = this.selected[x]
+    setHover(obj, 0)
+  }
 
   this.selected = []
   this.scene.render()

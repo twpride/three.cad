@@ -26,10 +26,6 @@ window.STLexp = new STLExporter();
 window.id = 0
 
 
-const pointMaterial = new THREE.PointsMaterial({
-  color: color.selpoint,
-  size: 4,
-})
 
 export class Scene {
   constructor(store) {

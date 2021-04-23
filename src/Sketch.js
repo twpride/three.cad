@@ -47,19 +47,6 @@ class Sketch {
       this.constraints = new Map()
       this.c_id = 1;
 
-      this.helpersGroup = new THREE.Group()
-      this.obj3d.add(this.helpersGroup);
-      // this.freePt = new THREE.Points(
-      //   new THREE.BufferGeometry().setAttribute('position',
-      //     new THREE.Float32BufferAttribute(3, 3)
-      //   ),
-      //   custPtMat.clone()
-      // )
-      // this.freePt.matrixAutoUpdate = false
-      // this.freePt.visible = false
-      // this.freePt.userData.type = 'selpoint'
-      // this.helpersGroup.add(this.freePt);
-
       this.obj3d.add(new THREE.Group());
       this.geomStartIdx = this.obj3d.children.length
       this.obj3d.userData.geomStartIdx = this.geomStartIdx

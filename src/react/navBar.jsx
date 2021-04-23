@@ -115,12 +115,7 @@ export const NavBar = () => {
     [Icon.Tangent, () => sc.activeSketch.command('t'), 'Tangent (T)'],
     [MdSave,
       async () => {
-        if (await verifyPermission(fileHandle) === false) return
-        sc.refreshNode(sc.activeSketch.obj3d.name, treeEntries)
-        sc.activeSketch.clearSelection()
         saveFile(fileHandle, JSON.stringify([id, sc.sid, sc.mid, treeEntries]), dispatch)
-        sc.render()
-        sc.activeSketch.setClean()
       }
       , 'Save'],
   ]
@@ -129,7 +124,8 @@ export const NavBar = () => {
   const partModeButtons = [
     [FaEdit, addSketch, 'Sketch'],
     [Icon.Extrude, () => {
-      if (sc.selected[0] && treeEntries.byId[sc.selected[0].name].userData.type == 'sketch') {
+      console.log(treeEntries.byId[sc.selected[0].name], 'here')
+      if (sc.selected[0] && treeEntries.byId[sc.selected[0].name].obj3d) {
         dispatch({ type: 'set-dialog', action: 'extrude', target: treeEntries.byId[sc.selected[0].name] })
       } else {
         alert('please select a sketch from the left pane extrude')

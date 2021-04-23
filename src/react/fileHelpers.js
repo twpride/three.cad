@@ -31,12 +31,16 @@ export async function saveFile(fileHandle, file, dispatch) {
     if (!fileHandle) {
       return await saveFileAs(file, dispatch);
     }
-    await writeFile(fileHandle, file);
+
+    const writable = await fileHandle.createWritable();
+    await writable.write(file);
+    await writable.close();
 
     dispatch({ type: 'set-modified', status: false })
   } catch (ex) {
     const msg = 'Unable to save file';
     console.error(msg, ex);
+    console.log('heeeeeeeeerree')
     alert(msg);
   }
 };
@@ -56,6 +60,7 @@ export async function saveFileAs(file, dispatch) {
 
   } catch (ex) {
     if (ex.name === 'AbortError') {
+      console.log('aborted')
       return;
     }
     const msg = 'An error occured trying to open the file.';
@@ -66,9 +71,7 @@ export async function saveFileAs(file, dispatch) {
 
   try {
     const writable = await fileHandle.createWritable();
-    // Write the contents of the file to the stream.
     await writable.write(file);
-    // Close the file and write the contents to disk.
     await writable.close()
 
     dispatch({ type: 'set-file-handle', fileHandle, modified: false })
