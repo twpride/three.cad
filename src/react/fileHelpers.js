@@ -5,12 +5,12 @@
 //   fileSave,
 // } from '../../extlib/fs/index';
 
-import {
-  fileOpen,
-  fileSave,
-} from 'browser-fs-access';
+// import {
+//   fileOpen,
+//   fileSave,
+// } from 'browser-fs-access';
 
-import {sce} from './app'
+import {sce, fs} from './app'
 
 // https://web.dev/file-system-access/
 
@@ -38,7 +38,7 @@ export async function saveFile(fileHandle, file, dispatch) {
       return await saveFileAs(file, dispatch);
     }
 
-    await fileSave(new Blob([file], { type: 'application/json' }), undefined, fileHandle, true)
+    await fs.fileSave(new Blob([file], { type: 'application/json' }), undefined, fileHandle, true)
 
     dispatch({ type: 'set-modified', status: false })
   } catch (ex) {
@@ -51,7 +51,7 @@ export async function saveFile(fileHandle, file, dispatch) {
 export async function saveFileAs(file, dispatch) {
 
   try {
-    const fileHandle = await fileSave(new Blob([file], { type: 'application/json' }), {
+    const fileHandle = await fs.fileSave(new Blob([file], { type: 'application/json' }), {
       extensions: ['.json'],
     })
 
@@ -80,7 +80,7 @@ export async function openFile(dispatch) {
       description: 'Part files',
     };
     
-    file = await fileOpen(options);
+    file = await fs.fileOpen(options);
 
   } catch (ex) {
     if (ex.name === 'AbortError') {
