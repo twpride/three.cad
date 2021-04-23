@@ -1,3 +1,15 @@
+
+
+// import {
+//   fileOpen,
+//   fileSave,
+// } from '../../extlib/fs/index';
+
+import {
+  fileOpen,
+  fileSave,
+} from 'browser-fs-access';
+
 // https://web.dev/file-system-access/
 
 const link = document.createElement('a');
@@ -5,23 +17,15 @@ link.style.display = 'none';
 document.body.appendChild(link);
 
 function saveLegacy(blob, filename) {
-
   link.href = URL.createObjectURL(blob);
   link.download = filename;
   link.click();
-
 }
 
-
 var tzoffset = (new Date()).getTimezoneOffset() * 60000;
-
-
 export function STLExport(filename) {
-
   const result = STLexp.parse(sc.selected[0], { binary: true });
-
   const time = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -5).replace(/:/g, '-');
-
   saveLegacy(new Blob([result], { type: 'model/stl' }), `${filename}_${time}.stl`);
 }
 
@@ -32,47 +36,24 @@ export async function saveFile(fileHandle, file, dispatch) {
       return await saveFileAs(file, dispatch);
     }
 
-    const writable = await fileHandle.createWritable();
-    await writable.write(file);
-    await writable.close();
+    await fileSave(new Blob([file], { type: 'application/json' }), undefined, fileHandle, true)
 
     dispatch({ type: 'set-modified', status: false })
   } catch (ex) {
     const msg = 'Unable to save file';
     console.error(msg, ex);
-    console.log('heeeeeeeeerree')
     alert(msg);
   }
 };
 
 export async function saveFileAs(file, dispatch) {
-  let fileHandle;
-  try {
 
-    const opts = {
-      types: [{
-        description: 'Text file',
-        accept: { 'application/json': ['.json'] },
-      }],
-    };
-    fileHandle = await showSaveFilePicker(opts)
-
-
-  } catch (ex) {
-    if (ex.name === 'AbortError') {
-      console.log('aborted')
-      return;
-    }
-    const msg = 'An error occured trying to open the file.';
-    console.error(msg, ex);
-    alert(msg);
-    return;
-  }
 
   try {
-    const writable = await fileHandle.createWritable();
-    await writable.write(file);
-    await writable.close()
+    const fileHandle = await fileSave(new Blob([file], { type: 'application/json' }), {
+      fileName: 'untitled.json',
+      extensions: ['.json'],
+    })
 
     dispatch({ type: 'set-file-handle', fileHandle, modified: false })
 
@@ -88,12 +69,19 @@ export async function saveFileAs(file, dispatch) {
 
 
 export async function openFile(dispatch) {
-  let fileHandle
+  let file
 
-  // If a fileHandle is provided, verify we have permission to read/write it,
-  // otherwise, show the file open prompt and allow the user to select the file.
   try {
-    fileHandle = await getFileHandle();
+
+    const options = {
+      mimeTypes: ['application/json'],
+      extensions: ['.json'],
+      multiple: false,
+      description: 'Part files',
+    };
+    
+    file = await fileOpen(options);
+
   } catch (ex) {
     if (ex.name === 'AbortError') {
       return;
@@ -103,17 +91,11 @@ export async function openFile(dispatch) {
     alert(msg);
   }
 
-  if (!fileHandle) {
-    return;
-  }
-
-
   try {
-    const file = await fileHandle.getFile();
     const text = await file.text();;
 
     dispatch({ type: 'restore-state', state: sc.loadState(text) })
-    dispatch({ type: 'set-file-handle', fileHandle })
+    dispatch({ type: 'set-file-handle', fileHandle:file.handle })
 
   } catch (ex) {
     const msg = `An error occured reading ${fileHandle}`;
