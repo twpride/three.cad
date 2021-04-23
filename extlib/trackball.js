@@ -4,7 +4,7 @@ import {
 	Quaternion,
 	Vector2,
 	Vector3
-} from 'three/src/Three';
+} from '../node_modules/three/src/Three';
 
 var TrackballControls = function ( object, domElement ) {
 
@@ -194,8 +194,7 @@ var TrackballControls = function ( object, domElement ) {
 
 		if ( _state === STATE.TOUCH_ZOOM_PAN ) {
 
-			// factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
-			factor = _touchZoomDistanceEnd /  _touchZoomDistanceStart;
+			factor = _touchZoomDistanceEnd / _touchZoomDistanceStart;
 			_touchZoomDistanceStart = _touchZoomDistanceEnd;
 
 			if ( scope.object.isPerspectiveCamera ) {

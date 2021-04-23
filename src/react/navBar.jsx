@@ -1,6 +1,6 @@
 
 
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -168,7 +168,7 @@ export const NavBar = () => {
 
     {/* <div className='w-auto h-full flex-1 flex items-center justify-end'> */}
     <div className='w-auto h-full flex-1 flex items-center justify-end md:justify-between'>
-      <div className='w-100 h-full items-center font-mono text-lg text-gray-200 select-none hidden md:flex mr-8'>
+      <div className='w-100 h-full items-center font-mono text-lg text-gray-200 select-none hidden lg:flex mr-8'>
         <Icon.Logo className='w-auto h-6 mx-1' />
           three.cad
       </div>
@@ -187,7 +187,7 @@ export const NavBar = () => {
         ))
       }
     </div>
-    <div className='w-auto h-full flex-1 items-center justify-end flex-shrink-1 hidden lg:flex'>
+    <div className='w-auto h-full flex-1 items-center justify-end flex-shrink-1 hidden md:flex'>
       <DropDown />
       <a href='https://github.com/twpride/threeCAD' className='h-full w=auto'>
         <FaGithub className="btn-green w-auto h-full p-3.5"></FaGithub>
