@@ -37,6 +37,7 @@ const App = ({ store }) => {
 }
 
 export let sce
+export let pako
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   sce = new Scene(store)
   // window.sc = sce
   ReactDOM.render(<App store={store} />, document.getElementById('react'));
+
 
 });
 

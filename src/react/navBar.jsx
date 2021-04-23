@@ -13,7 +13,6 @@ import { DropDown } from './dropDown'
 import { STLExport, saveFile, openFile, verifyPermission } from './fileHelpers'
 
 import { sce } from './app'
-// import { serial, deserial} from './app'
 
 export const NavBar = () => {
   const dispatch = useDispatch()
@@ -119,7 +118,7 @@ export const NavBar = () => {
     [MdSave,
       async () => {
         saveFile(fileHandle, JSON.stringify([id, sce.sid, sce.mid, treeEntries]), dispatch)
-        // saveFile(fileHandle, serial([id, sce.sid, sce.mid, treeEntries]), dispatch)
+        // saveFile(fileHandle, bson.serialize([id, sce.sid, sce.mid, treeEntries]), dispatch)
       }
       , 'Save'],
   ]
@@ -149,7 +148,7 @@ export const NavBar = () => {
     [MdSave,
       () => {
         saveFile(fileHandle, JSON.stringify([id, sce.sid, sce.mid, treeEntries]), dispatch)
-        // saveFile(fileHandle, serial([id, sce.sid, sce.mid, treeEntries]), dispatch)
+        // saveFile(fileHandle, bson.serialize([id, sce.sid, sce.mid, treeEntries.toJson()]), dispatch)
       }
       , 'Save'],
     [MdFolder, () => {

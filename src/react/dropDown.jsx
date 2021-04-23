@@ -3,13 +3,15 @@ import React, { useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import {sce} from './app'
+import { sce, pako } from './app'
 
 
+const utf8decoder = new TextDecoder();
 
 export const DropDown = () => {
   const arr = [
-    ['https://howardhwang.s3-us-west-1.amazonaws.com/headphone-stand.json', 'headphone-stand'],
+    ['https://howardhwang.s3-us-west-1.amazonaws.com/headphone-stand.json.gz', 'headphone-stand'],
+    // ['headphone-stand.json.gz', 'headphone-stand'],
   ]
 
   const dispatch = useDispatch()
@@ -22,11 +24,9 @@ export const DropDown = () => {
     */
     setOpen(state => !state) // handle click on button & dropdown, always a toggle
 
-    document.addEventListener( // handles click outside dropdown & button
+    document.addEventListener( // handles click outside buttona & dropdown
       'pointerdown',
-      (e) => {
-        !e.path.includes(ev.target.parentNode) && setOpen(false)
-      }
+      (e) => { !e.composedPath().includes(ev.target.parentNode) && setOpen(false) }
       ,
       { capture: true, once: true } // capture phase to allow for stopPropogation on others
     )
@@ -36,19 +36,33 @@ export const DropDown = () => {
   const handleInsideClick = async (e) => {
     // handles click inside dropdown, business logic here
     const idx = Array.prototype.indexOf.call(e.target.parentNode.children, e.target)
+
     if (idx !== -1) {
-      console.log(idx)
-      const res = await fetch(arr[idx][0])
-      const text = await res.text()
-      dispatch({ type: 'restore-state', state: sce.loadState(text) })
+      setOpen(false)
+
+      const state = sce.loadState(
+        utf8decoder.decode(
+          new Zlib.Gunzip(
+            new Uint8Array(
+              await (
+                await (
+                  await fetch(arr[idx][0])
+                ).blob()
+              ).arrayBuffer()
+            )
+          ).decompress()
+        )
+      )
+
+      dispatch({ type: 'restore-state', state })
       sce.render()
     }
   }
-  const fileHandle = useSelector(state => state.ui.fileHandle)
+
   return <div className="cursor-pointer w-28 h-full overflow-visible relative select-none"
-    onClick={handleOutsideClick}
+
   >
-    <div className="btn text-gray-200 h-full w-full flex items-center justify-center">
+    <div className="btn text-gray-200 h-full w-full flex items-center justify-center" onClick={handleOutsideClick}>
       Demo Parts
     </div>
     {
