@@ -155,7 +155,7 @@ export async function drawDimension() {
       }
     )
     this.labelContainer.removeChild(this.labelContainer.lastChild);
-    sc.render()
+    this.scene.render()
   }
   if (this.mode == "dimension") {
     this.drawDimension()
@@ -176,7 +176,7 @@ export function updateDim(c_id) {
         this.constraints.set(c_id, ent)
         this.updateOtherBuffers()
         this.solve()
-        sc.render()
+        this.scene.render()
         ev_focus.target.blur()
         this.updateBoundingSpheres()
       } else if (e.key == 'Escape') {
@@ -217,7 +217,7 @@ export function _onMoveDimension(point, line, initial) {
       point,
       _p1, _p2, null, initial
     )
-    sc.render()
+    this.scene.render()
   }
 }
 

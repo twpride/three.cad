@@ -10,6 +10,8 @@ import {
   fileSave,
 } from 'browser-fs-access';
 
+import {sce} from './app'
+
 // https://web.dev/file-system-access/
 
 const link = document.createElement('a');
@@ -24,7 +26,7 @@ function saveLegacy(blob, filename) {
 
 var tzoffset = (new Date()).getTimezoneOffset() * 60000;
 export function STLExport(filename) {
-  const result = STLexp.parse(sc.selected[0], { binary: true });
+  const result = STLexp.parse(sce.selected[0], { binary: true });
   const time = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -5).replace(/:/g, '-');
   saveLegacy(new Blob([result], { type: 'model/stl' }), `${filename}_${time}.stl`);
 }
@@ -92,7 +94,7 @@ export async function openFile(dispatch) {
   try {
     const text = await file.text();;
 
-    dispatch({ type: 'restore-state', state: sc.loadState(text) })
+    dispatch({ type: 'restore-state', state: sce.loadState(text) })
     dispatch({ type: 'set-file-handle', fileHandle:file.handle })
 
   } catch (ex) {

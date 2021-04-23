@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { MdDone, MdClose } from 'react-icons/md'
 import * as Icon from "./icons";
 
+import {sce} from './app'
+
 
 export const Dialog = () => {
 
@@ -21,22 +23,22 @@ export const Dialog = () => {
   }, [dialog])
 
   const extrude = () => {
-    const mesh = sc.extrude(dialog.target, ref.current.value)
+    const mesh = sce.extrude(dialog.target, ref.current.value)
 
     dispatch({ type: 'rx-extrusion', mesh, sketchId: dialog.target.obj3d.name })
 
-    if (sc.activeSketch == dialog.target) {
+    if (sce.activeSketch == dialog.target) {
       dispatch({ type: 'finish-sketch' })
       dialog.target.deactivate()
     }
 
     dispatch({ type: "clear-dialog" })
 
-    sc.render()
+    sce.render()
   }
 
   const extrudeCancel = () => {
-    if (sc.activeSketch == dialog.target) { // if extrude dialog launched from sketch mode we set dialog back to the sketch dialog
+    if (sce.activeSketch == dialog.target) { // if extrude dialog launched from sketch mode we set dialog back to the sketch dialog
       dispatch({ type: 'set-dialog', action: 'sketch' })
     } else {
       dispatch({ type: "clear-dialog" })
@@ -46,41 +48,41 @@ export const Dialog = () => {
   const extrudeEdit = () => {
     dialog.target.userData.featureInfo[1] = ref.current.value
 
-    sc.refreshNode(dialog.target.name, treeEntries)
+    sce.refreshNode(dialog.target.name, treeEntries)
     dispatch({ type: 'set-modified', status: true })
 
     dispatch({ type: "clear-dialog" })
 
-    sc.render()
+    sce.render()
   }
 
   const extrudeEditCancel = () => dispatch({ type: "clear-dialog" })
 
   const sketchDone = () => {
-    if (sc.activeSketch.hasChanged
-      || sc.activeSketch.idOnActivate != id
-      || sc.activeSketch.c_idOnActivate != sc.activeSketch.c_id
+    if (sce.activeSketch.hasChanged
+      || sce.activeSketch.idOnActivate != id
+      || sce.activeSketch.c_idOnActivate != sce.activeSketch.c_id
     ) {
-      sc.refreshNode(sc.activeSketch.obj3d.name, treeEntries)
+      sce.refreshNode(sce.activeSketch.obj3d.name, treeEntries)
 
       dispatch({ type: 'set-modified', status: true })
     }
 
     dispatch({ type: 'finish-sketch' })
 
-    sc.activeSketch.deactivate()
-    sc.render()
+    sce.activeSketch.deactivate()
+    sce.render()
     dispatch({ type: "clear-dialog" })
   }
 
   const sketchCancel = () => {
-    if (!sc.activeSketch.hasChanged
-      && sc.activeSketch.idOnActivate == id
-      && sc.activeSketch.c_idOnActivate == sc.activeSketch.c_id
+    if (!sce.activeSketch.hasChanged
+      && sce.activeSketch.idOnActivate == id
+      && sce.activeSketch.c_idOnActivate == sce.activeSketch.c_id
     ) {
-      if (sc.newSketch) {
-        dispatch({ type: 'delete-node', id: sc.activeSketch.obj3d.name })
-        sc.sid -= 1
+      if (sce.newSketch) {
+        dispatch({ type: 'delete-node', id: sce.activeSketch.obj3d.name })
+        sce.sid -= 1
       } else {
         dispatch({ type: "restore-sketch" })
       }
@@ -88,8 +90,8 @@ export const Dialog = () => {
 
     dispatch({ type: 'finish-sketch' })
 
-    sc.activeSketch.deactivate()
-    sc.render()
+    sce.activeSketch.deactivate()
+    sce.render()
     dispatch({ type: "clear-dialog" })
   }
 

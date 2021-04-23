@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux'
 
+import {sce} from './app'
+
+
 
 export const DropDown = () => {
   const arr = [
@@ -30,17 +33,15 @@ export const DropDown = () => {
 
   }
 
-  const handleInsideClick = (e) => {
+  const handleInsideClick = async (e) => {
     // handles click inside dropdown, business logic here
     const idx = Array.prototype.indexOf.call(e.target.parentNode.children, e.target)
     if (idx !== -1) {
       console.log(idx)
-      fetch(arr[idx][0])
-        .then(res => res.text())
-        .then(text => {
-          dispatch({ type: 'restore-state', state: sc.loadState(text) })
-          sc.render()
-        })
+      const res = await fetch(arr[idx][0])
+      const text = await res.text()
+      dispatch({ type: 'restore-state', state: sce.loadState(text) })
+      sce.render()
     }
   }
   const fileHandle = useSelector(state => state.ui.fileHandle)

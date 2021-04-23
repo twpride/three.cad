@@ -6,6 +6,8 @@ import { MdVisibilityOff, MdVisibility, MdDelete } from 'react-icons/md'
 
 import { FaCube, FaEdit } from 'react-icons/fa'
 
+import {sce} from './app'
+
 export const Tree = () => {
   const treeEntries = useSelector(state => state.treeEntries)
   const fileHandle = useSelector(state => state.ui.fileHandle)
@@ -53,19 +55,19 @@ const TreeEntry = ({ entId }) => {
   return <div className='btn text-gray-200 select-none flex justify-start w-full h-7 items-center text-sm'
     onDoubleClick={() => {
       if (obj3d.userData.type == 'sketch') {
-        if (sc.activeSketch) {
+        if (sce.activeSketch) {
           dispatch({ type: 'finish-sketch' })
-          sc.activeSketch.deactivate()
+          sce.activeSketch.deactivate()
         }
 
 
         sketch.activate()
         dispatch({ type: 'set-active-sketch', sketch })
 
-        sc.clearSelection()
-        sc.activeSketch = sketch;
+        sce.clearSelection()
+        sce.activeSketch = sketch;
         dispatch({ type: 'set-dialog', action: 'sketch' })
-        sc.render()
+        sce.render()
       } else if (obj3d.userData.featureInfo.length == 2) {
         dispatch({ type: 'set-dialog', action: 'extrude-edit', target: treeEntriesById[entId] })
       }
@@ -79,37 +81,37 @@ const TreeEntry = ({ entId }) => {
         obj3d.visible = true
       }
 
-      sc.setHover(obj3d, 1)
-      sc.render()
+      sce.setHover(obj3d, 1)
+      sce.render()
     }}
     onPointerLeave={() => {
       if (!mouseOn) return
       setMouseOn(false)
 
       if (obj3d.userData.type == 'sketch'
-        && !sc.selected.includes(obj3d)
+        && !sce.selected.includes(obj3d)
         && !visible
       ) {
         obj3d.visible = false
       }
 
-      if (sc.selected.includes(obj3d)) return
+      if (sce.selected.includes(obj3d)) return
 
-      sc.setHover(obj3d, 0)
+      sce.setHover(obj3d, 0)
 
-      sc.render()
+      sce.render()
     }}
     onClick={() => {
-      const idx = sc.selected.indexOf(obj3d)
+      const idx = sce.selected.indexOf(obj3d)
 
       if (idx == -1) {
-        sc.selected.push(obj3d)
-        sc.setHover(obj3d, 1)
+        sce.selected.push(obj3d)
+        sce.setHover(obj3d, 1)
       } else {
-        sc.setHover(sc.selected[idx], 0)
-        sc.selected.splice(idx, 1)
+        sce.setHover(sce.selected[idx], 0)
+        sce.selected.splice(idx, 1)
       }
-      sc.render()
+      sce.render()
     }}
 
     tooltip= {obj3d.name[0] !='(' && "double click to edit"}
@@ -125,7 +127,7 @@ const TreeEntry = ({ entId }) => {
       <MdDelete className='btn-green h-full w-auto p-1.5'
         onClick={(e) => {
           dispatch({ type: 'delete-node', id: entId })
-          sc.render()
+          sce.render()
           e.stopPropagation()
         }}
       />
@@ -142,7 +144,7 @@ const TreeEntry = ({ entId }) => {
                 obj3d.traverse((e) => e.layers.disable(1))
               }
 
-              sc.render()
+              sce.render()
               forceUpdate()
             }}
           />
@@ -158,7 +160,7 @@ const TreeEntry = ({ entId }) => {
                   e.layers.enable(1)
                 })
               }
-              sc.render()
+              sce.render()
               forceUpdate()
             }}
           />

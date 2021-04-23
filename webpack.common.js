@@ -5,7 +5,7 @@ const tailwindcss = require('tailwindcss')
 module.exports = {
   entry: {
     app: './src/react/app.jsx',
-    scene: './src/Scene.js',
+    // scene: './src/Scene.js',
   },
   output: {
     filename: '[name].bundle.js',

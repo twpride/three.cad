@@ -11,8 +11,13 @@ import { ToolTip } from './toolTip'
 
 import './app.css'
 
+// export async function serial(...args) {
+//   return (await import('bson')).serialize(...args);
+// }
 
-
+// export async function deserial(...args) {
+//   return (await import('bson')).deserialize(...args);
+// }
 
 let store
 if (process.env.NODE_ENV === 'production') {
@@ -22,6 +27,7 @@ if (process.env.NODE_ENV === 'production') {
   store = createStore(reducer, {}, applyMiddleware(logger))
 }
 
+
 const App = ({ store }) => {
   return <Provider store={store}>
     <NavBar />
@@ -30,8 +36,15 @@ const App = ({ store }) => {
   </Provider>
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+export let sce
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+  const { Scene } = await import('../Scene')
+  sce = new Scene(store)
+  // window.sc = sce
   ReactDOM.render(<App store={store} />, document.getElementById('react'));
+
 });
 
-window.store = store
+// window.store = store

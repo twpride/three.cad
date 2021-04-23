@@ -3,6 +3,7 @@
 import { DepTree } from './depTree'
 import update from 'immutability-helper'
 import { combineReducers } from 'redux';
+import { sce } from './app'
 
 const defaultState = {
   byId: {},
@@ -38,13 +39,13 @@ export function treeEntries(state = defaultState, action) {
       })
     case 'finish-sketch':
       return update(state, {
-        visible: { [sc.activeSketch.obj3d.name]: { $set: false } },
+        visible: { [sce.activeSketch.obj3d.name]: { $set: false } },
       })
     case 'restore-sketch':
 
-      const sketch = sc.loadSketch(cache)
+      const sketch = sce.loadSketch(cache)
 
-      const deletedObj = sc.obj3d.children.splice(state.order[sc.activeSketch.obj3d.name] + 1, 1,
+      const deletedObj = sce.obj3d.children.splice(state.order[sce.activeSketch.obj3d.name] + 1, 1,
         sketch.obj3d
       )[0]
 
@@ -53,10 +54,10 @@ export function treeEntries(state = defaultState, action) {
         if (obj.material) obj.material.dispose()
       })
 
-      sc.activeSketch = sketch
+      sce.activeSketch = sketch
 
       return update(state, {
-        byId: { [sc.activeSketch.obj3d.name]: { $set: sketch } },
+        byId: { [sce.activeSketch.obj3d.name]: { $set: sketch } },
       })
     case 'rx-extrusion':
 

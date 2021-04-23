@@ -78,7 +78,7 @@ export function drawPreClick2(e) {
   }
 
 
-  sc.render()
+  this.scene.render()
 }
 
 export function drawOnClick2(e) {
@@ -136,7 +136,7 @@ let ccw;
 export function drawPreClick3(e) {
   const mouseLoc = this.getLocation(e);
   ccw = drawArc4(mouseLoc, this.toPush)
-  sc.render()
+  this.scene.render()
 }
 
 export function drawOnClick3(e) {

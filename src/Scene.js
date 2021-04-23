@@ -417,4 +417,4 @@ function addSketch() {
   return sketch
 }
 
-window.sc = new Scene(store)
+// window.sc = new Scene(store)

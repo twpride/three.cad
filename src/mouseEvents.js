@@ -219,7 +219,8 @@ export function onPick(e) {
       }
 
       // dont think this would have been possible without redux
-      if (obj.userData.type == 'sketch' && !sc.store.getState().treeEntries.visible[obj.name]) {
+      // if (obj.userData.type == 'sketch' && !sc.store.getState().treeEntries.visible[obj.name]) {
+      if (obj.userData.type == 'sketch' && !this.scene.store.getState().treeEntries.visible[obj.name]) {
         obj.visible = false
       }
 

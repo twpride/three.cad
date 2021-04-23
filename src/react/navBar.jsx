@@ -12,6 +12,9 @@ import { Dialog } from './dialog'
 import { DropDown } from './dropDown'
 import { STLExport, saveFile, openFile, verifyPermission } from './fileHelpers'
 
+import { sce } from './app'
+// import { serial, deserial} from './app'
+
 export const NavBar = () => {
   const dispatch = useDispatch()
   const sketchActive = useSelector(state => state.ui.sketchActive)
@@ -20,15 +23,15 @@ export const NavBar = () => {
   const modified = useSelector(state => state.ui.modified)
 
   const boolOp = (code) => {
-    if (sc.selected.length != 2 || !sc.selected.every(e => e.userData.type == 'mesh')) {
+    if (sce.selected.length != 2 || !sce.selected.every(e => e.userData.type == 'mesh')) {
       alert('please first select two bodies for boolean operation')
       return
     }
-    const [m1, m2] = sc.selected
+    const [m1, m2] = sce.selected
 
-    const mesh = sc.boolOp(m1, m2, code)
+    const mesh = sce.boolOp(m1, m2, code)
 
-    sc.obj3d.add(mesh)
+    sce.obj3d.add(mesh)
 
     dispatch({
       type: 'set-entry-visibility', obj: {
@@ -43,13 +46,13 @@ export const NavBar = () => {
     })
 
 
-    sc.render()
+    sce.render()
     forceUpdate()
   }
 
 
   const addSketch = () => {
-    const sketch = sc.addSketch()
+    const sketch = sce.addSketch()
     if (!sketch) {
       alert('please select a plane or 3 points to set the sketch plane')
       return
@@ -59,7 +62,7 @@ export const NavBar = () => {
 
     sketch.activate()
 
-    sc.render()
+    sce.render()
 
     dispatch({ type: 'set-dialog', action: 'sketch' })
 
@@ -74,11 +77,11 @@ export const NavBar = () => {
   useEffect(() => {
     const onBeforeUnload = (e) => {
       if (modified ||
-        (sc.activeSketch &&
+        (sce.activeSketch &&
           (
-            sc.activeSketch.hasChanged
-            || sc.activeSketch.idOnActivate != id
-            || sc.activeSketch.c_idOnActivate != sc.activeSketch.c_id
+            sce.activeSketch.hasChanged
+            || sce.activeSketch.idOnActivate != id
+            || sce.activeSketch.c_idOnActivate != sce.activeSketch.c_id
           )
         )
       ) {
@@ -92,30 +95,31 @@ export const NavBar = () => {
 
   useEffect(() => {  // hacky way to handle mounting and unmounting mouse listeners for feature mode
     if (!sketchActive) {
-      sc.canvas.addEventListener('pointermove', sc.onHover)
-      sc.canvas.addEventListener('pointerdown', sc.onPick)
+      sce.canvas.addEventListener('pointermove', sce.onHover)
+      sce.canvas.addEventListener('pointerdown', sce.onPick)
       return () => {
-        sc.canvas.removeEventListener('pointermove', sc.onHover)
-        sc.canvas.removeEventListener('pointerdown', sc.onPick)
+        sce.canvas.removeEventListener('pointermove', sce.onHover)
+        sce.canvas.removeEventListener('pointerdown', sce.onPick)
       }
     }
   }, [sketchActive])
 
   const sketchModeButtons = [
     [Icon.Extrude, () => {
-      dispatch({ type: 'set-dialog', action: 'extrude', target: sc.activeSketch })
+      dispatch({ type: 'set-dialog', action: 'extrude', target: sce.activeSketch })
 
     }, 'Extrude'],
-    [Icon.Line, () => sc.activeSketch.command('l'), 'Line (L)'],
-    [Icon.Arc, () => sc.activeSketch.command('a'), 'Arc (A)'],
-    [Icon.Dimension, () => sc.activeSketch.command('d'), 'Dimension (D)'],
-    [Icon.Coincident, () => sc.activeSketch.command('c'), 'Coincident (C)'],
-    [Icon.Vertical, () => sc.activeSketch.command('v'), 'Vertical (V)'],
-    [Icon.Horizontal, () => sc.activeSketch.command('h'), 'Horizontal (H)'],
-    [Icon.Tangent, () => sc.activeSketch.command('t'), 'Tangent (T)'],
+    [Icon.Line, () => sce.activeSketch.command('l'), 'Line (L)'],
+    [Icon.Arc, () => sce.activeSketch.command('a'), 'Arc (A)'],
+    [Icon.Dimension, () => sce.activeSketch.command('d'), 'Dimension (D)'],
+    [Icon.Coincident, () => sce.activeSketch.command('c'), 'Coincident (C)'],
+    [Icon.Vertical, () => sce.activeSketch.command('v'), 'Vertical (V)'],
+    [Icon.Horizontal, () => sce.activeSketch.command('h'), 'Horizontal (H)'],
+    [Icon.Tangent, () => sce.activeSketch.command('t'), 'Tangent (T)'],
     [MdSave,
       async () => {
-        saveFile(fileHandle, JSON.stringify([id, sc.sid, sc.mid, treeEntries]), dispatch)
+        saveFile(fileHandle, JSON.stringify([id, sce.sid, sce.mid, treeEntries]), dispatch)
+        // saveFile(fileHandle, serial([id, sce.sid, sce.mid, treeEntries]), dispatch)
       }
       , 'Save'],
   ]
@@ -125,7 +129,7 @@ export const NavBar = () => {
     [FaEdit, addSketch, 'Sketch'],
     [Icon.Extrude, () => {
       try {
-        dispatch({ type: 'set-dialog', action: 'extrude', target: treeEntries.byId[sc.selected[0].name] })
+        dispatch({ type: 'set-dialog', action: 'extrude', target: treeEntries.byId[sce.selected[0].name] })
       } catch (err) {
         console.error(err)
         alert('please select a sketch from the left pane extrude')
@@ -138,23 +142,24 @@ export const NavBar = () => {
     [Icon.Intersect, () => boolOp('i'), 'Intersect'],
     [MdInsertDriveFile, () => {
       if (!confirmDiscard()) return
-      sc.newPart()
+      sce.newPart()
       dispatch({ type: 'new-part' })
-      sc.render()
+      sce.render()
     }, 'New'],
     [MdSave,
       () => {
-        saveFile(fileHandle, JSON.stringify([id, sc.sid, sc.mid, treeEntries]), dispatch)
+        saveFile(fileHandle, JSON.stringify([id, sce.sid, sce.mid, treeEntries]), dispatch)
+        // saveFile(fileHandle, serial([id, sce.sid, sce.mid, treeEntries]), dispatch)
       }
       , 'Save'],
     [MdFolder, () => {
       if (!confirmDiscard()) return
       openFile(dispatch).then(
-        sc.render
+        sce.render
       )
     }, 'Open'],
     [Icon.Stl, () => {
-      if (sc.selected[0] && sc.selected[0].userData.type == 'mesh') {
+      if (sce.selected[0] && sce.selected[0].userData.type == 'mesh') {
         STLExport(fileHandle ? fileHandle.name.replace(/\.[^/.]+$/, "") : 'untitled')
       } else {
         alert('please first select one body to export')

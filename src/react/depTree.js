@@ -1,3 +1,4 @@
+import {sce} from './app'
 
 export class DepTree {
   constructor(obj) {
@@ -64,7 +65,8 @@ export class DepTree {
 
       this.allIds.splice(spliceIdx, 1)
 
-      const deletedObj = sc.obj3d.children.splice(spliceIdx + 1, 1)[0] // first 1 elements are non geom
+      // const deletedObj = sc.obj3d.children.splice(spliceIdx + 1, 1)[0] // first 1 elements are non geom
+      const deletedObj = sce.obj3d.children.splice(spliceIdx + 1, 1)[0] // first 1 elements are non geom
 
       deletedObj.traverse((obj) => {
         if (obj.geometry) obj.geometry.dispose()
