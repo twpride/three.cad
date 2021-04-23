@@ -178,6 +178,10 @@
   position: relative;
 }
 
+.-left-10 {
+  left: -2.5rem;
+}
+
 * {
   --tw-shadow: 0 0 #0000;
 }
