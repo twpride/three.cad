@@ -38,6 +38,7 @@ file save, stl export// done
 seperate scene from init logic only init cam and rendere // not an issue , ended up just splicing (1)
 add download button, different from save button // done
 - vertical and horzontal baseline to dimension to / or just smart ordinate dir dimenensing // done
+- auto snap done
 
 
 
@@ -53,7 +54,6 @@ lighting messed up
 
 
 reattach sketch
-auto snap
 highlight button to indicate active mode
 
 

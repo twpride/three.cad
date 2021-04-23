@@ -55,11 +55,11 @@ export const DropDown = () => {
     </div>
     {
       open &&
-      <div className="absolute drop-down-top w-full p-1 rounded bg-gray-700"
+      <div className="absolute drop-down-top -left-10 w-48 p-1 rounded bg-gray-700"
         onClick={handleInsideClick}
       >
         {arr.map(([url, name], idx) => (
-          <div className="w-auto h-8 p-0.5 flex items-center bg-transparent text-gray-200
+          <div className="w-full h-8 p-0.5 flex items-center bg-transparent text-gray-200
           hover:bg-gray-500 "
             key={idx}
           >

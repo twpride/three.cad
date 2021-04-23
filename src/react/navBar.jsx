@@ -51,7 +51,7 @@ export const NavBar = () => {
   const addSketch = () => {
     const sketch = sc.addSketch()
     if (!sketch) {
-      alert('please select a plane or 3 points to define sketch plane')
+      alert('please select a plane or 3 points to set the sketch plane')
       return
     }
 
@@ -106,9 +106,9 @@ export const NavBar = () => {
       dispatch({ type: 'set-dialog', action: 'extrude', target: sc.activeSketch })
 
     }, 'Extrude'],
-    [Icon.Dimension, () => sc.activeSketch.command('d'), 'Dimension (D)'],
     [Icon.Line, () => sc.activeSketch.command('l'), 'Line (L)'],
     [Icon.Arc, () => sc.activeSketch.command('a'), 'Arc (A)'],
+    [Icon.Dimension, () => sc.activeSketch.command('d'), 'Dimension (D)'],
     [Icon.Coincident, () => sc.activeSketch.command('c'), 'Coincident (C)'],
     [Icon.Vertical, () => sc.activeSketch.command('v'), 'Vertical (V)'],
     [Icon.Horizontal, () => sc.activeSketch.command('h'), 'Horizontal (H)'],
@@ -124,10 +124,10 @@ export const NavBar = () => {
   const partModeButtons = [
     [FaEdit, addSketch, 'Sketch'],
     [Icon.Extrude, () => {
-      console.log(treeEntries.byId[sc.selected[0].name], 'here')
-      if (sc.selected[0] && treeEntries.byId[sc.selected[0].name].obj3d) {
+      try {
         dispatch({ type: 'set-dialog', action: 'extrude', target: treeEntries.byId[sc.selected[0].name] })
-      } else {
+      } catch (err) {
+        console.error(err)
         alert('please select a sketch from the left pane extrude')
       }
 
@@ -187,8 +187,7 @@ export const NavBar = () => {
         ))
       }
     </div>
-    {/* <div className='w-auto h-full flex-1 items-center justify-end flex-shrink-1 hidden lg:flex'> */}
-    <div className='w-auto h-full flex-1 items-center justify-end flex-shrink-1 flex'>
+    <div className='w-auto h-full flex-1 items-center justify-end flex-shrink-1 hidden lg:flex'>
       <DropDown />
       <a href='https://github.com/twpride/threeCAD' className='h-full w=auto'>
         <FaGithub className="btn-green w-auto h-full p-3.5"></FaGithub>

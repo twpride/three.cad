@@ -1,14 +1,14 @@
 
 
-import {
-  fileOpen,
-  fileSave,
-} from '../../extlib/fs/index';
-
 // import {
 //   fileOpen,
 //   fileSave,
-// } from 'browser-fs-access';
+// } from '../../extlib/fs/index';
+
+import {
+  fileOpen,
+  fileSave,
+} from 'browser-fs-access';
 
 // https://web.dev/file-system-access/
 
@@ -46,56 +46,12 @@ export async function saveFile(fileHandle, file, dispatch) {
   }
 };
 
-// export async function saveFileAs(file, dispatch) {
-
-
-//   try {
-//     console.log('heeeeeeeeeeeeeer')
-//     const fileHandle = await fileSave(new Blob([file], { type: 'application/json' }), {
-//       fileName: 'unamed',
-//       extensions: ['.json'],
-//     })
-
-//     dispatch({ type: 'set-file-handle', fileHandle, modified: false })
-
-//   } catch (ex) {
-
-//     const msg = 'Unable to save file.';
-//     console.error(msg, ex);
-//     alert(msg);
-//     return;
-//   }
-// };
-
 export async function saveFileAs(file, dispatch) {
-  let fileHandle;
-  try {
-
-    const opts = {
-      suggestedName: 'test',
-      types: [{
-        description: 'Text file',
-        accept: { 'application/json': ['.json'] },
-      }],
-    };
-    fileHandle = await showSaveFilePicker(opts)
-
-
-  } catch (ex) {
-    if (ex.name === 'AbortError') {
-      console.log('aborted')
-      return;
-    }
-    const msg = 'An error occured trying to open the file.';
-    console.error(msg, ex);
-    alert(msg);
-    return;
-  }
 
   try {
-    const writable = await fileHandle.createWritable();
-    await writable.write(file);
-    await writable.close()
+    const fileHandle = await fileSave(new Blob([file], { type: 'application/json' }), {
+      extensions: ['.json'],
+    })
 
     dispatch({ type: 'set-file-handle', fileHandle, modified: false })
 
@@ -107,6 +63,7 @@ export async function saveFileAs(file, dispatch) {
     return;
   }
 };
+
 
 
 export async function openFile(dispatch) {

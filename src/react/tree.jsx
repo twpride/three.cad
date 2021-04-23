@@ -12,7 +12,7 @@ export const Tree = () => {
 
   return <div className='sideNav flex flex-col bg-gray-800'>
     <div className='w-full text-gray-50 h-9 text-lg mx-1 border-0 flex items-center focus:outline-none bg-transparent'>
-      {fileHandle ? fileHandle.name.replace(/\.[^/.]+$/, "") : 'untitled'}
+      {fileHandle ? fileHandle.name.replace(/\.[^/.]+$/, "") : 'Untitled'}
     </div>
     {treeEntries.allIds.map((entId, idx) => (
       <TreeEntry key={idx} entId={entId} />

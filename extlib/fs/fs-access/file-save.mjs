@@ -26,7 +26,6 @@ export default async (
   throwIfExistingHandleNotGood = false
 ) => {
   options.fileName = options.fileName || 'Untitled';
-  console.log(options.fileName,"ddddddddddd")
   const accept = {};
   if (options.mimeTypes) {
     options.mimeTypes.push(blob.type);
