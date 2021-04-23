@@ -51,7 +51,7 @@ export async function saveFileAs(file, dispatch) {
 
   try {
     const fileHandle = await fileSave(new Blob([file], { type: 'application/json' }), {
-      fileName: 'unamed.json',
+      // fileName: 'unamed.json',
       extensions: ['.json'],
     })
 
