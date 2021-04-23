@@ -32,7 +32,7 @@ export function onHover(e) {
 
   let idx = []
 
-  const thresh = this.snap ? 1 : 0.0001
+  const thresh = 0.0001
   if (hoverPts.length) {
     let minDist = Infinity;
     for (let i = 0; i < hoverPts.length; i++) {

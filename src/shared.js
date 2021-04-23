@@ -216,13 +216,13 @@ const fragmentShader = `
     }
   }
 `
-const pixelRatio = 2
+const sz = 4
 const custPtMat = new THREE.ShaderMaterial({
   uniforms: {
     color: { value: new THREE.Color(0xff0000) },
-    edgeColor: { value: new THREE.Color(0x990000) },
-    pointWidth: { value: 4 * pixelRatio },
-    edgeSize: { value: 4 * pixelRatio },
+    edgeColor: { value: new THREE.Color(0x770000) },
+    pointWidth: { value: sz },
+    edgeSize: { value: sz },
   },
   vertexShader,
   fragmentShader,

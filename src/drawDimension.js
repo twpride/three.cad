@@ -30,7 +30,7 @@ export async function drawDimension() {
 
     constraint = [
       'angle', dimVal,
-      [-1, -1, selection[0].name, selection[1].name]
+      [-1, -1, selection[0].name, selection[1].name], 0
     ]
 
     dimType = 'a'
