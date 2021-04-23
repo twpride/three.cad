@@ -3,6 +3,7 @@ const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
 const webpack = require('webpack')
 const TerserPlugin = require("terser-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = merge(common, {
 
@@ -12,7 +13,12 @@ module.exports = merge(common, {
       'process.env.NODE_ENV': JSON.stringify('production')
       // 'process.env.NODE_ENV': 'production'
     }),
-    new webpack.IgnorePlugin(/redux-logger/)
+    new webpack.IgnorePlugin(/redux-logger/),
+    new CopyPlugin({
+      patterns: [
+        { from: "static", to: "" },
+      ],
+    }),    
   ],
   optimization: {
     minimize: true,

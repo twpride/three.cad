@@ -296,7 +296,8 @@ export class Scene {
     mesh.name = `(${m1.name} ${opChar} ${m2.name})`
     mesh.layers.enable(1)
 
-    const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial({ size: 0 }));
+    const vertices = new THREE.Points(mesh.geometry, new THREE.PointsMaterial());
+    vertices.visible = false
     vertices.userData.type = 'point'
     vertices.layers.enable(1)
 

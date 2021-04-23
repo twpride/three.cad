@@ -1,4 +1,3 @@
 node_modules/
-dist/*bundle.js*
-dist/app.css
+dist/
 stats.json

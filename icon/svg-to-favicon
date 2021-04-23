@@ -16,4 +16,4 @@ done
 
 convert $out favicon.ico
 
-mv favicon.ico icon-192.png icon-512.png ../dist
+mv favicon.ico icon-192.png icon-512.png ../static

@@ -40,8 +40,6 @@ export const DropDown = () => {
         .then(res => res.text())
         .then(text => {
           dispatch({ type: 'restore-state', state: sc.loadState(text) })
-          fileHandle.name = 'something'
-          console.log(fileHandle.name)
           sc.render()
         })
     }
