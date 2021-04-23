@@ -194,7 +194,8 @@ var TrackballControls = function ( object, domElement ) {
 
 		if ( _state === STATE.TOUCH_ZOOM_PAN ) {
 
-			factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
+			// factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
+			factor = _touchZoomDistanceEnd /  _touchZoomDistanceStart;
 			_touchZoomDistanceStart = _touchZoomDistanceEnd;
 
 			if ( scope.object.isPerspectiveCamera ) {
