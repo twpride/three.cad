@@ -168,7 +168,8 @@ export const NavBar = () => {
 
     {/* <div className='w-auto h-full flex-1 flex items-center justify-end'> */}
     <div className='w-auto h-full flex-1 flex items-center justify-end md:justify-between'>
-      <div className='w-100 h-full items-center font-mono text-lg text-gray-200 select-none hidden md:flex mr-8'>
+      {/* <div className='w-100 h-full items-center font-mono text-lg text-gray-200 select-none hidden md:flex mr-8'> */}
+      <div className='w-100 h-full items-center font-mono text-lg text-gray-200 select-none flex mr-8'>
         <Icon.Logo className='w-auto h-6 mx-1' />
           three.cad
       </div>
