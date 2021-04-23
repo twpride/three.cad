@@ -37,7 +37,7 @@ const App = ({ store }) => {
 }
 
 export let sce
-export let fs
+// export let fs
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   ReactDOM.render(<App store={store} />, document.getElementById('react'));
 
-  fs = await import ('../../node_modules/browser-fs-access/dist/index')
+  // fs = await import ('../../node_modules/browser-fs-access/dist/index')
 
 });
 
