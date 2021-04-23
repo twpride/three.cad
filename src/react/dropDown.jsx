@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch} from 'react-redux'
 
-import { sce, pako } from './app'
+import { sce } from './app'
 
 
 const utf8decoder = new TextDecoder();

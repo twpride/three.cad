@@ -37,15 +37,14 @@ const App = ({ store }) => {
 }
 
 export let sce
-export let pako
 
 document.addEventListener('DOMContentLoaded', async () => {
 
   const { Scene } = await import('../Scene')
   sce = new Scene(store)
   // window.sc = sce
-  ReactDOM.render(<App store={store} />, document.getElementById('react'));
 
+  ReactDOM.render(<App store={store} />, document.getElementById('react'));
 
 });
 
