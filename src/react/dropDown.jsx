@@ -10,7 +10,8 @@ const utf8decoder = new TextDecoder();
 
 export const DropDown = () => {
   const arr = [
-    ['https://howardhwang.s3-us-west-1.amazonaws.com/headphone-stand.json.gz', 'headphone-stand'],
+    // ['https://howardhwang.s3-us-west-1.amazonaws.com/headphone-stand.json.gz', 'headphone-stand'],
+    ['https://raw.githubusercontent.com/twpride/threeCAD/master/demo_parts/headphone-stand.json.gz', 'headphone-stand'],
     // ['headphone-stand.json.gz', 'headphone-stand'],
   ]
 

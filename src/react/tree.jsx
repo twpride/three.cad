@@ -6,7 +6,7 @@ import { MdVisibilityOff, MdVisibility, MdDelete } from 'react-icons/md'
 
 import { FaCube, FaEdit } from 'react-icons/fa'
 
-import {sce} from './app'
+import { sce } from './app'
 
 export const Tree = () => {
   const treeEntries = useSelector(state => state.treeEntries)
@@ -114,8 +114,8 @@ const TreeEntry = ({ entId }) => {
       sce.render()
     }}
 
-    tooltip= {obj3d.name[0] !='(' && "double click to edit"}
-    // tooltip= {obj3d.userData.name}
+    tooltip={obj3d.name[0] != '(' ? "double click to edit" : undefined}
+  // tooltip= {obj3d.userData.name}
 
   >
     <Icon className='h-full w-auto p-1.5' />

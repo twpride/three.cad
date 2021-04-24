@@ -76,9 +76,10 @@ export const Dialog = () => {
   }
 
   const sketchCancel = () => {
-    if (!sce.activeSketch.hasChanged
-      && sce.activeSketch.idOnActivate == id
-      && sce.activeSketch.c_idOnActivate == sce.activeSketch.c_id
+    console.log(sce.activeSketch.hasChanged)
+    if (sce.activeSketch.hasChanged
+      || sce.activeSketch.idOnActivate != id
+      || sce.activeSketch.c_idOnActivate != sce.activeSketch.c_id
     ) {
       if (sce.newSketch) {
         dispatch({ type: 'delete-node', id: sce.activeSketch.obj3d.name })
