@@ -11,14 +11,13 @@ module.exports = merge(common, {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')
-      // 'process.env.NODE_ENV': 'production'
     }),
     new webpack.IgnorePlugin(/redux-logger/),
-    new CopyPlugin({
-      patterns: [
-        { from: "static", to: "" },
-      ],
-    }),    
+    // new CopyPlugin({
+    //   patterns: [
+    //     { from: "static", to: "" },
+    //   ],
+    // }),    
   ],
   optimization: {
     minimize: true,

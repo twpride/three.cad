@@ -1,4 +1,3 @@
-// import {sce} from './app'
 
 export class DepTree {
   constructor(obj) {

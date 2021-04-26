@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { MdEdit, MdVisibility, MdDelete } from 'react-icons/md'
 import { FaCube, FaDrawPolygon } from 'react-icons/fa'
 
-// import { sce } from './app'
 
 export const Tree = () => {
   const treeEntries = useSelector(state => state.treeEntries)
@@ -45,7 +44,6 @@ const TreeEntry = ({ entId }) => {
   const selected = useSelector(state => state.ui.selectedSet[entId])
   const activeId = useSelector(state => state.ui.dialog.target)
 
-  // console.log(entId)
 
   let obj, sketch;
 

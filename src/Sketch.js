@@ -198,6 +198,8 @@ class Sketch {
     this.obj3d.traverse(e => e.layers.disable(2))
     this.scene.axes.visible = false
     this.scene.activeSketch = null
+
+    this.disableLineHover = false
     if (this.scene.newSketch) {
       this.scene.newSketch = false
     }
@@ -312,11 +314,22 @@ class Sketch {
               this.drawDimension();
               break;
             case 'coincident':
-            case 'vertical':
-            case 'horizontal':
-            case 'tangent':
-
               setCoincident.call(this).then(
+                () => this.scene.store.dispatch({ type: 'set-mode', mode: "" })
+              );
+              break;
+            case 'vertical':
+              setOrdinate.call(this, 0).then(
+                () => this.scene.store.dispatch({ type: 'set-mode', mode: "" })
+              );
+              break;
+            case 'horizontal':
+              setOrdinate.call(this, 1).then(
+                () => this.scene.store.dispatch({ type: 'set-mode', mode: "" })
+              );
+              break;
+            case 'tangent':
+              setTangent.call(this).then(
                 () => this.scene.store.dispatch({ type: 'set-mode', mode: "" })
               );
               break;

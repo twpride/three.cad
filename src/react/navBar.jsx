@@ -12,12 +12,6 @@ import { Dialog } from './dialog'
 import { DropDown } from './dropDown'
 import { STLExport, saveFile, openFile } from './fileHelpers'
 
-// import { drawClear } from '../drawEvents'
-
-// import { sce } from './app'
-
-
-
 const buttonIdx = {
   'line': 1,
   'arc': 2,
@@ -120,10 +114,7 @@ export const NavBar = () => {
   }, [sketchActive])
 
   const sketchModeButtons = [
-    [Icon.Extrude, () => {
-      // drawClear.call(sce.activeSketch)
-      dispatch({ type: 'set-dialog', action: 'extrude', target: sce.activeSketch.obj3d.name })
-    }, 'Extrude'],
+    [Icon.Extrude, () => dispatch({ type: 'set-dialog', action: 'extrude', target: sce.activeSketch.obj3d.name }), 'Extrude'],
     [Icon.Line, () => sce.activeSketch.command('line'), 'Line (L)'], //1
     [Icon.Arc, () => sce.activeSketch.command('arc'), 'Arc (A)'],
     [Icon.Dimension, () => sce.activeSketch.command('dimension'), 'Dimension (D)'],
@@ -131,11 +122,7 @@ export const NavBar = () => {
     [Icon.Vertical, () => sce.activeSketch.command('vertical'), 'Vertical (V)'],
     [Icon.Horizontal, () => sce.activeSketch.command('horizontal'), 'Horizontal (H)'],
     [Icon.Tangent, () => sce.activeSketch.command('tangent'), 'Tangent (T)'], //7
-    [MdSave,
-      async () => {
-        saveFile(fileHandle, JSON.stringify([id, sce.sid, sce.mid, treeEntries]), dispatch, fileName)
-      }
-      , 'Save'],
+    [MdSave, async () => saveFile(fileHandle, JSON.stringify([id, sce.sid, sce.mid, treeEntries]), dispatch, fileName), 'Save'],
   ]
 
 
@@ -152,8 +139,7 @@ export const NavBar = () => {
     }, 'Extrude'],
 
     [Icon.Union, () => boolOp('u'), 'Union'],
-    [Icon.Union, () => boolOp('u'), 'Union'],
-    // [Icon.Subtract, () => boolOp('s'), 'Subtract'],
+    [Icon.Subtract, () => boolOp('s'), 'Subtract'],
     [Icon.Intersect, () => boolOp('i'), 'Intersect'],
     [MdInsertDriveFile, () => {
       if (!confirmDiscard()) return
@@ -208,7 +194,7 @@ export const NavBar = () => {
     </div>
     <div className='w-auto h-full flex-1 items-center justify-end flex-shrink-1 hidden md:flex'>
       <DropDown />
-      <a href='https://github.com/twpride/threeCAD' className='h-full w=auto'>
+      <a href='https://github.com/twpride/three.cad' className='h-full w=auto'>
         <FaGithub className="btn-green w-auto h-full p-3.5"></FaGithub>
       </a>
       <a href='https://www.linkedin.com/in/howard-hwang-b3000335' className='h-full w=auto'>
