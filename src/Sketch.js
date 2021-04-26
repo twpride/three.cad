@@ -235,8 +235,8 @@ class Sketch {
   onKeyPress(e) {
 
     if (e.isTrusted && e.key == 'Escape') {
+      this.disableLineHover = false
       drawClear.call(this)
-      document.activeElement.blur()
 
       this.scene.store.dispatch({ type: 'set-mode', mode: '' })
     } else {
@@ -249,19 +249,18 @@ class Sketch {
         v: 'vertical',
         h: 'horizontal',
         t: 'tangent',
-        'Delete': 'delete',
-        'Backspace': 'delete'
+        Delete: 'delete',
+        Backspace: 'delete'
       }
       this.command(keyToMode[e.key])
-      console.log(e.key)
     }
   }
 
 
 
   command(com) {
+    this.disableLineHover = false
     drawClear.call(this)
-    document.activeElement.blur()
 
     let mode;
 
@@ -273,6 +272,7 @@ class Sketch {
       case 'vertical':
       case 'horizontal':
       case 'tangent':
+        // need to fire synthetic event to clear any earlier awaitSelection (see shared.js)
         window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
       case 'line':
       case 'arc':
@@ -286,9 +286,11 @@ class Sketch {
           switch (com) {
             case 'line':
             case 'arc':
+              this.disableLineHover = true
               this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true });
               break;
             case 'point':
+              this.disableLineHover = true
               this.canvas.addEventListener('pointerdown', (e) => {
                 if (this.scene.mode !== 'point') return
                 const pt = ptObj()

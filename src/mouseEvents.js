@@ -5,7 +5,7 @@ import { onDimMoveEnd } from './drawDimension'
 let ptLoc
 
 export function onHover(e) {
-  if (e.buttons || this.noHover) return
+  if (e.buttons) return
 
   raycaster.setFromCamera(
     new THREE.Vector2(
@@ -45,7 +45,7 @@ export function onHover(e) {
       }
     }
 
-    if (!idx.length) {
+    if (!idx.length && !this.disableLineHover) {
       idx.push(0)
     }
 

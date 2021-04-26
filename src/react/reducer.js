@@ -114,9 +114,6 @@ const defaultUIState = {
 export function ui(state = defaultUIState, action) {
   switch (action.type) {
     case 'set-active-sketch':
-      return update(state, {
-        sketchActive: { $set: true },
-      })
     case 'rx-sketch':
       return update(state, {
         sketchActive: { $set: true },
@@ -147,9 +144,6 @@ export function ui(state = defaultUIState, action) {
         modified: { $set: action.status },
       })
     case 'delete-node':
-      return update(state, {
-        modified: { $set: true },
-      })
     case 'rx-extrusion':
       return update(state, {
         modified: { $set: true },
@@ -160,7 +154,6 @@ export function ui(state = defaultUIState, action) {
       })
     case 'on-pick':
 
-      console.log(action.obj.userData.type)
       const idx = state.selectedList.indexOf(action.obj)
 
       const setNeedsUpdate = action.obj.userData.type == 'mesh' || action.obj.userData.type == 'sketch'

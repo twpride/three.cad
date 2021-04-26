@@ -136,7 +136,6 @@ export function drawOnClick2(e) {
 
 let ccw;
 export function drawPreClick3(e) {
-  this.noHover = true
   const mouseLoc = this.getLocation(e);
   ccw = drawArc4(mouseLoc, this.toPush)
   this.scene.render()
@@ -144,7 +143,6 @@ export function drawPreClick3(e) {
 
 export function drawOnClick3(e) {
   if (e.buttons !== 1) return;
-  this.noHover = false
   this.canvas.removeEventListener('pointermove', this.drawPreClick3);
 
   if (!ccw) {

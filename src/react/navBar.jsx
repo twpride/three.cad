@@ -78,7 +78,6 @@ export const NavBar = () => {
     sketch.activate()
 
     sce.render()
-    console.log(sketch)
 
     dispatch({ type: 'set-dialog', action: 'sketch', target: sketch.obj3d.name })
 
@@ -128,7 +127,7 @@ export const NavBar = () => {
     [Icon.Line, () => sce.activeSketch.command('line'), 'Line (L)'], //1
     [Icon.Arc, () => sce.activeSketch.command('arc'), 'Arc (A)'],
     [Icon.Dimension, () => sce.activeSketch.command('dimension'), 'Dimension (D)'],
-    [Icon.Coincident_alt, () => sce.activeSketch.command('coincident'), 'Coincident (C)'],
+    [Icon.Coincident, () => sce.activeSketch.command('coincident'), 'Coincident (C)'],
     [Icon.Vertical, () => sce.activeSketch.command('vertical'), 'Vertical (V)'],
     [Icon.Horizontal, () => sce.activeSketch.command('horizontal'), 'Horizontal (H)'],
     [Icon.Tangent, () => sce.activeSketch.command('tangent'), 'Tangent (T)'], //7
