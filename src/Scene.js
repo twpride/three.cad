@@ -364,6 +364,7 @@ function render() {
     this.camera.left = -canvas.clientWidth / canvas.clientHeight;
     this.camera.right = canvas.clientWidth / canvas.clientHeight;
     this.camera.updateProjectionMatrix();
+    console.log(this.camera.zoom)
 
     this.controls.handleResize()
     Object.assign(this.rect, this.canvas.getBoundingClientRect().toJSON())
@@ -371,7 +372,7 @@ function render() {
   }
 
 
-  if (this.axes) this.axes.resize(this.camera.zoom)
+  if (this.axes) this.axes.resize(this.camera.zoom, this.canvas.clientHeight)
 
   this.renderer.render(this.obj3d, this.camera);
 

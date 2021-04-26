@@ -32,8 +32,8 @@ class AxesHelper extends THREE.Object3D {
     return this
   }
 
-  resize(zoom) {
-    const scale = this.initialZoom / zoom
+  resize(zoom, canvH) {
+    const scale = this.initialZoom / zoom * 1000/canvH
 
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].setLength(

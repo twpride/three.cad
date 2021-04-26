@@ -179,6 +179,7 @@ export function updateDim(c_id) {
         this.scene.render()
         ev_focus.target.blur()
         this.updateBoundingSpheres()
+        this.hasChanged = true
       } else if (e.key == 'Escape') {
         ev_focus.target.textContent = value
         getSelection().empty()
