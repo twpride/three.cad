@@ -84,7 +84,7 @@ export default class Scene {
 
       freePt.matrixAutoUpdate = false
       freePt.visible = false
-      freePt.renderOrder=1
+      freePt.renderOrder = 1
       // freePt.depthTest = false
       freePt.userData.type = 'selpoint'
       helpersGroup.add(freePt);
@@ -129,11 +129,11 @@ export default class Scene {
 
 
     const dist = 500
-    const light1 = new THREE.PointLight(color.lighting, 0.7);
-    light1.position.set(dist, dist, dist);
-    helpersGroup.add(light1);
-    const light2 = new THREE.PointLight(color.lighting, 0.7);
-    light2.position.set(-dist, -dist, -dist);
+    const light1 = new THREE.PointLight(color.lighting, 0.5);
+    light1.position.set(dist * 1, dist * 2, dist * 3);
+    helpersGroup.add(light1)
+    const light2 = new THREE.PointLight(color.lighting, 0.5);
+    light2.position.set(-dist * 1, -dist * 2, -dist * 3);
     helpersGroup.add(light2);
 
 
@@ -237,6 +237,7 @@ export default class Scene {
 
         entries[k] = loader.parse(state.byId[k])
 
+
         if (entries[k].userData.inverted) {
           flipBufferGeometryNormals(entries[k].geometry)
         }
@@ -324,7 +325,6 @@ export default class Scene {
     let curId
     let que = [id]
     let idx = 0
-    // let newNodes = {}
 
     while (idx < que.length) {
       curId = que[idx++]
@@ -339,7 +339,7 @@ export default class Scene {
         }
         byId[curId].geometry.copy(newNode.geometry)
         byId[curId].geometry.parameters = newNode.geometry.parameters // took 2 hours to figure out
-
+        byId[curId].userData.inverted = newNode.userData.inverted
       }
 
       for (let k in tree[curId]) {

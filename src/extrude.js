@@ -107,6 +107,8 @@ export function extrude(sketch, depth) {
   if (depth < 0) {
     flipBufferGeometryNormals(mesh.geometry)
     mesh.userData.inverted = true
+    // console.log('heere')
+    console.log('heere', mesh)
   }
 
   return mesh
