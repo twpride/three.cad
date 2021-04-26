@@ -1,4 +1,3 @@
-import { color, setHover } from './shared'
 
 export async function setCoincident(sel) {
   let selection
@@ -37,12 +36,15 @@ export async function setCoincident(sel) {
   this.solve()
   this.updateBoundingSpheres()
 
-  for (let x = 0; x < this.selected.length; x++) {
-    const obj = this.selected[x]
-    setHover(obj, 0)
-  }
 
-  this.selected = []
+  this.clearSelection()
+  // for (let x = 0; x < this.scene.selected.length; x++) {
+  //   const obj = this.selected[x]
+  //   setHover(obj, 0)
+  // }
+
+  // this.selected = []
+
   this.scene.render()
 }
 
@@ -52,7 +54,7 @@ export async function setOrdinate(dir = 0) {
   if (selection == null) return;
 
   let arr
-  if (this.selected.length == 1) {
+  if (selection.length == 1) {
     arr = [-1, -1, selection[0].name, -1]
   } else {
     arr = [selection[0].name, selection[1].name, -1, -1]
@@ -72,12 +74,8 @@ export async function setOrdinate(dir = 0) {
   this.updateOtherBuffers()
   this.solve()
   this.updateBoundingSpheres()
-  for (let x = 0; x < this.selected.length; x++) {
-    const obj = this.selected[x]
-    setHover(obj, 0)
-  }
   
-  this.selected = []
+  this.clearSelection()
   this.scene.render()
 }
 
@@ -156,12 +154,8 @@ export async function setTangent() {
   this.solve()
   this.updateBoundingSpheres()
 
-  for (let x = 0; x < this.selected.length; x++) {
-    const obj = this.selected[x]
-    setHover(obj, 0)
-  }
-
-  this.selected = []
+  this.clearSelection()
+  
   this.scene.render()
 }
 

@@ -157,7 +157,7 @@ export async function drawDimension() {
     this.labelContainer.removeChild(this.labelContainer.lastChild);
     this.scene.render()
   }
-  if (this.mode == "dimension") {
+  if (this.scene.mode == "dimension") {
     this.drawDimension()
   }
 

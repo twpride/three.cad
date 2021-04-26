@@ -3,6 +3,8 @@
 
 * {
   box-sizing: border-box;
+  scrollbar-color: lightgray #262626;
+  scrollbar-width: thin;
 }
 
 body {
@@ -61,7 +63,7 @@ body {
   cursor: pointer;
   @apply fill-current
   bg-transparent text-gray-200
-  hover:text-green-400;
+  hover:text-green-500;
 }
 
 
@@ -94,4 +96,22 @@ input[type=number] {
 
 .drop-down-top {
   top: calc(var(--topNavH) + 6px);
+}
+
+
+.hide-scroll{
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scroll::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+}
+
+::-webkit-scrollbar {
+  width: 0.375rem;
+  background: #262626;
+}
+
+::-webkit-scrollbar-thumb {
+  background: lightgray;
 }

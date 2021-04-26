@@ -2,7 +2,7 @@
 
 import * as THREE from '../node_modules/three/src/Three';
 
-import { _vec2, _vec3, raycaster, awaitSelection, ptObj, setHover,custPtMat } from './shared'
+import { _vec2, _vec3, raycaster, awaitSelection, ptObj, setHover, custPtMat } from './shared'
 
 import { drawOnClick1, drawOnClick2, drawPreClick2, drawOnClick3, drawPreClick3, drawClear, drawPoint } from './drawEvents'
 import { onHover, onDrag, onPick, onRelease, clearSelection } from './mouseEvents'
@@ -47,10 +47,11 @@ class Sketch {
       this.constraints = new Map()
       this.c_id = 1;
 
-      this.obj3d.add(new THREE.Group());
+      this.dimGroup = new THREE.Group()
+      this.dimGroup.name = 'dimensions'
+      this.obj3d.add(this.dimGroup);
       this.geomStartIdx = this.obj3d.children.length
       this.obj3d.userData.geomStartIdx = this.geomStartIdx
-      this.dimGroup = this.obj3d.children[this.geomStartIdx - 1]
 
       this.labels = []
 
@@ -101,9 +102,11 @@ class Sketch {
 
     this.bindHandlers()
 
-    this.selected = []
+    // this.selected = this.scene.selected
+    // this.selected = []
+
     this.hovered = []
-    this.mode = ""
+    this.scene.mode = ""
     this.subsequent = false;
   }
 
@@ -155,7 +158,7 @@ class Sketch {
     this.c_idOnActivate = this.c_id
 
     const changeDetector = (e) => {
-      if (this.selected.length && e.buttons) {
+      if (this.scene.selected.length && e.buttons) {
         this.canvas.removeEventListener('pointermove', changeDetector)
         this.hasChanged = true
       }
@@ -230,93 +233,110 @@ class Sketch {
 
 
   onKeyPress(e) {
-    this.command(e.key)
+
+    if (e.isTrusted && e.key == 'Escape') {
+      drawClear.call(this)
+      document.activeElement.blur()
+
+      this.scene.store.dispatch({ type: 'set-mode', mode: '' })
+    } else {
+      const keyToMode = {
+        l: 'line',
+        a: 'arc',
+        p: 'point',
+        d: 'dimension',
+        c: 'coincident',
+        v: 'vertical',
+        h: 'horizontal',
+        t: 'tangent',
+        'Delete': 'delete',
+        'Backspace': 'delete'
+      }
+      this.command(keyToMode[e.key])
+      console.log(e.key)
+    }
   }
 
-  command(key) {
 
-    switch (key) {
-      case 'Escape':
-        drawClear.call(this)
-        document.activeElement.blur()
-        break;
-      case 'l':
-        if (this.mode == 'line') {
-          drawClear.call(this)
-        }
-        this.mode = "line"
-        this.snap = true
-        this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
-        break;
-      case 'a':
-        this.mode = "arc"
-        this.snap = true
-        this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
-        // this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
-        break;
-      case 'p':
-        this.mode = "point"
-        this.snap = true
-        this.canvas.addEventListener('pointerdown', (e) => {
-          if (this.mode !== 'point') return
-          const pt = ptObj()
 
-          pt.matrixAutoUpdate = false;
-          pt.userData.constraints = []
+  command(com) {
+    drawClear.call(this)
+    document.activeElement.blur()
 
-          pt.geometry.attributes.position.set(
-            this.getLocation(e).toArray()
-          )
-          pt.layers.enable(2)
+    let mode;
 
-          this.obj3d.add(pt)
-          this.updatePointsBuffer(this.obj3d.children.length - 1)
-          this.scene.render()
-        })
-        break;
-      case 'd':
-        if (this.mode != 'dimension') {
-          drawClear.call(this)
-          this.mode = "dimension"
-          this.drawDimension()
-        }
-        break;
-      case 'c':
-        drawClear.call(this)
-        setCoincident.call(this)
-        break;
-      case 'v':
-        drawClear.call(this)
-        setOrdinate.call(this, 0)
-        break;
-      case 'h':
-        drawClear.call(this)
-        setOrdinate.call(this, 1)
-        break;
-      case 't':
-        drawClear.call(this)
-        setTangent.call(this)
-        break;
-      case 'Delete':
+    switch (com) {
+      case 'delete':
         this.deleteSelected()
         break;
-      case 'Backspace':
-        this.deleteSelected()
-        break;
-      case 'z':
-        console.log('undo would be nice')
+      case 'coincident':
+      case 'vertical':
+      case 'horizontal':
+      case 'tangent':
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      case 'line':
+      case 'arc':
+      case 'point':
+      case 'dimension':
+        if (this.scene.mode == com) {
+          mode = ''
+        } else {
+          mode = com
+
+          switch (com) {
+            case 'line':
+            case 'arc':
+              this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true });
+              break;
+            case 'point':
+              this.canvas.addEventListener('pointerdown', (e) => {
+                if (this.scene.mode !== 'point') return
+                const pt = ptObj()
+
+                pt.matrixAutoUpdate = false;
+                pt.userData.constraints = []
+
+                pt.geometry.attributes.position.set(
+                  this.getLocation(e).toArray()
+                )
+                pt.layers.enable(2)
+
+                this.obj3d.add(pt)
+                this.updatePointsBuffer(this.obj3d.children.length - 1)
+                this.scene.render()
+              });
+              break;
+            case 'dimension':
+              this.drawDimension();
+              break;
+            case 'coincident':
+            case 'vertical':
+            case 'horizontal':
+            case 'tangent':
+
+              setCoincident.call(this).then(
+                () => this.scene.store.dispatch({ type: 'set-mode', mode: "" })
+              );
+              break;
+          }
+        }
         break;
     }
-    // console.log('this mode:', this.mode)
+
+    if (mode !== undefined) {
+      this.scene.store.dispatch({ type: 'set-mode', mode })
+    }
+
+    // console.log('this mode:', this.scene.mode)
   }
 
   deleteSelected() {
 
-    this.selected
+    this.scene.selected
       .filter(e => e.userData.type == 'dimension')
       .forEach(e => this.constraints.has(e.name) && this.deleteConstraints(e.name))
 
-    const toDelete = this.selected
+    const toDelete = this.scene.selected
       .filter(e => e.userData.type == 'line')
       .sort((a, b) => b.id - a.id)
       .map(obj => {
@@ -329,7 +349,10 @@ class Sketch {
 
     this.updateOtherBuffers()
 
-    this.selected = []
+    // this.selected = []
+
+    this.scene.store.dispatch({ type: 'clear-selection' })
+
     this.scene.render()
   }
 
@@ -608,9 +631,12 @@ Object.assign(Sketch.prototype,
       h_dist: 34,
       v_dist: 35,
     },
+
+
     max_pts: 1000,
     max_links: 1000,
     max_constraints: 1000,
+
   }
 )
 

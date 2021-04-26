@@ -30,11 +30,11 @@ const color = {
 
 const hoverColor = {
   emissive: 0x343407,
-  point: 0x00ff00,
+  point: 0x10B981,
   selpoint: 0xff0000,
-  line: 0x00ff00,
+  line: 0x10B981,
   mesh: 0xFAB601,
-  dimension: 0x00ff00,
+  dimension: 0x10B981,
 
   plane: 0xffff00,
   planeBorder: 0x919100,
@@ -105,7 +105,7 @@ async function awaitSelection(...criteria) {
 
   const counter = {}
 
-  let references = this.selected.slice()
+  let references = (this.selected || this.scene.selected).slice()
 
   for (let ob of references) {
     const type = ob.userData.type
@@ -149,7 +149,7 @@ async function awaitSelection(...criteria) {
     window.removeEventListener('keydown', onKey)
   }
 
-  // console.log('fail')
+  console.log('fail')
   return null
 }
 

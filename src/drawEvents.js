@@ -1,10 +1,9 @@
 
 import { drawArc, drawArc2, drawArc3, drawArc4 } from './drawArc'
 import { drawLine, drawLine2 } from './drawLine'
-import { ptObj } from './shared'
 
-export function drawOnClick1(e, loc) {
-  if (!loc && e.buttons !== 1) return
+export function drawOnClick1(e) {
+  if (e.buttons !== 1) return
 
   // this.canvas.removeEventListener('pointerdown', this.drawOnClick1)
 
@@ -14,9 +13,7 @@ export function drawOnClick1(e, loc) {
 
   let mouseLoc
 
-  if (loc) {
-    mouseLoc = loc
-  } else if (this.hovered.length && !this.subsequent) {
+  if (this.hovered.length && !this.subsequent) {
     mouseLoc = this.hovered[this.hovered.length - 1].geometry.attributes.position.array
   } else {
     mouseLoc = this.getLocation(e).toArray();
@@ -24,8 +21,8 @@ export function drawOnClick1(e, loc) {
 
 
 
-  // this.mode allow alow following modes to create new obj3ds
-  if (this.mode == "line") {
+  // this.scene.mode allow alow following modes to create new obj3ds
+  if (this.scene.mode == "line") {
     this.toPush = drawLine(mouseLoc)
     if (this.subsequent) {
       // we pre-increment because we need to push the same c_id to the constraints
@@ -41,7 +38,7 @@ export function drawOnClick1(e, loc) {
       this.toPush[0].userData.constraints.push(this.c_id)
 
     }
-  } else if (this.mode == "arc") {
+  } else if (this.scene.mode == "arc") {
     this.toPush = drawArc(mouseLoc)
   }
 
@@ -59,7 +56,7 @@ export function drawOnClick1(e, loc) {
 
   this.updatePoint = this.obj3d.children.length
   this.obj3d.add(...this.toPush)
-  this.linkedObjs.set(this.l_id, [this.mode, this.toPush.map(e => e.name)])
+  this.linkedObjs.set(this.l_id, [this.scene.mode, this.toPush.map(e => e.name)])
   for (let obj of this.toPush) {
     obj.userData.l_id = this.l_id
   }
@@ -71,9 +68,9 @@ export function drawOnClick1(e, loc) {
 export function drawPreClick2(e) {
   const mouseLoc = this.getLocation(e).toArray();
 
-  if (this.mode == "line") {
+  if (this.scene.mode == "line") {
     drawLine2(mouseLoc, this.toPush)
-  } else if (this.mode == 'arc') {
+  } else if (this.scene.mode == 'arc') {
     drawArc2(mouseLoc, this.toPush)
   }
 
@@ -88,7 +85,7 @@ export function drawOnClick2(e) {
   this.updatePointsBuffer(this.updatePoint)
   this.updateOtherBuffers()
 
-  // a this.mode == "" (set with esc) here will prevent event chain from persisisting
+  // a this.scene.mode == "" (set with esc) here will prevent event chain from persisisting
 
   this.toPush.forEach(element => { // make sure elements are selectable by sketch raycaster
     element.layers.enable(2)
@@ -109,16 +106,21 @@ export function drawOnClick2(e) {
     modLoc = this.hovered[this.hovered.length - 1].geometry.attributes.position.array
   }
 
-  if (this.mode == "line") {
-    this.subsequent = true
+  if (this.scene.mode == "line") {
     if (modLoc) {
       drawLine2(modLoc, this.toPush)
-      this.drawOnClick1(null, modLoc)
+      // this.drawOnClick1(null, modLoc)
+
+      this.subsequent = false
+      this.updatePoint = this.obj3d.children.length
+      this.canvas.addEventListener('pointerdown', this.drawOnClick1, { once: true })
+
     } else {
+      this.subsequent = true
       this.drawOnClick1(e)
     }
 
-  } else if (this.mode == "arc") {
+  } else if (this.scene.mode == "arc") {
     if (modLoc) {
       drawArc2(modLoc, this.toPush)
     }
@@ -134,6 +136,7 @@ export function drawOnClick2(e) {
 
 let ccw;
 export function drawPreClick3(e) {
+  this.noHover = true
   const mouseLoc = this.getLocation(e);
   ccw = drawArc4(mouseLoc, this.toPush)
   this.scene.render()
@@ -141,6 +144,7 @@ export function drawPreClick3(e) {
 
 export function drawOnClick3(e) {
   if (e.buttons !== 1) return;
+  this.noHover = false
   this.canvas.removeEventListener('pointermove', this.drawPreClick3);
 
   if (!ccw) {
@@ -164,9 +168,8 @@ export function drawOnClick3(e) {
 
 
 export function drawClear() {
-  if (this.mode == "") return
-
-  if (['line', 'arc'].includes(this.mode)) {
+  if (this.scene.mode == "") return
+  if (['line', 'arc'].includes(this.scene.mode)) {
     this.delete(this.obj3d.children[this.updatePoint])
   }
 
@@ -179,9 +182,7 @@ export function drawClear() {
   this.scene.render()
   this.subsequent = false
   this.toPush = []
-  this.snap = false
 
-  this.mode = ""
 }
 
 

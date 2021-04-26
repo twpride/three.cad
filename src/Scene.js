@@ -16,7 +16,7 @@ let stats
 if (process.env.NODE_ENV !== 'production') {
   const { default: d } = require('../extlib/stats.module.js')
   stats = new d();
-  document.getElementById('stats').appendChild(stats.dom);
+  // document.getElementById('stats').appendChild(stats.dom);
 }
 
 
@@ -137,14 +137,15 @@ export class Scene {
     helpersGroup.add(light2);
 
 
-    this.render = render.bind(this);
-    this.addSketch = addSketch.bind(this);
-    this.extrude = this.extrude.bind(this);
-    this.onHover = onHover.bind(this);
-    this.onPick = onPick.bind(this);
-    this.clearSelection = clearSelection.bind(this);
-    this.setHover = setHover.bind(this);
-    this.awaitSelection = awaitSelection.bind(this);
+    this.render = render.bind(this)
+    this.addSketch = addSketch.bind(this)
+    this.onHover = onHover.bind(this)
+    this.onPick = onPick.bind(this)
+    this.clearSelection = clearSelection.bind(this)
+    this.setHover = setHover.bind(this)
+    this.awaitSelection = awaitSelection.bind(this)
+    this.extrude = this.extrude.bind(this)
+
 
     this.obj3d.addEventListener('change', this.render);
     this.controls.addEventListener('change', this.render);
@@ -153,18 +154,30 @@ export class Scene {
 
     if (process.env.NODE_ENV !== 'production') {
       this.stats = stats
-      this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-      document.getElementById('stats').appendChild(this.stats.dom);
     }
 
 
 
-
     this.hovered = [];
-    this.selected = [];
     this.activeSketch = null;
 
+    this.selected = [];
+    this.mode = '';
+    this.store.subscribe(this.reduxCallback.bind(this))
+
     this.render();
+  }
+
+  reduxCallback() {
+    const currSelected = this.store.getState().ui.selectedList
+    const currMode = this.store.getState().ui.mode
+    if (currSelected !== this.selected) {
+      this.selected = currSelected
+    }
+    if (currMode !== this.mode) {
+      this.mode = currMode
+    }
+
   }
 
 

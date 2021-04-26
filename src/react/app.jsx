@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const { Scene } = await import('../Scene')
   sce = new Scene(store)
-  // window.sc = sce
+  window.sc = sce
 
   ReactDOM.render(<App store={store} />, document.getElementById('react'));
 

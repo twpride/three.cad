@@ -5,7 +5,7 @@ import update from 'immutability-helper'
 import { combineReducers } from 'redux';
 import { sce } from './app'
 
-const defaultState = {
+const defaultTreeState = {
   byId: {},
   allIds: [],
   tree: {},
@@ -15,7 +15,7 @@ const defaultState = {
 
 let cache
 
-export function treeEntries(state = defaultState, action) {
+export function treeEntries(state = defaultTreeState, action) {
   switch (action.type) {
     case 'rx-sketch':
       return update(state, {
@@ -96,13 +96,22 @@ export function treeEntries(state = defaultState, action) {
     case 'restore-state':
       return action.state
     case 'new-part':
-      return defaultState
+      return defaultTreeState
     default:
       return state
   }
 }
 
-export function ui(state = { dialog: {}, filePane: false }, action) {
+const defaultUIState = {
+  dialog: {},
+  fileHandle: null,
+  fileName: 'Untitled',
+  selectedList: [],
+  selectedSet: {},
+
+}
+
+export function ui(state = defaultUIState, action) {
   switch (action.type) {
     case 'set-active-sketch':
       return update(state, {
@@ -119,10 +128,12 @@ export function ui(state = { dialog: {}, filePane: false }, action) {
     case 'set-dialog':
       return update(state, {
         dialog: { $set: { target: action.target, action: action.action } },
+        mode: { $set: "" } // we clear the existing mode when entering dialog
       })
     case 'clear-dialog':
       return update(state, {
         dialog: { $set: {} },
+        mode: { $set: "" }
       })
     case 'set-file-handle':
       return update(state, {
@@ -130,10 +141,7 @@ export function ui(state = { dialog: {}, filePane: false }, action) {
         modified: { $set: false },
       })
     case 'new-part':
-      return update(state, {
-        fileHandle: { $set: null },
-        modified: { $set: false },
-      })
+      return defaultUIState
     case 'set-modified':
       return update(state, {
         modified: { $set: action.status },
@@ -146,6 +154,55 @@ export function ui(state = { dialog: {}, filePane: false }, action) {
       return update(state, {
         modified: { $set: true },
       })
+    case 'restore-state':
+      return update(state, {
+        fileName: { $set: action.fileName },
+      })
+    case 'on-pick':
+
+      console.log(action.obj.userData.type)
+      const idx = state.selectedList.indexOf(action.obj)
+
+      const setNeedsUpdate = action.obj.userData.type == 'mesh' || action.obj.userData.type == 'sketch'
+
+      if (idx == -1) {
+        return update(state, {
+          selectedList: { $push: [action.obj] },
+          // selectedSet: { [action.obj.name]: { $set: true } }
+          selectedSet: (curr) => setNeedsUpdate ? { ...curr, [action.obj.name]: true } : curr
+        })
+
+      } else {
+
+        if (action.obj.userData.type != 'selpoint') {
+          return update(state, {
+            selectedList: { $splice: [[idx, 1]] },
+            // selectedSet: { [action.obj.name]: { $set: false } }
+            selectedSet: (curr) => setNeedsUpdate ? { ...curr, [action.obj.name]: false } : curr
+          })
+        } else {
+          return state
+        }
+
+      }
+
+    case 'clear-selection':
+      if (state.selectedList.length) {
+        return update(state, {
+          selectedList: { $set: [] },
+          selectedSet: { $set: {} }
+        })
+      } else {
+        return state
+      }
+
+    case 'set-mode':
+
+
+      return update(state, {
+        mode: { $set: action.mode }
+      })
+
     default:
       return state
   }

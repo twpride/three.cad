@@ -5,8 +5,7 @@ import { onDimMoveEnd } from './drawDimension'
 let ptLoc
 
 export function onHover(e) {
-  // if ((this.mode && this.mode != 'dimension' && !this.snap) || e.buttons) return
-  if (e.buttons) return
+  if (e.buttons || this.noHover) return
 
   raycaster.setFromCamera(
     new THREE.Vector2(
@@ -46,13 +45,14 @@ export function onHover(e) {
       }
     }
 
-    if (!idx.length && !this.snap) {
+    if (!idx.length) {
       idx.push(0)
     }
 
   }
 
 
+  const selected = this.selected || this.scene.selected
   if (idx.length) { // after filtering, if hovered objs still exists
     if (
       !this.hovered.length
@@ -63,7 +63,7 @@ export function onHover(e) {
       for (let x = 0; x < this.hovered.length; x++) { // first clear old hovers that are not selected
 
         const obj = this.hovered[x]
-        if (typeof obj == 'object' && !this.selected.includes(obj)) {
+        if (typeof obj == 'object' && !selected.includes(obj)) {
           setHover(obj, 0)
         }
       }
@@ -107,7 +107,7 @@ export function onHover(e) {
 
         if (typeof obj == 'number') {
           this.selpoints[0].visible = false
-        } else if (!this.selected.includes(obj)) {
+        } else if (!selected.includes(obj)) {
           setHover(obj, 0)
         }
 
@@ -124,13 +124,19 @@ export function onHover(e) {
 
 let draggedLabel;
 export function onPick(e) {
-  if ((this.mode && this.mode != 'dimension') || e.buttons != 1) return
+  // console.log('aa',this.scene.mode)
+  // if ((this.scene && this.scene.mode.length && this.scene.mode != 'dimension') || e.buttons != 1) return
+  // console.log('bb')
+
+  if ((this.scene && ['line', 'arc'].includes(this.scene.mode)) || e.buttons != 1) return
+
+  const store = this.store || this.scene.store
+  const selected = this.selected || this.scene.selected
 
   if (this.hovered.length) {
     let obj = this.hovered[this.hovered.length - 1]
-    // if (sc.selected.includes(obj3d)) continue
 
-    if (typeof obj != 'object') { // special sketchplace define pts in feature mode
+    if (typeof obj != 'object') { // special case define pts in feature mode
 
       const pp = this.selpoints[this.fptIdx % 3 + 1]
       const p0 = this.selpoints[0]
@@ -142,73 +148,68 @@ export function onPick(e) {
 
       obj = pp
       this.fptIdx++
+    }
 
 
-      const idx = this.selected.indexOf(obj)
+
+    store.dispatch({ type: 'on-pick', obj })
+
+
+    // if (idx == -1) {
+    //   this.selected.push(
+    //     obj
+    //   )
+    // } else if (obj.userData.type != 'selpoint') {
+    //   this.selected.splice(idx, 1)
+    // }
+
+    const idx = selected.indexOf(obj)
+
+    if (obj.userData.type != 'selpoint') {
       if (idx == -1) {
-        this.selected.push(
-          obj
-        )
-      } else {
-        this.selected.splice(idx, 1, obj)
-      }
-
-    } else {
-
-      const idx = this.selected.indexOf(obj)
-      if (idx == -1) {
-        this.selected.push(
-          obj
-        )
         this.setHover(obj, 1)
-
       } else {
-
-        this.setHover(this.selected[idx], 0)
-
-        this.selected.splice(idx, 1)
-
+        this.setHover(selected[idx], 0)
       }
     }
 
 
     this.obj3d.dispatchEvent({ type: 'change' })
 
-    if (this.obj3d.userData.type != 'sketch') {
-      return;
-    }
+    if (this.obj3d.userData.type == 'sketch') {
+      switch (obj.userData.type) {
+        case 'dimension':
+          const idx = this.dimGroup.children.indexOf(this.hovered[0])
+          if (idx % 2) { // we only allow tag point (odd idx) to be dragged
+            this.onDragDim = this._onMoveDimension(
+              this.dimGroup.children[idx],
+              this.dimGroup.children[idx - 1],
+            )
+            this.canvas.addEventListener('pointermove', this.onDragDim);
+            this.canvas.addEventListener('pointerup', () => {
+              onDimMoveEnd(this.dimGroup.children[idx])
+              this.onRelease()
+            })
+          }
 
-    switch (obj.userData.type) {
-      case 'dimension':
-        const idx = this.dimGroup.children.indexOf(this.hovered[0])
-        if (idx % 2) { // we only allow tag point (odd idx) to be dragged
-          this.onDragDim = this._onMoveDimension(
-            this.dimGroup.children[idx],
-            this.dimGroup.children[idx - 1],
-          )
-          this.canvas.addEventListener('pointermove', this.onDragDim);
-          this.canvas.addEventListener('pointerup', () => {
-            onDimMoveEnd(this.dimGroup.children[idx])
-            this.onRelease()
-          })
-        }
+          draggedLabel = this.dimGroup.children[idx].label
+          draggedLabel.style.zIndex = -1;
+          break;
+        case 'point':
 
-        draggedLabel = this.dimGroup.children[idx].label
-        draggedLabel.style.zIndex = -1;
-        break;
-      case 'point':
+          this.canvas.addEventListener('pointermove', this.onDrag);
+          this.canvas.addEventListener('pointerup', this.onRelease)
+          break;
 
-        this.canvas.addEventListener('pointermove', this.onDrag);
-        this.canvas.addEventListener('pointerup', this.onRelease)
-        break;
-
-      default:
-        break;
+        default:
+          break;
+      }
     }
 
   } else {
-    for (let x = 0; x < this.selected.length; x++) {
-      const obj = this.selected[x]
+    const vis = store.getState().treeEntries.visible
+    for (let x = 0, obj; x < selected.length; x++) {
+      obj = selected[x]
 
 
       if (obj.userData.type == 'selpoint') {
@@ -219,15 +220,14 @@ export function onPick(e) {
       }
 
       // dont think this would have been possible without redux
-      // if (obj.userData.type == 'sketch' && !sc.store.getState().treeEntries.visible[obj.name]) {
-      if (obj.userData.type == 'sketch' && !this.scene.store.getState().treeEntries.visible[obj.name]) {
+      if (obj.userData.type == 'sketch' && !vis[obj.name]) {
         obj.visible = false
       }
 
-
     }
+    store.dispatch({ type: 'clear-selection' })
+
     this.obj3d.dispatchEvent({ type: 'change' })
-    this.selected = []
   }
 }
 
@@ -267,15 +267,17 @@ export function onRelease(e) {
 }
 
 export function clearSelection() {
-  for (let x = 0, obj; x < this.selected.length; x++) {
-    obj = this.selected[x]
+  const selected = this.selected || this.scene.selected
+  for (let x = 0, obj; x < selected.length; x++) {
+    obj = selected[x]
     if (obj.userData.type == 'selpoint') {
       obj.visible = false
     } else {
       setHover(obj, 0)
     }
   }
-  this.selected = []
+
+  store.dispatch({ type: 'clear-selection' })
 
   for (let x = 0; x < this.hovered.length; x++) {
 

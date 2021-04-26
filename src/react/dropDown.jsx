@@ -10,7 +10,7 @@ const utf8decoder = new TextDecoder();
 
 export const DropDown = () => {
   const arr = [
-    ['https://raw.githubusercontent.com/twpride/threeCAD/master/demo_parts/headphones-stand.json.gz', 'headphones stand'],
+    ['https://raw.githubusercontent.com/twpride/threeCAD/master/demo_parts/headphones-stand.json.gz', 'headphones-stand'],
   ]
 
   const dispatch = useDispatch()
@@ -53,7 +53,7 @@ export const DropDown = () => {
         )
       )
 
-      dispatch({ type: 'restore-state', state })
+      dispatch({ type: 'restore-state', state, fileName:arr[idx][1]})
       sce.render()
     }
   }

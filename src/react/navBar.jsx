@@ -10,16 +10,32 @@ import { MdSave, MdFolder, MdInsertDriveFile } from 'react-icons/md'
 import * as Icon from "./icons";
 import { Dialog } from './dialog'
 import { DropDown } from './dropDown'
-import { STLExport, saveFile, openFile, verifyPermission } from './fileHelpers'
+import { STLExport, saveFile, openFile } from './fileHelpers'
+
+import { drawClear } from '../drawEvents'
 
 import { sce } from './app'
 
+
+
+const buttonIdx = {
+  'line': 1,
+  'arc': 2,
+  'dimension': 3,
+  'coincident': 4,
+  'vertical': 5,
+  'horizontal': 6,
+  'tangent': 7,
+}
+
 export const NavBar = () => {
   const dispatch = useDispatch()
-  const sketchActive = useSelector(state => state.ui.sketchActive)
   const treeEntries = useSelector(state => state.treeEntries)
+  const sketchActive = useSelector(state => state.ui.sketchActive)
   const fileHandle = useSelector(state => state.ui.fileHandle)
   const modified = useSelector(state => state.ui.modified)
+  const fileName = useSelector(state => state.ui.fileName)
+  const mode = useSelector(state => state.ui.mode)
 
   const boolOp = (code) => {
     if (sce.selected.length != 2 || !sce.selected.every(e => e.userData.type == 'mesh')) {
@@ -62,8 +78,9 @@ export const NavBar = () => {
     sketch.activate()
 
     sce.render()
+    console.log(sketch)
 
-    dispatch({ type: 'set-dialog', action: 'sketch' })
+    dispatch({ type: 'set-dialog', action: 'sketch', target: sketch.obj3d.name })
 
     forceUpdate()
   }
@@ -105,20 +122,19 @@ export const NavBar = () => {
 
   const sketchModeButtons = [
     [Icon.Extrude, () => {
-      dispatch({ type: 'set-dialog', action: 'extrude', target: sce.activeSketch })
-
+      drawClear.call(sce.activeSketch)
+      dispatch({ type: 'set-dialog', action: 'extrude', target: sce.activeSketch.obj3d.name })
     }, 'Extrude'],
-    [Icon.Line, () => sce.activeSketch.command('l'), 'Line (L)'],
-    [Icon.Arc, () => sce.activeSketch.command('a'), 'Arc (A)'],
-    [Icon.Dimension, () => sce.activeSketch.command('d'), 'Dimension (D)'],
-    [Icon.Coincident, () => sce.activeSketch.command('c'), 'Coincident (C)'],
-    [Icon.Vertical, () => sce.activeSketch.command('v'), 'Vertical (V)'],
-    [Icon.Horizontal, () => sce.activeSketch.command('h'), 'Horizontal (H)'],
-    [Icon.Tangent, () => sce.activeSketch.command('t'), 'Tangent (T)'],
+    [Icon.Line, () => sce.activeSketch.command('line'), 'Line (L)'], //1
+    [Icon.Arc, () => sce.activeSketch.command('arc'), 'Arc (A)'],
+    [Icon.Dimension, () => sce.activeSketch.command('dimension'), 'Dimension (D)'],
+    [Icon.Coincident_alt, () => sce.activeSketch.command('coincident'), 'Coincident (C)'],
+    [Icon.Vertical, () => sce.activeSketch.command('vertical'), 'Vertical (V)'],
+    [Icon.Horizontal, () => sce.activeSketch.command('horizontal'), 'Horizontal (H)'],
+    [Icon.Tangent, () => sce.activeSketch.command('tangent'), 'Tangent (T)'], //7
     [MdSave,
       async () => {
-        saveFile(fileHandle, JSON.stringify([id, sce.sid, sce.mid, treeEntries]), dispatch)
-        // saveFile(fileHandle, bson.serialize([id, sce.sid, sce.mid, treeEntries]), dispatch)
+        saveFile(fileHandle, JSON.stringify([id, sce.sid, sce.mid, treeEntries]), dispatch, fileName)
       }
       , 'Save'],
   ]
@@ -128,7 +144,7 @@ export const NavBar = () => {
     [FaEdit, addSketch, 'Sketch'],
     [Icon.Extrude, () => {
       try {
-        dispatch({ type: 'set-dialog', action: 'extrude', target: treeEntries.byId[sce.selected[0].name] })
+        dispatch({ type: 'set-dialog', action: 'extrude', target: sce.selected[0].name })
       } catch (err) {
         console.error(err)
         alert('please select a sketch from the left pane extrude')
@@ -147,8 +163,7 @@ export const NavBar = () => {
     }, 'New'],
     [MdSave,
       () => {
-        saveFile(fileHandle, JSON.stringify([id, sce.sid, sce.mid, treeEntries]), dispatch)
-        // saveFile(fileHandle, bson.serialize([id, sce.sid, sce.mid, treeEntries.toJson()]), dispatch)
+        saveFile(fileHandle, JSON.stringify([id, sce.sid, sce.mid, treeEntries]), dispatch, fileName)
       }
       , 'Save'],
     [MdFolder, () => {
@@ -170,7 +185,6 @@ export const NavBar = () => {
 
   return <div className='topNav flex justify-center items-center bg-gray-800'>
 
-    {/* <div className='w-auto h-full flex-1 flex items-center justify-end'> */}
     <div className='w-auto h-full flex-1 flex items-center justify-end md:justify-between'>
       <div className='w-100 h-full items-center font-mono text-lg text-gray-200 select-none hidden lg:flex mr-8'>
         <Icon.Logo className='w-auto h-6 mx-1' />
@@ -184,7 +198,8 @@ export const NavBar = () => {
       {(sketchActive ? sketchModeButtons : partModeButtons).map(
         ([Icon, fcn, txt], idx) => (
           Icon !== undefined ?
-            <Icon className="btn text-gray-200 w-auto h-full p-3.5" tooltip={txt}
+            <Icon className={`cursor-pointer fill-current text-gray-200 w-auto h-full p-3.5
+            ${idx == buttonIdx[mode] ? 'bg-green-600' : 'hover:bg-gray-600 bg-transparent'}`} tooltip={txt}
               onClick={fcn} key={idx}
             /> :
             <div className="w-12 h-full"></div>

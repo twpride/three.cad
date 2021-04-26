@@ -1,16 +1,16 @@
 
 
-// import {
-//   fileOpen,
-//   fileSave,
-// } from '../../extlib/fs/index';
-
 import {
   fileOpen,
   fileSave,
-} from 'browser-fs-access';
+} from '../../extlib/fs/index';
 
-import {sce} from './app'
+// import {
+//   fileOpen,
+//   fileSave,
+// } from 'browser-fs-access';
+
+import { sce } from './app'
 
 // https://web.dev/file-system-access/
 
@@ -32,13 +32,14 @@ export function STLExport(filename) {
 }
 
 
-export async function saveFile(fileHandle, file, dispatch) {
+export async function saveFile(fileHandle, file, dispatch, suggestedName) {
   try {
     if (!fileHandle) {
-      return await saveFileAs(file, dispatch);
+      return await saveFileAs(file, dispatch, suggestedName);
     }
 
-    await fileSave(new Blob([file], { type: 'application/json' }), undefined, fileHandle, true)
+    const blob = new Blob([file], { type: 'application/json' })
+    await fileSave(blob, undefined, fileHandle, true)
 
     dispatch({ type: 'set-modified', status: false })
   } catch (ex) {
@@ -48,12 +49,22 @@ export async function saveFile(fileHandle, file, dispatch) {
   }
 };
 
-export async function saveFileAs(file, dispatch) {
+const options = {
+  mimeTypes: ['application/json'],
+  extensions: ['.json'],
+  multiple: false,
+  description: 'Part files',
+};
+
+export async function saveFileAs(file, dispatch, suggestedName) {
 
   try {
-    const fileHandle = await fileSave(new Blob([file], { type: 'application/json' }), {
-      extensions: ['.json'],
-    })
+
+    const blob = new Blob([file], { type: 'application/json' })
+
+    options.fileName = suggestedName + options.extensions[0]
+
+    const fileHandle = await fileSave(blob, options)
 
     dispatch({ type: 'set-file-handle', fileHandle, modified: false })
 
@@ -73,13 +84,7 @@ export async function openFile(dispatch) {
 
   try {
 
-    const options = {
-      mimeTypes: ['application/json'],
-      extensions: ['.json'],
-      multiple: false,
-      description: 'Part files',
-    };
-    
+
     file = await fileOpen(options);
 
   } catch (ex) {
@@ -92,10 +97,13 @@ export async function openFile(dispatch) {
   }
 
   try {
-    const text = await file.text();;
+    const text = await file.text();
+    console.log(file, file.handle)
 
-    dispatch({ type: 'restore-state', state: sce.loadState(text) })
-    dispatch({ type: 'set-file-handle', fileHandle:file.handle })
+    dispatch({ type: 'restore-state', state: sce.loadState(text), fileName: file.name })
+    if (file.handle) {
+      dispatch({ type: 'set-file-handle', fileHandle: file.handle })
+    }
 
   } catch (ex) {
     const msg = `An error occured reading ${fileHandle}`;
