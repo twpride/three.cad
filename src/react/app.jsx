@@ -11,13 +11,6 @@ import { ToolTip } from './toolTip'
 
 import './app.css'
 
-// export async function serial(...args) {
-//   return (await import('bson')).serialize(...args);
-// }
-
-// export async function deserial(...args) {
-//   return (await import('bson')).deserialize(...args);
-// }
 
 let store
 if (process.env.NODE_ENV === 'production') {

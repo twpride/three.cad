@@ -152,7 +152,8 @@ export const NavBar = () => {
     }, 'Extrude'],
 
     [Icon.Union, () => boolOp('u'), 'Union'],
-    [Icon.Subtract, () => boolOp('s'), 'Subtract'],
+    [Icon.Union, () => boolOp('u'), 'Union'],
+    // [Icon.Subtract, () => boolOp('s'), 'Subtract'],
     [Icon.Intersect, () => boolOp('i'), 'Intersect'],
     [MdInsertDriveFile, () => {
       if (!confirmDiscard()) return
