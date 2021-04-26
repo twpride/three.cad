@@ -329,7 +329,6 @@ class Sketch {
       this.scene.store.dispatch({ type: 'set-mode', mode })
     }
 
-    // console.log('this mode:', this.scene.mode)
   }
 
   deleteSelected() {

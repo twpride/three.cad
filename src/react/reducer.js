@@ -3,7 +3,7 @@
 import { DepTree } from './depTree'
 import update from 'immutability-helper'
 import { combineReducers } from 'redux';
-import { sce } from './app'
+// import { sce } from './app'
 
 const defaultTreeState = {
   byId: {},

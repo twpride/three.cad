@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 import { useDispatch} from 'react-redux'
 
-import { sce } from './app'
+// import { sce } from './app'
 
 
 const utf8decoder = new TextDecoder();

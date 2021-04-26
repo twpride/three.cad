@@ -27,7 +27,7 @@ window.id = 0
 
 
 
-export class Scene {
+export default class Scene {
   constructor(store) {
     this.sid = 1
     this.mid = 1
@@ -430,4 +430,4 @@ function addSketch() {
   return sketch
 }
 
-// window.sc = new Scene(store)
+window.sce = new Scene(store)

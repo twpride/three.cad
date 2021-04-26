@@ -1,4 +1,4 @@
-import {sce} from './app'
+// import {sce} from './app'
 
 export class DepTree {
   constructor(obj) {

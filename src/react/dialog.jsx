@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { MdDone, MdClose } from 'react-icons/md'
 import * as Icon from "./icons";
 
-import { sce } from './app'
+// import { sce } from './app'
 
 
 export const Dialog = () => {

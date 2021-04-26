@@ -36,13 +36,8 @@ const App = ({ store }) => {
   </Provider>
 }
 
-export let sce
 
-document.addEventListener('DOMContentLoaded', async () => {
-
-  const { Scene } = await import('../Scene')
-  sce = new Scene(store)
-  window.sc = sce
+document.addEventListener('DOMContentLoaded', () => {
 
   ReactDOM.render(<App store={store} />, document.getElementById('react'));
 

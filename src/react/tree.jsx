@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { MdEdit, MdVisibility, MdDelete } from 'react-icons/md'
 import { FaCube, FaDrawPolygon } from 'react-icons/fa'
 
-import { sce } from './app'
+// import { sce } from './app'
 
 export const Tree = () => {
   const treeEntries = useSelector(state => state.treeEntries)

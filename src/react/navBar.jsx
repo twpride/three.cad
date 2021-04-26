@@ -12,9 +12,9 @@ import { Dialog } from './dialog'
 import { DropDown } from './dropDown'
 import { STLExport, saveFile, openFile } from './fileHelpers'
 
-import { drawClear } from '../drawEvents'
+// import { drawClear } from '../drawEvents'
 
-import { sce } from './app'
+// import { sce } from './app'
 
 
 
@@ -121,7 +121,7 @@ export const NavBar = () => {
 
   const sketchModeButtons = [
     [Icon.Extrude, () => {
-      drawClear.call(sce.activeSketch)
+      // drawClear.call(sce.activeSketch)
       dispatch({ type: 'set-dialog', action: 'extrude', target: sce.activeSketch.obj3d.name })
     }, 'Extrude'],
     [Icon.Line, () => sce.activeSketch.command('line'), 'Line (L)'], //1
