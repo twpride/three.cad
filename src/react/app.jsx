@@ -10,6 +10,7 @@ import { NavBar } from './navBar'
 import { ToolTip } from './toolTip'
 
 import './app.css'
+import { Help } from './help'
 
 
 let store
@@ -26,6 +27,7 @@ const App = ({ store }) => {
     <NavBar />
     <Tree />
     <ToolTip />
+    <Help/>
   </Provider>
 }
 

@@ -5,11 +5,12 @@ import React, { useEffect, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 
 import { FaEdit, FaLinkedin, FaGithub } from 'react-icons/fa'
-import { MdSave, MdFolder, MdInsertDriveFile } from 'react-icons/md'
+import { MdSave, MdFolder, MdInsertDriveFile, MdHelpOutline } from 'react-icons/md'
 
 import * as Icon from "./icons";
 import { Dialog } from './dialog'
 import { DropDown } from './dropDown'
+import { Help } from './help'
 import { STLExport, saveFile, openFile } from './fileHelpers'
 
 const buttonIdx = {
@@ -115,13 +116,13 @@ export const NavBar = () => {
 
   const sketchModeButtons = [
     [Icon.Extrude, () => dispatch({ type: 'set-dialog', action: 'extrude', target: sce.activeSketch.obj3d.name }), 'Extrude'],
-    [Icon.Line, () => sce.activeSketch.command('line'), 'Line (L)'], //1
-    [Icon.Arc, () => sce.activeSketch.command('arc'), 'Arc (A)'],
-    [Icon.Dimension, () => sce.activeSketch.command('dimension'), 'Dimension (D)'],
-    [Icon.Coincident, () => sce.activeSketch.command('coincident'), 'Coincident (C)'],
-    [Icon.Vertical, () => sce.activeSketch.command('vertical'), 'Vertical (V)'],
-    [Icon.Horizontal, () => sce.activeSketch.command('horizontal'), 'Horizontal (H)'],
-    [Icon.Tangent, () => sce.activeSketch.command('tangent'), 'Tangent (T)'], //7
+    [Icon.Line, () => sce.activeSketch.command('line'), 'Line (l)'], //1
+    [Icon.Arc, () => sce.activeSketch.command('arc'), 'Arc (a)'],
+    [Icon.Dimension, () => sce.activeSketch.command('dimension'), 'Dimension (d)'],
+    [Icon.Coincident, () => sce.activeSketch.command('coincident'), 'Coincident (c)'],
+    [Icon.Vertical, () => sce.activeSketch.command('vertical'), 'Vertical (v)'],
+    [Icon.Horizontal, () => sce.activeSketch.command('horizontal'), 'Horizontal (h)'],
+    [Icon.Tangent, () => sce.activeSketch.command('tangent'), 'Tangent (t)'], //7
     [MdSave, async () => saveFile(fileHandle, JSON.stringify([id, sce.sid, sce.mid, treeEntries]), dispatch, fileName), 'Save'],
   ]
 
@@ -193,7 +194,7 @@ export const NavBar = () => {
       }
     </div>
     <div className='w-auto h-full flex-1 items-center justify-end flex-shrink-1 hidden md:flex'>
-      <DropDown />
+      <MdHelpOutline className="btn-green w-auto h-full p-3" onClick={()=>dispatch({type:'set-help', status:true})}/>
       <a href='https://github.com/twpride/three.cad' className='h-full w=auto'>
         <FaGithub className="btn-green w-auto h-full p-3.5"></FaGithub>
       </a>

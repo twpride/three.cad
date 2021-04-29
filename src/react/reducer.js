@@ -107,7 +107,7 @@ const defaultUIState = {
   fileName: 'Untitled',
   selectedList: [],
   selectedSet: {},
-
+  help: false
 }
 
 export function ui(state = defaultUIState, action) {
@@ -193,6 +193,11 @@ export function ui(state = defaultUIState, action) {
 
       return update(state, {
         mode: { $set: action.mode }
+      })
+
+    case 'set-help':
+      return update(state, {
+        help: { $set: action.status }
       })
 
     default:

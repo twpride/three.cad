@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
 
-import { useDispatch} from 'react-redux'
+import { useDispatch } from 'react-redux'
 
+import { MdHelpOutline } from 'react-icons/md'
 
 
 const utf8decoder = new TextDecoder();
@@ -52,17 +53,18 @@ export const DropDown = () => {
         )
       )
 
-      dispatch({ type: 'restore-state', state, fileName:arr[idx][1]})
+      dispatch({ type: 'restore-state', state, fileName: arr[idx][1] })
       sce.render()
     }
   }
 
-  return <div className="cursor-pointer w-28 h-full overflow-visible relative select-none"
+  return <div className="cursor-pointer w-auto h-full overflow-visible relative select-none"
 
   >
-    <div className="btn text-gray-200 h-full w-full flex items-center justify-center" onClick={handleOutsideClick}>
+    {/* <div className="btn text-gray-200 h-full w-full flex items-center justify-center" onClick={handleOutsideClick}>
       Demo Parts
-    </div>
+    </div> */}
+    <MdHelpOutline className="btn-green w-auto h-full p-3" onClick={handleOutsideClick} />
     {
       open &&
       <div className="absolute drop-down-top -left-10 w-48 p-1 rounded bg-gray-700"
