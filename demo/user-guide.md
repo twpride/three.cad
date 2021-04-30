@@ -14,6 +14,8 @@ combine multiple solids to form the part you desire
 
 uplaod your design to a 3d printer
 
+navigation tips
+
 
 
 General Workflow for part creation

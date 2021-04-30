@@ -31,6 +31,7 @@ export const NavBar = () => {
   const modified = useSelector(state => state.ui.modified)
   const fileName = useSelector(state => state.ui.fileName)
   const mode = useSelector(state => state.ui.mode)
+  const help = useSelector(state => state.ui.help)
 
   const boolOp = (code) => {
     if (sce.selected.length != 2 || !sce.selected.every(e => e.userData.type == 'mesh')) {
@@ -194,7 +195,10 @@ export const NavBar = () => {
       }
     </div>
     <div className='w-auto h-full flex-1 items-center justify-end flex-shrink-1 hidden md:flex'>
-      <MdHelpOutline className="btn-green w-auto h-full p-3" onClick={()=>dispatch({type:'set-help', status:true})}/>
+      <MdHelpOutline className="btn-green w-auto h-full p-3" onClick={() => {
+        dispatch({ type: 'set-help', status: true })
+      }
+      } />
       <a href='https://github.com/twpride/three.cad' className='h-full w=auto'>
         <FaGithub className="btn-green w-auto h-full p-3.5"></FaGithub>
       </a>

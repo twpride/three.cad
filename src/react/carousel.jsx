@@ -1,6 +1,7 @@
 
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
+import { MdArrowBack, MdArrowForward } from 'react-icons/md'
 
 export function throttle(callback, limit) {
   let handler = null;                      // Initially, we're not waiting
@@ -26,101 +27,97 @@ const transTime = 200
 
 const elastic = `transform ${transTime}ms cubic-bezier(0.4, 0.0, 0.2, 1)`;
 
+function reducer(state, action) {
+  switch (action.type) {
+    case 'set-rect':
+      return {
+        ...state,
+        rect: action.rect
+      };
+    case 'resize':
+      return {
+        ...state,
+        rect: action.rect,
+        dragLeft: state.pg * action.rect.width,
+        dragging: true
+      };
+    case 'move':
+      return {
+        ...state,
+        pg: state.pg + action.del,
+        dragging: false
+      };
+    case 'drag-start':
+      return {
+        ...state,
+        dragLeft: state.pg * state.rect.width,
+        dragging: true
+      };
+    case 'drag':
+      return {
+        ...state,
+        dragLeft: state.dragLeft - action.move
+      };
+    case 'drag-end':
+      return {
+        ...state,
+        pg: Math.round(state.dragLeft / state.rect.width),
+        dragging: false
+      };
+    default:
+      console.log('wtf')
+      console.error(action)
+  }
+}
 
 export const Carousel = () => {
   const arr = [1, 2, 3]
 
-
   const ref = useRef(null)
-  const [dragging, setDragging] = useState(false)
-
-  // const dragging = useRef(false)
-  const [rect, setRect] = useState({})
-  const [pg, setPg] = useState(0)
-  const [dragLeft, setDragLeft] = useState(0)
-
-
+  const [state, dispatch] = useReducer(reducer, { rect: {}, pg: 0, dragLeft: 0, dragging: false })
 
 
 
   useEffect(() => {
-    setRect(ref.current.getBoundingClientRect())
+    dispatch({ type: 'set-rect', rect: ref.current.getBoundingClientRect() })
   }, [ref])
 
 
   const updateSize = useCallback(
     debounce(
-    // throttle(
       () => {
-        setRect(ref.current.getBoundingClientRect())
+        dispatch({ type: 'resize', rect: ref.current.getBoundingClientRect() })
       }
       , 200
     )
     , []
   )
 
-  // const updateSize = () => setRect(ref.current.getBoundingClientRect())
-
- 
-  useEffect(() => {
-    // dragging.current = false
-    // console.log(dragging)
-    // setDragLeft(pg * rect.width)
-    // setDragging(false)
-  }, [rect])
 
   useEffect(() => {
     window.addEventListener('resize', updateSize)
-    return () => window.removeEventListener('resize', updateSize)
   }, [])
 
 
   return <>
-    <div
-      className='select-none'
-      onClick={
-        () => setPg(pg + 1)
-      }>1</div>
-    <div
-      className='select-none'
-      onClick={
-        () => setPg(pg - 1)
-      }
-    >2</div>
-    <div
+
+
+    <div className='bg-transparent h-full w-full'
       ref={ref}
-      className='relative overflow-visible bg-gray-200 h-full w-full'
     >
-      {rect.width &&
-        <div
-          className='absolute overflow-visible bg-green-400'
+      {state.rect.width &&
+        <div className='absolute top-0 overflow-visible bg-green-400 h-full'
 
-          onMouseDown={() => {
-            setDragging(true)
-            // dragging.current = true
-            setDragLeft(pg * rect.width)
-          }}
-
-          onMouseMove={(e) => {
-            if (e.buttons != 1) return
-            setDragLeft(state => state + e.movementX)
-          }}
-
-          onMouseUp={(e) => {
-            // dragging.current = false
-            setPg(Math.round(dragLeft / rect.width))
-            setDragging(false)
-          }}
+          onMouseDown={() => dispatch({ type: 'drag-start' })}
+          onMouseMove={(e) => e.buttons == 1 && dispatch({ type: 'drag', move: e.movementX })}
+          onMouseUp={() => dispatch({ type: 'drag-end' })}
 
           style={{
-            height: '80%',
-            width: 1 * rect.width,
-            top: 0,
-            // left: dragging ? dragLeft : pg * rect.width,
-            left: 0,
-            transform: `translateX(${dragging ? dragLeft : pg * rect.width}px)`,
-            transition: dragging ? null : elastic
-          }}>
+            width: 1 * state.rect.width,
+            transform: `translateX(${state.dragging ? -state.dragLeft : -state.pg * state.rect.width}px)`,
+            transition: state.dragging ? null : elastic
+          }}
+        >
           {
             arr.map((e, idx) => {
 
@@ -132,6 +129,24 @@ export const Carousel = () => {
         </div>
       }
     </div>
+
+    <div className='select-none absolute w-12 h-12 top-0 bottom-0 my-auto -left-24 fill-current bg-gray-100 rounded-full'
+      onClick={() => dispatch({ type: "move", del: -1 })}
+    >
+      <MdArrowBack className="w-full h-full text-gray-700 p-3" />
+    </div>
+    <div className='select-none absolute w-12 h-12 top-0 bottom-0 my-auto -right-24 fill-current bg-gray-100 rounded-full'
+      onClick={() => dispatch({ type: "move", del: 1 })}
+    >
+      <MdArrowForward className="w-full h-full text-gray-700 p-3" />
+    </div>
+
+    <div className="flex w-full -bottom-8 absolute flex justify-center items-center">
+      {arr.map((ele, idx) => (
+        <div key={idx} className={`h-2 w-2 mx-1 rounded-full ${idx == state.pg ? 'bg-gray-50' : 'bg-gray-500'}`}></div>
+      ))}
+    </div>
+
   </>
 
 }
