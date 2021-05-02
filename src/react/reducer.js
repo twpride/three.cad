@@ -195,15 +195,6 @@ export function ui(state = defaultUIState, action) {
         mode: { $set: action.mode }
       })
 
-    case 'set-help':
-      return update(state, {
-        help: { $set: action.status }
-      })
-    case 'toggle-help':
-      return update(state, {
-        help: { $set: !state.help }
-      })
-
     default:
       return state
   }

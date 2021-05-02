@@ -1,39 +1,18 @@
 
 
-import React, { useCallback, useEffect, useReducer, useRef } from 'react';
+import React, { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import { MdCancel, MdArrowBack, MdArrowForward } from 'react-icons/md'
+import { MdArrowBack, MdArrowForward } from 'react-icons/md'
 
-import { Carousel } from './carousel'
-
+import { QuickStart } from './quickStart'
 
 // 10, 'Use the line tool',
 // 10, 'Adding dimensions',
 // 10, 'Adding vetical/horizontal constraints',
 // 10, 'Drawing an arc',
 // 10, 'Adding coincident constraints',
-
-const basicWorkflowTS = [
-  10, 'Sketching on a plane',
-  10, 'Extruding a sketch to a solid',
-  10, 'Sketch on a face of a solid',
-  10, 'Peforming boolean operation between solids',
-]
-
-const editWorkflowTS = [
-  10, 'opening a file from disk',
-  10, 'editing an existing sketch',
-  10, 'accepting the edit and exiting',
-]
-
-const exportTS = [
-  10, 'selecting a body for export',
-  10, 'initiate export',
-  10, 'loading exported stl into 3dprint slicer',
-  10, 'result',
-]
 
 function debounce(callback, delay) {
   let handler = null;
@@ -46,10 +25,12 @@ function debounce(callback, delay) {
 function reducer(state, action) {
   switch (action.type) {
     case 'resize':
+
+      const rect = Math.min(Math.min(window.innerHeight * 0.8, window.innerWidth * 0.7),800)
       return {
         ...state,
-        rect: window.innerHeight * 0.6,
-        dragLeft: state.pg * window.innerHeight * 0.6,
+        rect,
+        dragLeft: state.pg * rect,
         dragging: true
       };
     case 'move':
@@ -81,47 +62,52 @@ function reducer(state, action) {
   }
 }
 
-const transTime = 200
+const transTime = 300
 
 const elastic = `transform ${transTime}ms cubic-bezier(0.4, 0.0, 0.2, 1)`;
 
-export const Help = () => {
+const arr = [
+  ['Sketch out your ideas in 2D outlines.', 'link'],
+  ['Transform the sketched shapes into 3D solids.', 'link'],
+  ['Combine multiple solids to form more complex ones.', 'link'],
+  ['Export your design to a 3D printer and turn into reality.', 'link'],
+]
+
+
+
+
+
+
+
+
+export const Help = ({ setModal }) => {
 
   const dispatch = useDispatch()
   const status = useSelector(state => state.ui.help)
 
-  const handleClick = (e) => {
-    if (!e.composedPath().includes(ref.current)
-    ) {
-      e.stopPropagation() // prevents mouse from immediately clicking nav button if over it
-      dispatch({ type: 'set-help', status: false })
-
-    }
-  }
-
-  useEffect(() => {
-    if (!status) return
-
-    document.addEventListener( // handles click outside buttona & dropdown
-      'click',
-      handleClick
-      ,
-      { capture: true } // capture phase to allow for stopPropogation on others
-    )
-
-    return () => {
-      document.removeEventListener('click', handleClick, { capture: true }) // important to include options if it was specified
-    }
-
-  }, [status])
 
 
+  // useEffect(() => {
+  //   if (!status) return
 
-  const arr = [1, 2, 3]
+  //   document.addEventListener( // handles click outside buttona & dropdown
+  //     'click',
+  //     handleClick
+  //     ,
+  //     { capture: true } // capture phase to allow for stopPropogation on others
+  //   )
+
+  //   return () => {
+  //     document.removeEventListener('click', handleClick, { capture: true }) // important to include options if it was specified
+  //   }
+
+  // }, [status])
+
+
 
   const ref = useRef(null)
-  const [state, carouselDispatch] = useReducer(reducer, { rect: window.innerHeight * 0.6, pg: 0, dragLeft: 0, dragging: false })
-
+  const rect = Math.min(Math.min(window.innerHeight * 0.8, window.innerWidth * 0.7),800)
+  const [state, carouselDispatch] = useReducer(reducer, { rect, pg: 0, dragLeft: 0, dragging: false })
 
 
 
@@ -137,62 +123,96 @@ export const Help = () => {
   )
 
 
+  const handleMouseDown = () => carouselDispatch({ type: 'drag-start' })
+  const handleMouseMove = (e) => e.buttons == 1 && carouselDispatch({ type: 'drag', move: e.movementX })
+  const handleMouseUp = () => carouselDispatch({ type: 'drag-end' })
+
   useEffect(() => {
     window.addEventListener('resize', updateSize)
+    document.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
   }, [])
 
-  if (status) {
-    return <div className="absolute h-3/5 left-0 top-0 right-0 bottom-0 m-auto bg-transparent
-    flex flex-col items-center
+  // if (status) {
+  return <div className="absolute left-0 right-0 top-0 bottom-0 m-auto bg-gray-700 rounded-xl
+    flex flex-col items-center border-gray-500 border-2
     "
-      style={{
-        width: 1 * state.rect,
-      }}
-      ref={ref}
-    >
-      <div className='absolute top-0 overflow-visible bg-green-400 h-full'
+    style={{
+      width: state.rect,
+      height: 1.1 * state.rect,
+    }}
+    ref={ref}
+  >
 
-        onMouseDown={() => carouselDispatch({ type: 'drag-start' })}
-        onMouseMove={(e) => e.buttons == 1 && carouselDispatch({ type: 'drag', move: e.movementX })}
-        onMouseUp={() => carouselDispatch({ type: 'drag-end' })}
+    <div className='w-full overflow-hidden relative rounded-t-xl'
+      style={{
+        height: state.rect,
+      }}
+    >
+      <div className='bg-transparent h-full flex select-none'
 
         style={{
-          width: 1 * state.rect,
-          transform: `translateX(${state.dragging ? -state.dragLeft : -state.pg * state.rect}px)`,
+          width: state.rect * (arr.length + 1),
+          transform: `translateX(${state.dragging ? -state.dragLeft-4 : -state.pg * state.rect-4}px)`,
           transition: state.dragging ? null : elastic
         }}
       >
         {
-          arr.map((e, idx) => {
-
-            return <div key={idx} style={{}}>
-              hi {e}
+          arr.map(
+            (e, idx) => <div className='flex flex-col items-center text-base lg:text-xl'
+              style={{ width: state.rect, height: '100%' }} key={idx}
+            >
+              <div className="bg-gray-800"
+                style={{
+                  width: state.rect * 0.8,
+                  height: state.rect * 0.8,
+                }}
+              ></div>
+              <div className='my-auto text-center text-gray-50'>
+                {e[0]}
+              </div>
             </div>
-          })
+          )
         }
+
+
+        <div className='flex flex-col items-center text-base lg:text-xl text-gray-50'
+          style={{ width: state.rect, height: '100%' }}
+        >
+          <QuickStart/>
+        </div>
       </div>
 
-      <div className='select-none absolute w-12 h-12 top-0 bottom-0 my-auto -left-24 fill-current bg-gray-100 rounded-full'
-        onClick={() => carouselDispatch({ type: "move", del: -1 })}
-      >
-        <MdArrowBack className="w-full h-full text-gray-700 p-3" />
-      </div>
-      <div className='select-none absolute w-12 h-12 top-0 bottom-0 my-auto -right-24 fill-current bg-gray-100 rounded-full'
-        onClick={() => carouselDispatch({ type: "move", del: 1 })}
-      >
-        <MdArrowForward className="w-full h-full text-gray-700 p-3" />
-      </div>
 
-      <div className="flex w-full -bottom-8 absolute flex justify-center items-center">
-        {arr.map((ele, idx) => (
-          <div key={idx} className={`h-2 w-2 mx-1 rounded-full ${idx == state.pg ? 'bg-gray-50' : 'bg-gray-500'}`}></div>
-        ))}
-      </div>
-      <MdCancel className="btn-green absolute h-7 w-auto right-4 top-4"
-        onClick={() => dispatch({ type: 'set-help', status: false })}
-      />
-    </div >
-  } else {
-    return null
-  }
+    </div>
+
+    <div
+      className="pointer-cursor bg-gray-200 rounded p-1 inline-block"
+      onClick={() => setModal(false)}
+    >
+      Get Started
+    </div>
+
+    <div className='select-none absolute w-12 h-12 top-0 bottom-0 my-auto -left-24 fill-current bg-gray-100 rounded-full'
+      onClick={() => carouselDispatch({ type: "move", del: -1 })}
+    >
+      <MdArrowBack className="w-full h-full text-gray-700 p-3" />
+    </div>
+    <div className='select-none absolute w-12 h-12 top-0 bottom-0 my-auto -right-24 fill-current bg-gray-100 rounded-full'
+      onClick={() => carouselDispatch({ type: "move", del: 1 })}
+    >
+      <MdArrowForward className="w-full h-full text-gray-700 p-3" />
+    </div>
+
+    <div className="flex -bottom-8 absolute flex justify-center items-center">
+      {Array(arr.length + 1).fill().map((ele, idx) => (
+        <div key={idx} className={`h-2 w-2 mx-1 rounded-full ${idx == state.pg ? 'bg-gray-50' : 'bg-gray-500'}`}></div>
+      ))}
+    </div>
+
+  </div >
+  // } else {
+  // return null
+  // }
 }

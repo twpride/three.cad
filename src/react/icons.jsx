@@ -314,6 +314,227 @@ function Logo(props) {
   );
 }
 
+function MouseLeft(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 127 185.208"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path
+        d="M57.144 34.384l-.002 9.987a11.89 11.89 0 00-7.912 11.225V77A11.865 11.865 0 0061.122 88.89h4.756A11.865 11.865 0 0077.77 77V55.596c0-5.21-3.316-9.615-7.96-11.23l-.03-9.982zm-3.157 0c-22.399 0-40.43 18.032-40.43 40.43v61.836c0 22.399 18.031 40.43 40.43 40.43h19.026c22.399 0 40.43-18.031 40.43-40.43V74.815c0-22.399-18.031-40.43-40.43-40.43z"
+        fill="none"
+        stroke="#fff"
+        strokeWidth={5.946}
+        strokeLinecap="round"
+        paintOrder="markers stroke fill"
+      />
+      <path
+        d="M46.232 44.336A35.596 35.596 0 0021.88 78.19v23.307H63.5v-4.972h-2.379c-10.504 0-19.13-8.63-19.13-19.133V55.987c0-4.456 1.625-8.463 4.24-11.65z"
+        fill="#fff"
+        paintOrder="markers stroke fill"
+      />
+    </svg>
+  );
+}
+
+function MouseMiddle(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 127 185.208"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path
+        d="M57.144 34.384l-.002 9.987a11.89 11.89 0 00-7.912 11.225V77A11.865 11.865 0 0061.122 88.89h4.756A11.865 11.865 0 0077.77 77V55.596c0-5.21-3.316-9.615-7.96-11.23l-.03-9.982zm-3.157 0c-22.399 0-40.43 18.032-40.43 40.43v61.836c0 22.399 18.031 40.43 40.43 40.43h19.026c22.399 0 40.43-18.031 40.43-40.43V74.815c0-22.399-18.031-40.43-40.43-40.43z"
+        fill="none"
+        stroke="#fff"
+        strokeWidth={5.946}
+        strokeLinecap="round"
+        paintOrder="markers stroke fill"
+      />
+      <rect
+        width={13.081}
+        height={29.728}
+        x={56.96}
+        y={51.57}
+        rx={4.757}
+        ry={4.757}
+        fill="#fff"
+        paintOrder="markers stroke fill"
+      />
+    </svg>
+  );
+}
+
+function MouseRight(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 127 185.208"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path
+        d="M57.144 34.384l-.002 9.987a11.89 11.89 0 00-7.912 11.225V77A11.865 11.865 0 0061.122 88.89h4.756A11.865 11.865 0 0077.77 77V55.596c0-5.21-3.316-9.615-7.96-11.23l-.03-9.982zm-3.157 0c-22.399 0-40.43 18.032-40.43 40.43v61.836c0 22.399 18.031 40.43 40.43 40.43h19.026c22.399 0 40.43-18.031 40.43-40.43V74.815c0-22.399-18.031-40.43-40.43-40.43z"
+        fill="none"
+        stroke="#fff"
+        strokeWidth={5.946}
+        strokeLinecap="round"
+        paintOrder="markers stroke fill"
+      />
+      <path
+        d="M80.768 44.336A35.596 35.596 0 01105.12 78.19v23.307H63.5v-4.972h2.379c10.504 0 19.13-8.63 19.13-19.133V55.987c0-4.456-1.625-8.463-4.24-11.65z"
+        fill="#fff"
+        paintOrder="markers stroke fill"
+      />
+    </svg>
+  );
+}
+
+function MouseScroll(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 127 185.208"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path
+        d="M57.144 34.384l-.002 9.987a11.89 11.89 0 00-7.912 11.225V77A11.865 11.865 0 0061.122 88.89h4.756A11.865 11.865 0 0077.77 77V55.596c0-5.21-3.316-9.615-7.96-11.23l-.03-9.982zm-3.157 0c-22.399 0-40.43 18.032-40.43 40.43v61.836c0 22.399 18.031 40.43 40.43 40.43h19.026c22.399 0 40.43-18.031 40.43-40.43V74.815c0-22.399-18.031-40.43-40.43-40.43z"
+        fill="none"
+        stroke="#fff"
+        strokeWidth={5.946}
+        strokeLinecap="round"
+        paintOrder="markers stroke fill"
+      />
+      <path
+        d="M53.191 18.36L63.533 8.018 73.81 18.293M63.533 29.64V8.018M53.191 105.468l10.342 10.343 10.276-10.276M63.533 94.188v21.623"
+        fill="none"
+        stroke="#fff"
+        strokeWidth={5.946}
+      />
+    </svg>
+  );
+}
+
+function Pan(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="Pan"
+      viewBox="0 0 24 24"
+      className="prefix__StyledIcon-ofa7kd-0 prefix__dSCMyp"
+      width="1em"
+      height="1em"
+      {...props}
+    >
+      <path
+        style={{
+          lineHeight: "normal",
+          fontVariantLigatures: "normal",
+          fontVariantPosition: "normal",
+          fontVariantCaps: "normal",
+          fontVariantNumeric: "normal",
+          fontVariantAlternates: "normal",
+          fontVariantEastAsian: "normal",
+          fontFeatureSettings: "normal",
+          fontVariationSettings: "normal",
+          textIndent: 0,
+          textAlign: "start",
+          textDecorationLine: "none",
+          textDecorationStyle: "solid",
+          textDecorationColor: "#000",
+          textTransform: "none",
+          textOrientation: "mixed",
+          whiteSpace: "normal",
+          shapePadding: 0,
+          shapeMargin: 0,
+          inlineSize: 0,
+          isolation: "auto",
+          mixBlendMode: "normal",
+          solidColor: "#000",
+          solidOpacity: 1,
+        }}
+        d="M12 2L8.314 5.686l1.239 1.239 1.57-1.571v5.77h-5.77l1.572-1.571-1.24-1.239L2 12l3.686 3.686 1.239-1.239-1.571-1.57h5.77v5.77l-1.571-1.572-1.239 1.24L12 22l3.686-3.686-1.239-1.239-1.57 1.571v-5.77h5.77l-1.572 1.571 1.24 1.239L22 12l-3.686-3.686-1.239 1.239 1.571 1.57h-5.77v-5.77l1.571 1.572 1.239-1.24z"
+        color="currentColor"
+        fontWeight={400}
+        fontFamily="sans-serif"
+        overflow="visible"
+      />
+    </svg>
+  );
+}
+
+function Rotate(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="PowerCycle"
+      viewBox="0 0 24 24"
+      className="prefix__StyledIcon-ofa7kd-0 prefix__dSCMyp"
+      width="1em"
+      height="1em"
+      {...props}
+    >
+      <path
+        style={{
+          lineHeight: "normal",
+          fontVariantLigatures: "normal",
+          fontVariantPosition: "normal",
+          fontVariantCaps: "normal",
+          fontVariantNumeric: "normal",
+          fontVariantAlternates: "normal",
+          fontVariantEastAsian: "normal",
+          fontFeatureSettings: "normal",
+          fontVariationSettings: "normal",
+          textIndent: 0,
+          textAlign: "start",
+          textDecorationLine: "none",
+          textDecorationStyle: "solid",
+          textDecorationColor: "#000",
+          textTransform: "none",
+          textOrientation: "mixed",
+          whiteSpace: "normal",
+          shapePadding: 0,
+          shapeMargin: 0,
+          inlineSize: 0,
+          isolation: "auto",
+          mixBlendMode: "normal",
+          solidColor: "#000",
+          solidOpacity: 1,
+        }}
+        d="M11.967 3C7.023 3 3 7.042 3 12h1.8c0-3.989 3.2-7.2 7.167-7.2 2.26 0 4.233 1.068 5.545 2.7H14.7v1.8H21V3h-1.8v3.81C17.572 4.53 14.969 3 11.967 3zm7.233 9c0 3.989-3.2 7.2-7.167 7.2-2.26 0-4.233-1.068-5.545-2.7H9.3v-1.8H3V21h1.8v-3.81C6.428 19.47 9.031 21 12.033 21 16.977 21 21 16.958 21 12z"
+        color="currentColor"
+        fontWeight={400}
+        fontFamily="sans-serif"
+        overflow="visible"
+      />
+    </svg>
+  );
+}
+
+function Select(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="1em"
+      viewBox="0 0 24 24"
+      width="1em"
+      {...props}
+    >
+      <path fill="none" d="M0 0h24v24H0z" />
+      <path d="M17 5h-2V3h2v2zm-2 10v6l2.29-2.29 2.3 2.29L21 19.59l-2.29-2.29L21 15h-6zm4-6h2V7h-2v2zm0 4h2v-2h-2v2zm-8 8h2v-2h-2v2zM7 5h2V3H7v2zM3 17h2v-2H3v2zm2 4v-2H3c0 1.1.9 2 2 2zM19 3v2h2c0-1.1-.9-2-2-2zm-8 2h2V3h-2v2zM3 9h2V7H3v2zm4 12h2v-2H7v2zm-4-8h2v-2H3v2zm0-8h2V3c-1.1 0-2 .9-2 2z" />
+    </svg>
+  );
+}
+
 function Stl(props) {
   return (
     <svg
@@ -475,4 +696,4 @@ function Vertical(props) {
     </svg>
   );
 }
-export { Arc, Coincident, Dimension, Extrude, Flip, Horizontal, Intersect, Line, Logo, Stl, Subtract, Tangent, Union, Vertical };
+export { Arc, Coincident, Dimension, Extrude, Flip, Horizontal, Intersect, Line, Logo, MouseLeft, MouseMiddle, MouseRight, MouseScroll, Pan, Rotate, Select, Stl, Subtract, Tangent, Union, Vertical };

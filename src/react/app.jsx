@@ -27,7 +27,6 @@ const App = ({ store }) => {
     <NavBar />
     <Tree />
     <ToolTip />
-    <Help/>
   </Provider>
 }
 

@@ -1,17 +1,18 @@
 
 
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux'
 
 import { FaEdit, FaLinkedin, FaGithub } from 'react-icons/fa'
 import { MdSave, MdFolder, MdInsertDriveFile, MdHelpOutline } from 'react-icons/md'
-
 import * as Icon from "./icons";
+
 import { Dialog } from './dialog'
-import { DropDown } from './dropDown'
 import { Help } from './help'
+import { Modal } from './modal'
 import { STLExport, saveFile, openFile } from './fileHelpers'
+import { DropDown} from './dropDown'
 
 const buttonIdx = {
   'line': 1,
@@ -171,10 +172,12 @@ export const NavBar = () => {
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
-  return <div className='topNav flex justify-center items-center bg-gray-800'>
+  const [modal, setModal] = useState(false)
 
-    <div className='w-auto h-full flex-1 flex items-center justify-end md:justify-between'>
-      <div className='w-100 h-full items-center font-mono text-lg text-gray-200 select-none hidden lg:flex mr-8'>
+  return <div className='topNav flex justify-center bg-gray-800'>
+
+    <div className='w-auto h-full flex-1 flex justify-end lg:justify-between'>
+      <div className='w-100 h-full font-mono text-lg text-gray-200 select-none hidden lg:flex mr-8 items-center'>
         <Icon.Logo className='w-auto h-6 mx-1' />
           three.cad
       </div>
@@ -194,11 +197,15 @@ export const NavBar = () => {
         ))
       }
     </div>
-    <div className='w-auto h-full flex-1 items-center justify-end flex-shrink-1 hidden md:flex'>
+    <div className='w-auto h-full flex-1 justify-end flex-shrink-1 hidden md:flex'>
+
       <MdHelpOutline className="btn-green w-auto h-full p-3" onClick={() => {
-        dispatch({ type: 'set-help', status: true })
+        setModal(true)
       }
       } />
+
+      {/* <DropDown/> */}
+
       <a href='https://github.com/twpride/three.cad' className='h-full w=auto'>
         <FaGithub className="btn-green w-auto h-full p-3.5"></FaGithub>
       </a>
@@ -206,6 +213,11 @@ export const NavBar = () => {
         <FaLinkedin className="btn-green w-auto h-full p-3.5"></FaLinkedin>
       </a>
     </div>
+    {
+      modal && <Modal>
+        <Help {...{ setModal }} />
+      </Modal>
+    }
 
   </div>
 }

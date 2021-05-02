@@ -5,6 +5,8 @@
   box-sizing: border-box;
   scrollbar-color: lightgray #262626;
   scrollbar-width: thin;
+  border-width: 0;
+  border-style: solid;
 }
 
 body {

@@ -6,15 +6,18 @@
 
 
 
-Draw a two outline using lines and arcs
 
-Extrude the ouline into a 3d solid
+s
 
-combine multiple solids to form the part you desire
+Turn the shapes you drew into 3D solids
+
+Combine multiple solids to form more complex solids
 
 uplaod your design to a 3d printer
 
-navigation tips
+navigation tip
+
+offer to watch three video demos
 
 
 
