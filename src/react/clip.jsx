@@ -3,16 +3,22 @@ import { MdCancel} from 'react-icons/md'
 
 
 export const Clip = ({ setClip, clip }) => {
+  let width;
+  if (window.innerWidth / 1.6 > window.innerHeight) {
+    width = window.innerHeight * 1.6 
+  } else {
+    width =  window.innerWidth
+  }
 
-  const width = window.innerWidth * 0.9
-  const top = (window.innerHeight - (width / 1.6)) / 2
+  width = Math.min(width* 0.9, 1024)
+  const top = (window.innerHeight - (width / 1.6) - 32) / 2
+  // console.log(width, width/1.6, window.innerHeight, top)
 
   return (
     <div className='absolute left-0 right-0 m-auto bg-gray-700 flex flex-col
-    border-2 border-gray-500 rounded-2xl overflow-hidden 
+    border-2 border-gray-500 rounded-2xl overflow-hidden
      '
       style={{
-        maxWidth: '1024px',
         width,
         top,
       }}
@@ -21,9 +27,6 @@ export const Clip = ({ setClip, clip }) => {
         <div className='text-gray-50'>
           {clip[1]}
         </div>
-        <MdCancel className="absolute btn-green right-2"
-          onClick={() => setClip(null)}
-        />
       </div>
       <video src={clip[0]} width='100%' controls muted type="video/mp4" />
     </div>

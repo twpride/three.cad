@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom'
-import React from 'react'
+import React, { useState } from 'react'
 
 import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
@@ -22,11 +22,15 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
+const visitedFlagStorage = sessionStorage
+
 const App = ({ store }) => {
+  const [modal, setModal] = useState(!visitedFlagStorage.getItem('visited'))
   return <Provider store={store}>
     <NavBar />
     <Tree />
     <ToolTip />
+    {modal && < Help {...{ setModal }} />}
   </Provider>
 }
 
@@ -34,7 +38,7 @@ const App = ({ store }) => {
 document.addEventListener('DOMContentLoaded', () => {
 
   ReactDOM.render(<App store={store} />, document.getElementById('react'));
-
+  visitedFlagStorage.setItem('visited', true);
 
 });
 

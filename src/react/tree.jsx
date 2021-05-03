@@ -20,7 +20,7 @@ export const Tree = () => {
     </div>
     <div className='overflow-auto'>
       {treeEntries.allIds.map((entId, idx) => (
-        <TreeEntry key={idx} entId={entId} />
+        <TreeEntry key={entId} entId={entId} />
       ))}
     </div>
   </div>

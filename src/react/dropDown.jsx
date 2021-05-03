@@ -25,9 +25,11 @@ export const DropDown = () => {
 
     document.addEventListener( // handles click outside buttona & dropdown
       'pointerdown',
-      (e) => { !e.composedPath().includes(ev.target.parentNode) && setOpen(false) }
+      (e) => { 
+        console.log(e.composedPath())
+        !e.composedPath().includes(ev.target.parentNode) && setOpen(false) }
       ,
-      { capture: true, once: true } // capture phase to allow for stopPropogation on others
+      { capture: false, once: true } // capture phase to allow for stopPropogation on others
     )
 
   }

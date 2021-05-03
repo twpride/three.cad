@@ -9,10 +9,9 @@ import { MdSave, MdFolder, MdInsertDriveFile, MdHelpOutline } from 'react-icons/
 import * as Icon from "./icons";
 
 import { Dialog } from './dialog'
-import { Help } from './help'
 import { Modal } from './modal'
 import { STLExport, saveFile, openFile } from './fileHelpers'
-import { DropDown} from './dropDown'
+import { QuickStart } from './quickStart';
 
 const buttonIdx = {
   'line': 1,
@@ -82,7 +81,6 @@ export const NavBar = () => {
   }
 
   const confirmDiscard = () => !modified ? true : confirm('Discard changes? All changes will be lost.')
-
 
 
 
@@ -204,8 +202,6 @@ export const NavBar = () => {
       }
       } />
 
-      {/* <DropDown/> */}
-
       <a href='https://github.com/twpride/three.cad' className='h-full w=auto'>
         <FaGithub className="btn-green w-auto h-full p-3.5"></FaGithub>
       </a>
@@ -214,8 +210,10 @@ export const NavBar = () => {
       </a>
     </div>
     {
-      modal && <Modal>
-        <Help {...{ setModal }} />
+      modal && <Modal {...{setModal, id: 'navbar'}}>
+        <QuickStartWrapper>
+          <QuickStart {...{setModal}}/>
+        </QuickStartWrapper>
       </Modal>
     }
 
@@ -223,6 +221,30 @@ export const NavBar = () => {
 }
 
 
+
+export const QuickStartWrapper = ({ children }) => {
+  const [rect, setRect] = useState(Math.min(Math.min(window.innerHeight * 0.8, window.innerWidth * 0.7), 800))
+
+  const updateSize = () => {
+    setRect(Math.min(Math.min(window.innerHeight * 0.8, window.innerWidth * 0.7), 800))
+  }
+  useEffect(() => {
+    window.addEventListener('resize', updateSize)
+    return () => {
+      window.removeEventListener('resize', updateSize)
+    }
+  }, [])
+
+  return <div className="absolute left-0 right-0 mx-auto bg-gray-700 rounded-xl flex flex-col items-center border-gray-500 border-2 overflow-hidden"
+    style={{
+      width: rect,
+      height: 1.1 * rect,
+      top: (window.innerHeight - 1.1 * rect) / 3,
+    }}
+  >
+    {children}
+  </div>
+}
 
 
 
