@@ -47,16 +47,6 @@
   background-color: rgba(16, 185, 129, var(--tw-bg-opacity));
 }
 
-.bg-green-800 {
-  --tw-bg-opacity: 1;
-  background-color: rgba(6, 95, 70, var(--tw-bg-opacity));
-}
-
-.bg-green-900 {
-  --tw-bg-opacity: 1;
-  background-color: rgba(6, 78, 59, var(--tw-bg-opacity));
-}
-
 .hover\:bg-gray-300:hover {
   --tw-bg-opacity: 1;
   background-color: rgba(212, 212, 212, var(--tw-bg-opacity));
@@ -72,9 +62,9 @@
   background-color: rgba(82, 82, 82, var(--tw-bg-opacity));
 }
 
-.hover\:bg-green-600:hover {
+.hover\:bg-green-500:hover {
   --tw-bg-opacity: 1;
-  background-color: rgba(5, 150, 105, var(--tw-bg-opacity));
+  background-color: rgba(16, 185, 129, var(--tw-bg-opacity));
 }
 
 .border-gray-50 {
