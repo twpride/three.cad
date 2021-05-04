@@ -48,7 +48,7 @@ function reducer(state, action) {
     case 'drag':
       const dragLeft = state.dragLeft - action.move
 
-      if (dragLeft < 0 || dragLeft > state.rect * arr.length) {
+      if (dragLeft < 0 || dragLeft > state.rect * arr.length - 1) {
         return state
       } else {
         return {
@@ -77,7 +77,7 @@ const arr = [
   ['Sketch out your idea in a 2D outline.', 'sketch.png'],
   ['Transform the sketched shape into a 3D solid.', 'extrude.png'],
   ['Use additional sketches to sculpt or extend the model.', 'sculpt.gif'],
-  ['Export your design to a 3D printer and turn into reality.', ''],
+  ['Export your design to a 3D printer and turn into reality.', '3dprint.mp4'],
 ]
 
 
@@ -87,7 +87,7 @@ const arr = [
 
 
 
-export const Help = ({ setModal }) => {
+export const Help = ({ setModal, setQs }) => {
 
 
 
@@ -150,38 +150,53 @@ export const Help = ({ setModal }) => {
       <div className='bg-transparent h-full flex select-none'
 
         style={{
-          width: state.rect * (arr.length + 1),
+          width: state.rect * (arr.length),
           transform: `translateX(${state.dragging ? -state.dragLeft - 4 : -state.pg * state.rect - 4}px)`,
           transition: state.dragging ? null : elastic
         }}
       >
         {
           arr.map(
-            (e, idx) => <div className='flex flex-col items-center'
-              style={{ width: state.rect, height: '100%' }} key={idx}
-            >
-              <img className="bg-gray-800"
-                src={e[1]}
-                style={{
-                  width: state.rect * 0.8,
-                  height: state.rect * 0.8,
-                }}
-              ></img>
+            (e, idx) => {
+              const isVideo = e[1].match(/\.[0-9a-z]+$/i)[0] == '.mp4'
+              return <div className='flex flex-col items-center'
+                style={{ width: state.rect, height: '100%' }} key={idx}
+              >
+                {
+                  isVideo ?
+                    <video src={e[1]}
+                      style={{
+                        width: state.rect * 0.8,
+                        height: state.rect * 0.8,
+                      }}
+                      autoPlay loop
+                      muted type="video/mp4" />
+                    :
+                    <img
+                      src={e[1]}
+                      style={{
+                        width: state.rect * 0.8,
+                        height: state.rect * 0.8,
+                      }}
+                    ></img>
+                }
 
 
-              <div className='my-auto text-center text-gray-50 text-sm sm:text-base md:text-xl'>
-                {e[0]}
+                <div className='my-auto text-center text-gray-50 text-sm sm:text-base md:text-xl'>
+                  {e[0]}
+                </div>
               </div>
-            </div>
+
+            }
           )
         }
 
 
-        <div className='flex flex-col items-center'
+        {/* <div className='flex flex-col items-center'
           style={{ width: state.rect, height: '100%' }}
         >
           <QuickStart {...{ setModal }} />
-        </div>
+        </div> */}
       </div>
 
 
@@ -192,7 +207,10 @@ export const Help = ({ setModal }) => {
       // style={{ 
       //   position:'absolute'
       //   bottom: 0.1 * state.rect}}
-      onClick={() => setModal(false)}
+      onClick={() => {
+        setModal(false)
+        setQs(true)
+      }}
     >
       Get Started
     </div>
@@ -208,14 +226,14 @@ export const Help = ({ setModal }) => {
     <div className='cursor-pointer select-none absolute w-12 h-12 top-0 bottom-0 my-auto -right-24 fill-current bg-gray-100 hover:bg-gray-300 rounded-full'
       onClick={() => carouselDispatch({ type: "move", del: 1 })}
       style={{
-        visibility: state.pg == arr.length ? 'hidden' : 'visible'
+        visibility: state.pg == arr.length - 1 ? 'hidden' : 'visible'
       }}
     >
       <MdArrowForward className="w-full h-full text-gray-700 p-3" />
     </div>
 
     <div className="flex -bottom-8 absolute flex justify-center items-center">
-      {Array(arr.length + 1).fill().map((ele, idx) => (
+      {Array(arr.length).fill().map((ele, idx) => (
         <div key={idx} className={`h-2 w-2 mx-1 rounded-full ${idx == state.pg ? 'bg-gray-50' : 'bg-gray-500'}`}></div>
       ))}
     </div>

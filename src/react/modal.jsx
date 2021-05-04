@@ -12,12 +12,11 @@ export class Modal extends React.Component {
 
     this.handleClickout = this.handleClickout.bind(this)
 
+    this.clickOut = props.clickOut == undefined ? true : props.clickOut
   }
 
   handleClickout(e) {
-    if (modalRoot.lastChild != this.el ) return
-
-    console.log(this.id, e.composedPath())
+    if (modalRoot.lastChild != this.el) return
 
 
     if (!e.composedPath().includes(this.el)) {
@@ -28,12 +27,13 @@ export class Modal extends React.Component {
 
   componentDidMount() {
     modalRoot.appendChild(this.el);
-
-    document.addEventListener( // handles click outside buttona & dropdown
-      'click', this.handleClickout
-      ,
-      { capture: true } // capture phase to allow for stopPropogation on others
-    )
+    if (this.clickOut) {
+      document.addEventListener( // handles click outside buttona & dropdown
+        'click', this.handleClickout
+        ,
+        { capture: true } // capture phase to allow for stopPropogation on others
+      )
+    }
   }
 
   componentWillUnmount() {

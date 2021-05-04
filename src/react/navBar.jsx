@@ -12,7 +12,8 @@ import { Dialog } from './dialog'
 import { Modal } from './modal'
 import { STLExport, saveFile, openFile } from './fileHelpers'
 import { QuickStart } from './quickStart';
-
+import { Help } from './help'
+const visitedFlagStorage = sessionStorage
 const buttonIdx = {
   'line': 1,
   'arc': 2,
@@ -170,9 +171,10 @@ export const NavBar = () => {
 
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
+  const [splash, setSplash] = useState(!visitedFlagStorage.getItem('visited'))
   const [modal, setModal] = useState(false)
 
-  return <div className='topNav flex justify-center bg-gray-800'>
+  return <div className='topNav flex justify-center bg-gray-800 text-gray-200 '>
 
     <div className='w-auto h-full flex-1 flex justify-end lg:justify-between'>
       <div className='w-100 h-full font-mono text-lg text-gray-200 select-none hidden lg:flex mr-8 items-center'>
@@ -187,8 +189,8 @@ export const NavBar = () => {
       {(sketchActive ? sketchModeButtons : partModeButtons).map(
         ([Icon, fcn, txt], idx) => (
           Icon !== undefined ?
-            <Icon className={`cursor-pointer fill-current text-gray-200 w-auto h-full p-3.5
-            ${idx == buttonIdx[mode] ? 'bg-green-600' : 'hover:bg-gray-600 bg-transparent'}`} tooltip={txt}
+            <Icon className={`cursor-pointer fill-current w-auto h-full p-3.5
+            ${idx == buttonIdx[mode] ? 'bg-green-800' : 'hover:bg-gray-600 bg-transparent'}`} tooltip={txt}
               onClick={fcn} key={idx}
             /> :
             <div className="w-12 h-full"></div>
@@ -197,54 +199,33 @@ export const NavBar = () => {
     </div>
     <div className='w-auto h-full flex-1 justify-end flex-shrink-1 hidden md:flex'>
 
-      <MdHelpOutline className="btn-green w-auto h-full p-3" onClick={() => {
+      <MdHelpOutline className={`cursor-pointer fill-current w-auto h-full p-3
+            ${modal ? 'bg-green-800' : 'hover:bg-gray-600 bg-transparent'}`} onClick={() => {
         setModal(true)
       }
       } />
 
-      <a href='https://github.com/twpride/three.cad' className='h-full w=auto'>
-        <FaGithub className="btn-green w-auto h-full p-3.5"></FaGithub>
+      <a href='https://github.com/twpride/three.cad' className='h-full w-auto'>
+        <FaGithub className="text-gray-200 cursor-pointer hover:bg-gray-600 bg-transparent w-auto h-full p-3.5"></FaGithub>
       </a>
-      <a href='https://www.linkedin.com/in/howard-hwang-b3000335' className='h-full w=auto'>
-        <FaLinkedin className="btn-green w-auto h-full p-3.5"></FaLinkedin>
+      <a href='https://www.linkedin.com/in/howard-hwang-b3000335' className='h-full w-auto'>
+        <FaLinkedin className="text-gray-200 cursor-pointer hover:bg-gray-600 bg-transparent w-auto h-full p-3.5"></FaLinkedin>
       </a>
     </div>
     {
-      modal && <Modal {...{setModal, id: 'navbar'}}>
-        <QuickStartWrapper>
-          <QuickStart {...{setModal}}/>
-        </QuickStartWrapper>
+      splash && <Modal {...{ setModal: setSplash, clickOut: false}}>
+        <Help {...{ setModal: setSplash, setQs: setModal }} />
+      </Modal>
+    }
+    {
+      modal && <Modal {...{ setModal, id: 'navbar' }}>
+        <QuickStart {...{ setModal }} />
       </Modal>
     }
 
   </div>
 }
 
-
-
-export const QuickStartWrapper = ({ children }) => {
-  const [rect, setRect] = useState(Math.min(Math.min(window.innerHeight * 0.8, window.innerWidth * 0.7), 800))
-
-  const updateSize = () => {
-    setRect(Math.min(Math.min(window.innerHeight * 0.8, window.innerWidth * 0.7), 800))
-  }
-  useEffect(() => {
-    window.addEventListener('resize', updateSize)
-    return () => {
-      window.removeEventListener('resize', updateSize)
-    }
-  }, [])
-
-  return <div className="absolute left-0 right-0 mx-auto bg-gray-700 rounded-xl flex flex-col items-center border-gray-500 border-2 overflow-hidden"
-    style={{
-      width: rect,
-      height: 1.1 * rect,
-      top: (window.innerHeight - 1.1 * rect) / 3,
-    }}
-  >
-    {children}
-  </div>
-}
 
 
 

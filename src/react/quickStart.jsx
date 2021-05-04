@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { Clip } from './clip'
 import { Modal } from './modal'
 
-import { MdZoomIn, MdSave, MdFolder, MdInsertDriveFile, MdHelpOutline } from 'react-icons/md'
+import { MdZoomIn, MdSave, MdFolder, MdInsertDriveFile, MdCancel } from 'react-icons/md'
 import { FaRegPlayCircle, FaEdit, FaCubes } from 'react-icons/fa'
 
 import * as Icon from "./icons";
@@ -50,36 +50,48 @@ const clipArr = [
   ['basic-workflow.mp4', 'Basic model creation workflow'],
   ['load-file-and-edit.mp4', 'Loading and editing models'],
   ['export-to-3dprint.mp4', 'Exporting model for 3D printing'],
-  ['headphones-stand.json.gz', 'Headphones Stand Model'],
+  ['headphone-stand.json.gz', 'Headphone Stand Model'],
 ]
 
 const utf8decoder = new TextDecoder();
 
-export const QuickStart = ({setModal}) => {
+export const QuickStart = ({ setModal }) => {
   const dispatch = useDispatch()
 
   const [clip, setClip] = useState(null)
+  const [rect, setRect] = useState(Math.min(Math.min(window.innerHeight * 0.8, window.innerWidth * 0.7), 800))
 
-  return <div className='bg-transparent w-full h-full flex justify-center'>
-    <div className="bg-transparent w-full h-full 
-    text-sm lg:text-base xl:text-lg 
-    flex flex-col items-center overflow-y-auto overflow-x-hidden text-gray-50">
-      <div className='text-center w-full text-lg lg:text-xl xl:text-2xl my-2 font-bold'>
-        Quick Start
-      </div>
+  const updateSize = () => {
+    setRect(Math.min(Math.min(window.innerHeight * 0.8, window.innerWidth * 0.7), 800))
+  }
+  useEffect(() => {
+    window.addEventListener('resize', updateSize)
+    return () => {
+      window.removeEventListener('resize', updateSize)
+    }
+  }, [])
 
+  return <div className="absolute left-0 right-0 mx-auto bg-gray-700 flex flex-col items-center
+  text-sm lg:text-base xl:text-lg text-gray-50"
+    style={{
+      width: rect,
+      height: 1.1 * rect,
+      top: (window.innerHeight - 1.1 * rect) / 2,
+    }}
+  >
+    <div className='w-full h-full bg-transparent overflow-y-auto overflow-x-hidden flex flex-col items-center'>
 
-      <div className='text-center text-base lg:text-lg xl:text-xl mb-2'>
+      <div className='text-center text-base lg:text-lg xl:text-xl mb-2 font-bold'>
         Demos
       </div>
 
 
-      <div className='mb-4 cursor-pointer'>
+      <div className='mb-4 cursor-pointer w-min'>
         {
           clipArr.map((ele, idx) => {
             const isGz = ele[0].match(/\.[0-9a-z]+$/i)[0] == '.gz'
 
-            return <div className="flex h-12 mx-2 rounded-lg items-center hover:text-green-500"
+            return <div className="flex h-12 mx-2 items-center hover:text-green-500 whitespace-nowrap"
               onClick={async () => {
                 if (isGz) {
                   const state = sce.loadState(
@@ -95,9 +107,9 @@ export const QuickStart = ({setModal}) => {
                       ).decompress()
                     )
                   )
-                  
+
                   setModal(false)
-                  dispatch({ type: 'restore-state', state, fileName: ele[0] })
+                  dispatch({ type: 'restore-state', state, fileName: ele[0].replace(/\.[^/.]+$/, "") })
                   sce.render()
 
                 } else {
@@ -109,9 +121,9 @@ export const QuickStart = ({setModal}) => {
               key={idx}
             >
               {isGz ?
-                <FaCubes size={'2.5em'} style={{ padding: '0.625em' }} />
+                <FaCubes size={'2.5em'} className='flex-shrink-0' style={{ padding: '0.625em' }} />
                 :
-                <FaRegPlayCircle size={'2.5em'} style={{ padding: '0.625em' }} />
+                <FaRegPlayCircle size={'2.5em'} className='flex-shrink-0' style={{ padding: '0.625em' }} />
               }
               {ele[1]}
             </div>
@@ -130,7 +142,7 @@ export const QuickStart = ({setModal}) => {
         {
           navArr.map((row, i) => (
             typeof row === 'string' ?
-              <div className='col-span-2 flex justify-center  text-base lg:text-lg xl:text-xl mb-2' key={i}>
+              <div className='col-span-2 flex justify-center  text-base lg:text-lg xl:text-xl mb-2 font-bold' key={i}>
                 {row}
               </div>
               :
@@ -161,18 +173,27 @@ export const QuickStart = ({setModal}) => {
         }
 
       </div>
+    </div>
 
-
-
-      {
-        clip && <Modal setModal={setClip} id={'qs'}>
-          <Clip {...{ setClip, clip }} />
-        </Modal>
-      }
+    <div className='absolute -top-7 w-full text-xl flex justify-center items-center bg-green-800'>
+      <div className='text-gray-50'>
+        Quick Start
+        </div>
+      <MdCancel className="absolute cursor-pointer text-gray-50 hover:text-gray-400 right-2"
+        onClick={() => setModal(null)}
+      />
     </div>
 
 
-  </div>
 
+
+    {
+      clip && <Modal setModal={setClip} id={'qs'}>
+        <Clip {...{ setClip, clip }} />
+      </Modal>
+    }
+
+
+  </div>
 
 }

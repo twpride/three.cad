@@ -25,12 +25,10 @@ if (process.env.NODE_ENV === 'production') {
 const visitedFlagStorage = sessionStorage
 
 const App = ({ store }) => {
-  const [modal, setModal] = useState(!visitedFlagStorage.getItem('visited'))
   return <Provider store={store}>
     <NavBar />
     <Tree />
     <ToolTip />
-    {modal && < Help {...{ setModal }} />}
   </Provider>
 }
 
