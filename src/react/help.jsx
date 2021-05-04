@@ -75,9 +75,9 @@ const elastic = `transform ${transTime}ms cubic-bezier(0.4, 0.0, 0.2, 1)`;
 
 const arr = [
   ['Sketch out your idea in a 2D outline.', 'sketch.png'],
-  ['Transform the sketched shape into a 3D solid.', 'extrude.png'],
+  ['Extrude the sketched shape into a 3D solid.', 'extrude.png'],
   ['Use additional sketches to sculpt or extend the model.', 'sculpt.gif'],
-  ['Export your design to a 3D printer and turn into reality.', '3dprint.mp4'],
+  ['Export your design to a 3D printer and turn into reality!', '3dprint.mp4'],
 ]
 
 

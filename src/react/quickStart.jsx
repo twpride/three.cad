@@ -22,22 +22,22 @@ const navArr = [
 
   '\u00A0',
   'Model Toolbar',
-  [['Sketch', FaEdit], ['Initiates a new sketch based on the the user must first select a plane, or three points on existing extrusions.']],
-  [['Extrude', Icon.Extrude], ['Intiates new extrusion dialog. before clickin gthis button. The user must firs select a sketch to extrude from']],
-  [['Union', Icon.Union], ['Creates a new solid that is a boolean union or two selected solids.']],
-  [['Substract', Icon.Subtract], ['Creates a new solid that is a boolean subtraction of the second selected solid from the first selected solid']],
+  [['Sketch', FaEdit], ['Initiates a new sketch on the selected plane, or on the plane defined by the three selected points in the existing model.']],
+  [['Extrude', Icon.Extrude], ['Intiates a new extrusion dialog. before clicking this button. The user must first select a sketch to extrude from']],
+  [['Union', Icon.Union], ['Creates a new solid that is a boolean union of two selected solids.']],
+  [['Substract', Icon.Subtract], ['Creates a new solid that is a boolean subtraction of the second selected solid from the first']],
   [['Intersect', Icon.Intersect], ['Creates a new solid that is a boolean intersection or two selected solids.']],
   [['New Document', MdInsertDriveFile], ['Wipes the current workspace and starts a fresh document']],
-  [['Save', MdSave], ['saves current document. on the inital save the user can specify save location and file name']],
-  [['Open', MdFolder], ['loads an existing document from the local disk.']],
-  [['Export to STL', Icon.Stl], ['Exports selected solid to 3d printer friendly stl format']],
+  [['Save', MdSave], ['Saves current document. On the inital save, the user can specify save location and file name']],
+  [['Open', MdFolder], ['Loads an existing document from the local disk.']],
+  [['Export to STL', Icon.Stl], ['Exports selected solid to the 3d printer friendly STL format']],
 
   '\u00A0',
   'Sketch Toolbar',
   [['Extrude', Icon.Extrude], ['Creates a new extrusion from the current sketch']],
-  [['Line', Icon.Line], ['Subsequent clicks on the canvas define the vertices of the line segment chain.']],
+  [['Line', Icon.Line], ['Starts a line segment chain. Subsequent clicks on the canvas define the vertices of the line segment chain.']],
   [['Arc', Icon.Arc], ['In the 3 subsequent mouse clicks, the first sets the start point, the seconds the endpoint, and the third the radius.']],
-  [['Dimension', Icon.Dimension], ['Adds a distance when 2 points, or 1 point and 1 line are selected. Adds an angle when two lines are selected.']],
+  [['Dimension', Icon.Dimension], ['Adds a distance between 2 points, or 1 point and 1 line. Adds an angle when two lines are selected.']],
   [['Coincident', Icon.Coincident], ['Adds a coincident contraint between two points, or a line and a point.']],
   [['Vertical', Icon.Vertical], ['Aligns the the selected line, or two selected points with the y-axis']],
   [['Horizontal', Icon.Horizontal], ['Aligns the the selected line, or two selected points with the x-axis']],
@@ -47,10 +47,10 @@ const navArr = [
 
 
 const clipArr = [
-  ['basic-workflow.mp4', 'Basic model creation workflow'],
-  ['load-file-and-edit.mp4', 'Loading and editing models'],
-  ['export-to-3dprint.mp4', 'Exporting model for 3D printing'],
-  ['headphone-stand.json.gz', 'Headphone Stand Model'],
+  ['basic-workflow.mp4', 'Basic part creation workflow'],
+  ['load-file-and-edit.mp4', 'Loading and editing a part'],
+  ['export-to-3dprint.mp4', 'Exporting a part for 3D printing'],
+  ['headphone-stand.json.gz', 'Example model: Headphone stand'],
 ]
 
 const utf8decoder = new TextDecoder();
