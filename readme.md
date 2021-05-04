@@ -6,6 +6,10 @@
 </div>
 
 <p align="center">
+  <img style="width:min(600px,100%)"  src="https://raw.githubusercontent.com/twpride/three.cad/master/dist/sketch.gif"></img>
+</p>
+
+<p align="center">
   <img style="width:min(600px,100%)"  src="https://raw.githubusercontent.com/twpride/three.cad/master/dist/site_preview.gif"></img>
 </p>
 
