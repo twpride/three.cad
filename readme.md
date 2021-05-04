@@ -10,10 +10,11 @@ Live Site
 </p>
  
 # About
-Three.cad is a 3D modelling web app built using [three.js](https://threejs.org/), [React](https://reactjs.org/), and [Web Assembly](https://webassembly.org/). It features parametric sketching and constructive solid geometry (CSG) capabilities.
+Three.cad is a computer-aided design (CAD) web app built using [three.js](https://threejs.org/), [React](https://reactjs.org/), and [Web Assembly](https://webassembly.org/). It features parametric sketching with [constraints](https://en.wikipedia.org/wiki/Geometric_constraint_solving) and 3D modelling with [constructive solid geometry](https://en.wikipedia.org/wiki/Constructive_solid_geometry) (CSG) capabilities.
  
+
 # Highlights
- 
+
 ## 2D Sketching
  
 <p align="center">
