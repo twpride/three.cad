@@ -107,7 +107,6 @@ const defaultUIState = {
   fileName: 'Untitled',
   selectedList: [],
   selectedSet: {},
-  help: false
 }
 
 export function ui(state = defaultUIState, action) {

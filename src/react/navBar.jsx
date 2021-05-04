@@ -12,7 +12,7 @@ import { Dialog } from './dialog'
 import { Modal } from './modal'
 import { STLExport, saveFile, openFile } from './fileHelpers'
 import { QuickStart } from './quickStart';
-import { Help } from './help'
+import { Onboard } from './onboard'
 const visitedFlagStorage = sessionStorage
 const buttonIdx = {
   'line': 1,
@@ -213,7 +213,7 @@ export const NavBar = () => {
     </div>
     {
       splash && <Modal {...{ setModal: setSplash, clickOut: false}}>
-        <Help {...{ setModal: setSplash, setQs: setModal }} />
+        <Onboard {...{ setModal: setSplash, setQs: setModal }} />
       </Modal>
     }
     {

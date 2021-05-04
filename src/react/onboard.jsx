@@ -87,7 +87,7 @@ const arr = [
 
 
 
-export const Help = ({ setModal, setQs }) => {
+export const Onboard = ({ setModal, setQs }) => {
 
 
 

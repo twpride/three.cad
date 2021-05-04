@@ -10,7 +10,7 @@ import { NavBar } from './navBar'
 import { ToolTip } from './toolTip'
 
 import './app.css'
-import { Help } from './help'
+import { Onboard } from './onboard'
 
 
 let store
