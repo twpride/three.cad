@@ -1,5 +1,24 @@
 
 
+const basicWorkflowTS = [
+  10, 'Sketching on a plane',
+  10, 'Extruding a sketch to a solid',
+  10, 'Sketch on a face of a solid',
+  10, 'Peforming boolean operation between solids',
+]
+
+const editWorkflowTS = [
+  10, 'opening a file from disk',
+  10, 'editing an existing sketch',
+  10, 'accepting the edit and exiting',
+]
+
+const exportTS = [
+  10, 'selecting a body for export',
+  10, 'initiate export',
+  10, 'loading exported stl into 3dprint slicer',
+  10, 'result',
+]
 
 
 

@@ -32,7 +32,6 @@ export const NavBar = () => {
   const modified = useSelector(state => state.ui.modified)
   const fileName = useSelector(state => state.ui.fileName)
   const mode = useSelector(state => state.ui.mode)
-  const help = useSelector(state => state.ui.help)
 
   const boolOp = (code) => {
     if (sce.selected.length != 2 || !sce.selected.every(e => e.userData.type == 'mesh')) {
@@ -190,7 +189,7 @@ export const NavBar = () => {
         ([Icon, fcn, txt], idx) => (
           Icon !== undefined ?
             <Icon className={`cursor-pointer fill-current w-auto h-full p-3.5
-            ${idx == buttonIdx[mode] ? 'bg-green-800' : 'hover:bg-gray-600 bg-transparent'}`} tooltip={txt}
+            ${idx == buttonIdx[mode] ? 'bg-green-500' : 'hover:bg-gray-600 bg-transparent'}`} tooltip={txt}
               onClick={fcn} key={idx}
             /> :
             <div className="w-12 h-full"></div>
@@ -200,7 +199,7 @@ export const NavBar = () => {
     <div className='w-auto h-full flex-1 justify-end flex-shrink-1 hidden md:flex'>
 
       <MdHelpOutline className={`cursor-pointer fill-current w-auto h-full p-3
-            ${modal ? 'bg-green-800' : 'hover:bg-gray-600 bg-transparent'}`} onClick={() => {
+            ${modal ? 'bg-green-500' : 'hover:bg-gray-600 bg-transparent'}`} onClick={() => {
         setModal(true)
       }
       } />

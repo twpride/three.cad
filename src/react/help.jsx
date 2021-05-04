@@ -48,7 +48,7 @@ function reducer(state, action) {
     case 'drag':
       const dragLeft = state.dragLeft - action.move
 
-      if (dragLeft < 0 || dragLeft > state.rect * arr.length - 1) {
+      if (dragLeft < 0 || dragLeft > state.rect * (arr.length - 1)) {
         return state
       } else {
         return {
@@ -74,7 +74,7 @@ const transTime = 300
 const elastic = `transform ${transTime}ms cubic-bezier(0.4, 0.0, 0.2, 1)`;
 
 const arr = [
-  ['Sketch out your idea in a 2D outline.', 'sketch.png'],
+  ['Sketch out the 2D outline of your idea.', 'sketch.mp4'],
   ['Extrude the sketched shape into a 3D solid.', 'extrude.png'],
   ['Use additional sketches to sculpt or extend the model.', 'sculpt.gif'],
   ['Export your design to a 3D printer and turn into reality!', '3dprint.mp4'],
@@ -178,6 +178,7 @@ export const Help = ({ setModal, setQs }) => {
                         width: state.rect * 0.8,
                         height: state.rect * 0.8,
                       }}
+                      draggable='false'
                     ></img>
                 }
 
@@ -203,7 +204,7 @@ export const Help = ({ setModal, setQs }) => {
     </div>
 
     <div
-      className="cursor-pointer text-gray-50 bg-green-500 rounded p-1.5 inline-block hover:bg-green-600"
+      className="cursor-pointer text-gray-50 bg-green-500 rounded p-1.5 inline-block hover:bg-green-500"
       // style={{ 
       //   position:'absolute'
       //   bottom: 0.1 * state.rect}}

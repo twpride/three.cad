@@ -59,24 +59,14 @@ export const QuickStart = ({ setModal }) => {
   const dispatch = useDispatch()
 
   const [clip, setClip] = useState(null)
-  const [rect, setRect] = useState(Math.min(Math.min(window.innerHeight * 0.8, window.innerWidth * 0.7), 800))
 
-  const updateSize = () => {
-    setRect(Math.min(Math.min(window.innerHeight * 0.8, window.innerWidth * 0.7), 800))
-  }
-  useEffect(() => {
-    window.addEventListener('resize', updateSize)
-    return () => {
-      window.removeEventListener('resize', updateSize)
-    }
-  }, [])
 
   return <div className="absolute left-0 right-0 mx-auto bg-gray-700 flex flex-col items-center
   text-sm lg:text-base xl:text-lg text-gray-50"
     style={{
-      width: rect,
-      height: 1.1 * rect,
-      top: (window.innerHeight - 1.1 * rect) / 2,
+      width: 'min(800px, 70%)',
+      height: '90%' ,
+      top: 'calc(5% + 14px)' ,
     }}
   >
     <div className='w-full h-full bg-transparent overflow-y-auto overflow-x-hidden flex flex-col items-center'>
@@ -175,7 +165,7 @@ export const QuickStart = ({ setModal }) => {
       </div>
     </div>
 
-    <div className='absolute -top-7 w-full text-xl flex justify-center items-center bg-green-800'>
+    <div className='absolute -top-7 w-full text-xl flex justify-center items-center bg-green-500'>
       <div className='text-gray-50'>
         Quick Start
         </div>

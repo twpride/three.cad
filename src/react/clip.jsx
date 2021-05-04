@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useReducer } from "react"
+import React from "react"
 import { MdCancel } from 'react-icons/md'
 
 
@@ -12,7 +12,6 @@ export const Clip = ({ setClip, clip }) => {
 
   width = Math.min(width * 0.9, 1024)
   const top = (window.innerHeight - (width / 1.6) - 32) / 2
-  // console.log(width, width/1.6, window.innerHeight, top)
 
   return (
     <div className='absolute left-0 right-0 m-auto flex flex-col
@@ -23,7 +22,7 @@ export const Clip = ({ setClip, clip }) => {
         top,
       }}
     >
-      <div className='text-xl flex justify-center items-center bg-green-900 '>
+      <div className='text-xl flex justify-center items-center bg-green-500 '>
         <div className='text-gray-50'>
           {clip[1]}
         </div>
@@ -39,22 +38,3 @@ export const Clip = ({ setClip, clip }) => {
   )
 }
 
-const basicWorkflowTS = [
-  10, 'Sketching on a plane',
-  10, 'Extruding a sketch to a solid',
-  10, 'Sketch on a face of a solid',
-  10, 'Peforming boolean operation between solids',
-]
-
-const editWorkflowTS = [
-  10, 'opening a file from disk',
-  10, 'editing an existing sketch',
-  10, 'accepting the edit and exiting',
-]
-
-const exportTS = [
-  10, 'selecting a body for export',
-  10, 'initiate export',
-  10, 'loading exported stl into 3dprint slicer',
-  10, 'result',
-]
