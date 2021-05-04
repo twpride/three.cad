@@ -204,7 +204,7 @@ export const Onboard = ({ setModal, setQs }) => {
     </div>
 
     <div
-      className="cursor-pointer text-gray-50 bg-green-500 rounded p-1.5 inline-block hover:bg-green-500"
+      className="cursor-pointer text-gray-50 bg-green-500 rounded p-1.5 inline-block hover:bg-green-600"
       // style={{ 
       //   position:'absolute'
       //   bottom: 0.1 * state.rect}}
@@ -216,7 +216,7 @@ export const Onboard = ({ setModal, setQs }) => {
       Get Started
     </div>
 
-    <div className='cursor-pointer select-none absolute w-12 h-12 top-0 bottom-0 my-auto -left-24 fill-current bg-gray-100 hover:bg-gray-300 rounded-full'
+    <div className='cursor-pointer select-none absolute w-12 h-12 top-0 bottom-0 my-auto -left-24 fill-current bg-gray-200 hover:bg-gray-400 rounded-full'
       onClick={() => carouselDispatch({ type: "move", del: -1 })}
       style={{
         visibility: state.pg == 0 ? 'hidden' : 'visible'
@@ -224,7 +224,7 @@ export const Onboard = ({ setModal, setQs }) => {
     >
       <MdArrowBack className="w-full h-full text-gray-700 p-3" />
     </div>
-    <div className='cursor-pointer select-none absolute w-12 h-12 top-0 bottom-0 my-auto -right-24 fill-current bg-gray-100 hover:bg-gray-300 rounded-full'
+    <div className='cursor-pointer select-none absolute w-12 h-12 top-0 bottom-0 my-auto -right-24 fill-current bg-gray-200 hover:bg-gray-400 rounded-full'
       onClick={() => carouselDispatch({ type: "move", del: 1 })}
       style={{
         visibility: state.pg == arr.length - 1 ? 'hidden' : 'visible'
