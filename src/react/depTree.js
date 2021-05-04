@@ -27,8 +27,6 @@ export class DepTree {
     this.addParent(childId)
   }
 
-
-
   getDescendents(id) {
     const dfs = (id) => {
       visited.add(id)
@@ -52,7 +50,6 @@ export class DepTree {
 
   deleteNode(id) {
 
-
     const nodesToDel = this.getDescendents(id)
 
     nodesToDel.sort((a, b) => this.order[b] - this.order[a])
@@ -64,7 +61,6 @@ export class DepTree {
 
       this.allIds.splice(spliceIdx, 1)
 
-      // const deletedObj = sc.obj3d.children.splice(spliceIdx + 1, 1)[0] // first 1 elements are non geom
       const deletedObj = sce.obj3d.children.splice(spliceIdx + 1, 1)[0] // first 1 elements are non geom
 
       deletedObj.traverse((obj) => {
@@ -93,40 +89,7 @@ export class DepTree {
   }
 
 
-
 }
-
-
-
-
-// const dt = new DepTree()
-// dt.addParent('r1')
-// dt.addParent('r2')
-// dt.addChild('r3', 'r1', 'r2')s
-// dt.addParent('r4')
-// dt.addChild('r5', 'r4', 'r3')
-// dt.addChild('r6', 'r1', 'r5')
-// dt.addChild('r7', 'r3', 'r5')
-
-// dt.addParent('r8')
-
-// // console.log(dt)
-
-// // const x = dt.deleteNode('r3')
-// // console.log(x)
-// // console.log(dt.allIds, dt.order)
-// // [ 6, 5, 4, 2 ]
-// // [ 'r1', 'r2', 'r4' ] { r1: 0, r2: 1, r4: 2 }
-
-
-// const x = dt.deleteNode('r5')
-// console.log(dt)
-// DepTree {
-//   tree: { r1: { r3: true }, r2: { r3: true }, r3: {}, r4: {}, r8: {} },
-//   order: { r1: 0, r2: 1, r3: 2, r4: 3, r8: 4 },
-//   allIds: [ 'r1', 'r2', 'r3', 'r4', 'r8' ]
-// }
-
 
 
 
