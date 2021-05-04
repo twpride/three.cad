@@ -169,7 +169,7 @@ export const QuickStart = ({ setModal }) => {
       <div className='text-gray-50'>
         Quick Start
         </div>
-      <MdCancel className="absolute cursor-pointer text-gray-50 hover:text-gray-400 right-2"
+      <MdCancel className="absolute cursor-pointer text-gray-50 hover:text-gray-400 right-1"
         onClick={() => setModal(null)}
       />
     </div>

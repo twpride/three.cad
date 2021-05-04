@@ -26,7 +26,7 @@ export const Clip = ({ setClip, clip }) => {
         <div className='text-gray-50'>
           {clip[1]}
         </div>
-        <MdCancel className="absolute cursor-pointer text-gray-50 hover:text-gray-400  right-2"
+        <MdCancel className="absolute cursor-pointer text-gray-50 hover:text-gray-400 right-1"
           onClick={() => setClip(null)}
         />
       </div>
